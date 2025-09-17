@@ -26,6 +26,80 @@
             box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
             border-color: #3B82F6 !important;
         }
+
+        /* Blog Article Styles */
+        .prose {
+            font-family: Georgia, 'Times New Roman', serif;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .prose h1,
+        .prose h2,
+        .prose h3,
+        .prose h4,
+        .prose h5,
+        .prose h6 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-weight: 700;
+            color: #111827;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .prose h2 {
+            font-size: 1.875rem;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 0.5rem;
+        }
+
+        .prose h3 {
+            font-size: 1.5rem;
+        }
+
+        .prose p {
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
+        }
+
+        .prose img {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        .prose blockquote {
+            border-left: 4px solid #E30613;
+            background: #F9FAFB;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .prose ul,
+        .prose ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .prose li {
+            margin-bottom: 0.5rem;
+        }
+
+        .prose a {
+            color: #E30613;
+            text-decoration: underline;
+            text-decoration-color: rgba(227, 6, 19, 0.3);
+            text-underline-offset: 3px;
+            transition: all 0.2s;
+        }
+
+        .prose a:hover {
+            text-decoration-color: #E30613;
+            color: #B8050F;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -203,8 +277,85 @@
             </div>
         </section>
 
+        <!-- FULL ARTICLE SECTION -->
+        <section id="full-article-section" class="hidden bg-white">
+            <div class="max-w-4xl mx-auto">
+                <!-- Article Header -->
+                <div class="relative">
+                    <div id="article-hero-image" class="h-96 bg-cover bg-center relative">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+                            <div class="mb-4">
+                                <span id="article-category" class="inline-block bg-primary text-white px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide">
+                                    AKTUALNOŚCI
+                                </span>
+                            </div>
+                            <h1 id="article-title" class="text-4xl md:text-5xl font-bold mb-4 leading-tight">Tytuł artykułu</h1>
+                            <div class="flex flex-wrap items-center space-x-6 text-gray-200">
+                                <div class="flex items-center">
+                                    <i class="ri-calendar-line mr-2"></i>
+                                    <span id="article-date">Data publikacji</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="ri-user-line mr-2"></i>
+                                    <span id="article-author">Autor</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="ri-time-line mr-2"></i>
+                                    <span id="article-reading-time">5 min czytania</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Content -->
+                <div class="px-8 py-12">
+                    <!-- Back Button -->
+                    <div class="mb-8">
+                        <button onclick="hideFullArticle()" class="inline-flex items-center text-secondary hover:text-primary font-semibold transition-colors">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Powrót do listy aktualności
+                        </button>
+                    </div>
+
+                    <!-- Article Body -->
+                    <div id="article-content" class="prose prose-lg max-w-none">
+                        <!-- Treść artykułu będzie wstawiona tutaj -->
+                    </div>
+
+                    <!-- Share Section -->
+                    <div class="mt-12 pt-8 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold mb-4">Udostępnij artykuł</h3>
+                        <div class="flex space-x-4">
+                            <button onclick="shareArticle('facebook')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                                <i class="ri-facebook-fill mr-2"></i>Facebook
+                            </button>
+                            <button onclick="shareArticle('twitter')" class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition-colors flex items-center">
+                                <i class="ri-twitter-fill mr-2"></i>Twitter
+                            </button>
+                            <button onclick="shareArticle('linkedin')" class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-colors flex items-center">
+                                <i class="ri-linkedin-fill mr-2"></i>LinkedIn
+                            </button>
+                            <button onclick="copyArticleLink()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center">
+                                <i class="ri-link mr-2"></i>Kopiuj link
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Back Button Bottom -->
+                    <div class="mt-12 text-center">
+                        <button onclick="hideFullArticle()" class="bg-secondary text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Powrót do aktualności
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- NEWS SECTION -->
-        <section class="py-16 bg-gray-50">
+        <section id="news-list-section" class="py-16 bg-gray-50">
             <div class="max-w-7xl mx-auto px-6">
                 <!-- Loading State -->
                 <div id="news-loading" class="text-center py-8">
@@ -552,15 +703,149 @@
             gridEl.classList.remove('hidden');
         }
 
-        // Open article in dedicated page
-        function openArticle(articleId) {
+        // Show full article on the same page
+        async function openArticle(articleId) {
             if (!articleId) {
                 console.error('No article ID provided');
                 return;
             }
             
-            // Navigate to article page
-            window.location.href = `/article.html?id=${encodeURIComponent(articleId)}`;
+            try {
+                // Load article from API
+                const response = await fetch(`/api/news/id/${articleId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success && data.news) {
+                    showFullArticle(data.news);
+                } else {
+                    throw new Error('Article not found');
+                }
+            } catch (error) {
+                console.error('Error loading article:', error);
+                alert('Nie udało się załadować artykułu. Spróbuj ponownie.');
+            }
+        }
+
+        // Display full article
+        function showFullArticle(article) {
+            // Hide news list section
+            document.getElementById('news-list-section').classList.add('hidden');
+            
+            // Show full article section
+            const fullArticleSection = document.getElementById('full-article-section');
+            fullArticleSection.classList.remove('hidden');
+
+            // Set article image
+            const heroImage = document.getElementById('article-hero-image');
+            let imageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
+            if (imageUrl.startsWith('./')) {
+                imageUrl = imageUrl.replace('./', '/');
+            }
+            heroImage.style.backgroundImage = `url('${imageUrl}')`;
+
+            // Set article content
+            document.getElementById('article-title').textContent = article.title;
+            document.getElementById('article-date').textContent = new Date(article.publishedAt || article.createdAt).toLocaleDateString('pl-PL', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('article-author').textContent = article.author ? 
+                `${article.author.firstName} ${article.author.lastName}` : 'BCU Spedycja';
+            
+            // Calculate reading time
+            const wordCount = (article.contentHTML || article.content || '').replace(/<[^>]*>/g, '').split(/\s+/).length;
+            const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+            document.getElementById('article-reading-time').textContent = `${readingTime} min czytania`;
+
+            // Set article content
+            const articleContent = document.getElementById('article-content');
+            articleContent.innerHTML = article.contentHTML || formatPlainText(article.content || article.excerpt || '');
+
+            // Set category
+            const category = article.tags && article.tags.length > 0 ? 
+                article.tags[0].toUpperCase() : 'AKTUALNOŚCI';
+            document.getElementById('article-category').textContent = category;
+
+            // Scroll to top of article
+            fullArticleSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Hide full article and show news list
+        function hideFullArticle() {
+            document.getElementById('full-article-section').classList.add('hidden');
+            document.getElementById('news-list-section').classList.remove('hidden');
+            
+            // Scroll back to news section
+            document.getElementById('news-list-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Smart image selection
+        function getSmartImage(title, content) {
+            const text = (title + ' ' + content).toLowerCase();
+            
+            if (text.includes('transport') || text.includes('pojazd') || text.includes('ciężar')) {
+                return '/imgs/truck-logistics-operation-dusk.jpg';
+            } else if (text.includes('magazyn') || text.includes('składow') || text.includes('warehouse')) {
+                return '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg';
+            } else if (text.includes('dostaw') || text.includes('kurier') || text.includes('przesył')) {
+                return '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+            } else if (text.includes('logist') || text.includes('spedyc') || text.includes('zarządzanie')) {
+                return '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+            } else if (text.includes('bezpieczeńst') || text.includes('bhp') || text.includes('pracowni')) {
+                return '/imgs/woman-safety-equipment-working.jpg';
+            } else if (text.includes('technolog') || text.includes('innowac') || text.includes('cyfrowy')) {
+                return '/imgs/drone-flying-modern-warehouse.jpg';
+            } else {
+                return '/imgs/transport-logistics-concept.jpg';
+            }
+        }
+
+        // Format plain text to HTML
+        function formatPlainText(text) {
+            return text
+                .split('\n\n')
+                .map(paragraph => `<p>${paragraph.trim()}</p>`)
+                .join('');
+        }
+
+        // Share functions
+        function shareArticle(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.getElementById('article-title').textContent);
+            
+            let shareUrl;
+            switch (platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    break;
+                default:
+                    return;
+            }
+            
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+
+        function copyArticleLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link skopiowany do schowka!');
+            });
         }
 
         // Legacy function for compatibility
