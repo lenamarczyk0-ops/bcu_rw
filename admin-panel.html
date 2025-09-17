@@ -75,6 +75,159 @@
         .notification.warning {
             background: #F59E0B;
         }
+
+        /* Styles for Application Print Modal */
+        .application-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+        }
+        
+        .application-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .application-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Print Styles for A4 Format */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .application-print-content, .application-print-content * {
+                visibility: visible;
+            }
+            
+            .application-print-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                font-family: 'Arial', sans-serif;
+                font-size: 12pt;
+                line-height: 1.4;
+                color: #000;
+            }
+            
+            .print-header {
+                border-bottom: 2px solid #E30613;
+                padding-bottom: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .print-logo {
+                font-size: 24pt;
+                font-weight: bold;
+                color: #E30613;
+                margin-bottom: 5px;
+            }
+            
+            .print-subtitle {
+                font-size: 14pt;
+                color: #004080;
+                margin-bottom: 10px;
+            }
+            
+            .print-section {
+                margin-bottom: 20px;
+                break-inside: avoid;
+            }
+            
+            .print-section-title {
+                font-size: 14pt;
+                font-weight: bold;
+                color: #E30613;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .print-field {
+                margin-bottom: 8px;
+                display: flex;
+                align-items: flex-start;
+            }
+            
+            .print-field-label {
+                font-weight: bold;
+                width: 150px;
+                flex-shrink: 0;
+                color: #333;
+            }
+            
+            .print-field-value {
+                flex: 1;
+                word-wrap: break-word;
+            }
+            
+            .print-status {
+                display: inline-block;
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 10pt;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+            
+            .print-status.new {
+                background: #FEF3C7;
+                color: #92400E;
+                border: 1px solid #F59E0B;
+            }
+            
+            .print-status.accepted {
+                background: #D1FAE5;
+                color: #065F46;
+                border: 1px solid #10B981;
+            }
+            
+            .print-status.rejected {
+                background: #FEE2E2;
+                color: #991B1B;
+                border: 1px solid #EF4444;
+            }
+            
+            .print-status.waiting {
+                background: #E0E7FF;
+                color: #3730A3;
+                border: 1px solid #6366F1;
+            }
+            
+            .print-footer {
+                margin-top: 30px;
+                padding-top: 15px;
+                border-top: 1px solid #ccc;
+                font-size: 10pt;
+                color: #666;
+                text-align: center;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            @page {
+                size: A4;
+                margin: 2cm;
+            }
+        }
     </style>
     <script>
         tailwind.config = {
@@ -506,6 +659,7 @@
                 this.applicationGroups = [];
                 this.jobApplicationGroups = [];
                 this.materials = [];
+                this.escapeListenerAdded = false;
                 this.init();
             }
 
@@ -1677,10 +1831,207 @@
                     
                     if (data.success) {
                         const app = data.application;
-                        alert(`Zgłoszenie: ${app.firstName} ${app.lastName}\nEmail: ${app.email}\nTelefon: ${app.phone}\nKurs: ${app.courseTitle || app.course?.title || 'Brak'}\nStatus: ${app.status}\nData: ${new Date(app.createdAt).toLocaleDateString('pl-PL')}`);
+                        this.showApplicationModal(app);
                     }
                 } catch (error) {
                     this.showNotification('Błąd ładowania zgłoszenia: ' + error.message, 'error');
+                }
+            }
+
+            showApplicationModal(application) {
+                const modal = document.getElementById('applicationModal');
+                const detailsContainer = document.getElementById('applicationDetails');
+                const printDateSpan = document.getElementById('printDate');
+                
+                // Set current print date
+                printDateSpan.textContent = new Date().toLocaleDateString('pl-PL', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                // Format status display
+                const statusLabels = {
+                    'new': 'Nowe',
+                    'accepted': 'Zaakceptowane',
+                    'rejected': 'Odrzucone',
+                    'waiting': 'Oczekuje'
+                };
+
+                const experienceLabels = {
+                    'none': 'Brak doświadczenia',
+                    'beginner': 'Początkujący',
+                    'intermediate': 'Średnio zaawansowany',
+                    'advanced': 'Zaawansowany'
+                };
+
+                // Generate application details HTML
+                detailsContainer.innerHTML = `
+                    <!-- Basic Information Section -->
+                    <div class="print-section">
+                        <div class="print-section-title">Informacje podstawowe</div>
+                        <div class="print-field">
+                            <div class="print-field-label">Numer zgłoszenia:</div>
+                            <div class="print-field-value">${application._id || 'Brak'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Data zgłoszenia:</div>
+                            <div class="print-field-value">${new Date(application.createdAt).toLocaleDateString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Status:</div>
+                            <div class="print-field-value">
+                                <span class="print-status ${application.status}">${statusLabels[application.status] || application.status}</span>
+                            </div>
+                        </div>
+                        ${application.reviewedAt ? `
+                        <div class="print-field">
+                            <div class="print-field-label">Data weryfikacji:</div>
+                            <div class="print-field-value">${new Date(application.reviewedAt).toLocaleDateString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Personal Information Section -->
+                    <div class="print-section">
+                        <div class="print-section-title">Dane osobowe</div>
+                        <div class="print-field">
+                            <div class="print-field-label">Imię:</div>
+                            <div class="print-field-value">${application.firstName || 'Brak'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Nazwisko:</div>
+                            <div class="print-field-value">${application.lastName || 'Brak'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Email:</div>
+                            <div class="print-field-value">${application.email || 'Brak'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Telefon:</div>
+                            <div class="print-field-value">${application.phone || 'Brak'}</div>
+                        </div>
+                        ${application.company ? `
+                        <div class="print-field">
+                            <div class="print-field-label">Firma:</div>
+                            <div class="print-field-value">${application.company}</div>
+                        </div>
+                        ` : ''}
+                        ${application.position ? `
+                        <div class="print-field">
+                            <div class="print-field-label">Stanowisko:</div>
+                            <div class="print-field-value">${application.position}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Course Information Section -->
+                    <div class="print-section">
+                        <div class="print-section-title">Informacje o kursie</div>
+                        <div class="print-field">
+                            <div class="print-field-label">Nazwa kursu:</div>
+                            <div class="print-field-value">${application.courseTitle || application.course?.title || 'Brak'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Typ zgłoszenia:</div>
+                            <div class="print-field-value">${application.applicationType === 'course' ? 'Kurs szkoleniowy' : 'Oferta pracy'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Poziom doświadczenia:</div>
+                            <div class="print-field-value">${experienceLabels[application.experience] || application.experience || 'Brak'}</div>
+                        </div>
+                    </div>
+
+                    ${application.motivation ? `
+                    <!-- Motivation Section -->
+                    <div class="print-section">
+                        <div class="print-section-title">Motywacja</div>
+                        <div class="print-field">
+                            <div class="print-field-value" style="width: 100%; white-space: pre-wrap;">${application.motivation}</div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <!-- RODO Consents Section -->
+                    <div class="print-section">
+                        <div class="print-section-title">Zgody RODO</div>
+                        <div class="print-field">
+                            <div class="print-field-label">Zgoda RODO:</div>
+                            <div class="print-field-value">${application.consentRODO ? '✓ Wyrażona' : '✗ Nie wyrażona'}</div>
+                        </div>
+                        <div class="print-field">
+                            <div class="print-field-label">Zgoda marketingowa:</div>
+                            <div class="print-field-value">${application.consentMarketing ? '✓ Wyrażona' : '✗ Nie wyrażona'}</div>
+                        </div>
+                    </div>
+
+                    ${application.notes ? `
+                    <!-- Notes Section -->
+                    <div class="print-section">
+                        <div class="print-section-title">Notatki administratora</div>
+                        <div class="print-field">
+                            <div class="print-field-value" style="width: 100%; white-space: pre-wrap;">${application.notes}</div>
+                        </div>
+                    </div>
+                    ` : ''}
+                `;
+
+                // Show modal
+                modal.classList.add('show');
+
+                // Add event listeners for modal
+                this.addApplicationModalListeners();
+            }
+
+            addApplicationModalListeners() {
+                const modal = document.getElementById('applicationModal');
+                const closeBtn = document.getElementById('closeApplicationModal');
+                const printBtn = document.getElementById('printApplicationBtn');
+
+                // Remove existing listeners to prevent duplicates
+                closeBtn.onclick = null;
+                printBtn.onclick = null;
+                modal.onclick = null;
+
+                // Close modal on close button click
+                closeBtn.onclick = () => {
+                    modal.classList.remove('show');
+                };
+
+                // Close modal on outside click
+                modal.onclick = (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('show');
+                    }
+                };
+
+                // Print functionality
+                printBtn.onclick = () => {
+                    window.print();
+                };
+
+                // Close modal on escape key (add only once)
+                if (!this.escapeListenerAdded) {
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && modal.classList.contains('show')) {
+                            modal.classList.remove('show');
+                        }
+                    });
+                    this.escapeListenerAdded = true;
                 }
             }
 
@@ -2359,5 +2710,47 @@
         // Initialize admin panel
         const adminPanel = new AdminPanel();
     </script>
+
+    <!-- Application Detail Modal -->
+    <div id="applicationModal" class="application-modal">
+        <div class="application-content">
+            <!-- Modal Header (Not Printed) -->
+            <div class="no-print p-6 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800">Szczegóły zgłoszenia</h2>
+                <div class="flex space-x-3">
+                    <button id="printApplicationBtn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors flex items-center space-x-2">
+                        <i class="ri-printer-line"></i>
+                        <span>Drukuj</span>
+                    </button>
+                    <button id="closeApplicationModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Application Content (Printable) -->
+            <div id="applicationPrintContent" class="application-print-content p-8">
+                <!-- Header -->
+                <div class="print-header">
+                    <div class="print-logo">BCU SPEDYCJA</div>
+                    <div class="print-subtitle">Centrum Kształcenia Kolejowego</div>
+                    <div style="font-size: 12pt; color: #666;">
+                        Zgłoszenie na kurs szkoleniowy
+                    </div>
+                </div>
+
+                <!-- Application Details -->
+                <div id="applicationDetails">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+
+                <!-- Footer -->
+                <div class="print-footer">
+                    <div>BCU SPEDYCJA - Centrum Kształcenia Kolejowego</div>
+                    <div>Data wydruku: <span id="printDate"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
