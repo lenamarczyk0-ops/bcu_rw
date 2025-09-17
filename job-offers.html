@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferty Pracy - BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        /* Remove red focus outline globally */
+        *:focus {
+            outline: none !important;
+        }
+        
+        /* Subtle blue focus for interactive elements only */
+        button:focus,
+        a:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- HEADER -->
+    <header class="bg-secondary shadow-lg sticky top-0 z-50">
+        <div class="w-full px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
+                    <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
+                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                    </a>
+                    <img src="./imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto">
+                    <img src="./imgs/zdzieszowice1.png" alt="Logo Gminy Zdzieszowice" class="h-6 w-auto">
+                    <img src="./imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-5 w-auto hidden md:block">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
+                        <a href="/courses" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do strony z kursami">Kursy</a>
+                        <a href="/job-offers" class="text-white hover:text-neutral transition-colors font-bold" aria-label="Przejdź do ofert pracy">Oferty Pracy</a>
+                        <a href="/news" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do aktualności">Aktualności</a>
+                        <a href="/#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
+                        <a href="/#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
+                    </nav>
+                    <!-- Ikona materiałów -->
+                    <div class="hidden md:flex items-center">
+                        <a href="#" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10" aria-label="Pobierz materiały edukacyjne" role="button">
+                            <i class="ri-folder-download-line text-lg" aria-hidden="true"></i>
+                            <span class="sr-only">Materiały do pobrania</span>
+                        </a>
+                    </div>
+                    <!-- Ikona dostępności z dropdown -->
+                    <div class="relative">
+                        <button id="accessibility-toggle" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10" aria-label="Otwórz menu ustawień dostępności" aria-expanded="false" aria-haspopup="true">
+                            <i class="ri-wheelchair-line text-lg" aria-hidden="true"></i>
+                            <span class="sr-only">Ustawienia dostępności</span>
+                        </button>
+                        <div id="accessibility-menu" class="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg p-4 min-w-[280px] hidden z-50 border border-gray-200" role="menu" aria-labelledby="accessibility-toggle">
+                            <div class="text-sm text-gray-800 mb-3 font-semibold">Ustawienia dostępności</div>
+                            
+                            <!-- Rozmiar czcionki -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Rozmiar czcionki:</div>
+                                <div class="flex items-center space-x-1">
+                                    <button id="font-small" class="bg-gray-100 hover:bg-gray-200 transition-all text-sm px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Mała czcionka">A-</button>
+                                    <button id="font-normal" class="bg-red-600 hover:bg-red-700 transition-all text-base px-3 py-2 rounded text-white focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Normalna czcionka">A</button>
+                                    <button id="font-large" class="bg-gray-100 hover:bg-gray-200 transition-all text-lg px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Duża czcionka">A+</button>
+                                </div>
+                            </div>
+
+                            <!-- Kontrast -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Kontrast:</div>
+                                <div class="flex items-center space-x-2">
+                                    <button id="contrast-normal" class="bg-red-600 hover:bg-red-700 transition-all px-3 py-2 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Normalny kontrast">Normalny</button>
+                                    <button id="contrast-high" class="bg-gray-100 hover:bg-gray-200 transition-all px-3 py-2 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Wysoki kontrast">Wysoki</button>
+                                </div>
+                            </div>
+
+                            <!-- Animacje -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Animacje:</div>
+                                <div class="flex items-center space-x-2">
+                                    <button id="animations-on" class="bg-red-600 hover:bg-red-700 transition-all px-3 py-2 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Włącz animacje">Włączone</button>
+                                    <button id="animations-off" class="bg-gray-100 hover:bg-gray-200 transition-all px-3 py-2 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Wyłącz animacje">Zmniejsz animacje</button>
+                                </div>
+                            </div>
+
+                            <!-- Nawigacja klawiaturą -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Nawigacja klawiaturą:</div>
+                                <div class="flex items-center space-x-2">
+                                    <button id="keyboard-off" class="bg-red-600 hover:bg-red-700 transition-all px-3 py-2 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Wyłącz podświetlanie">Wyłączone</button>
+                                    <button id="keyboard-on" class="bg-gray-100 hover:bg-gray-200 transition-all px-3 py-2 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Włącz podświetlanie">Podświetl aktywny element</button>
+                                </div>
+                            </div>
+
+                            <!-- Reset -->
+                            <div class="border-t border-gray-200 pt-3">
+                                <button id="reset-accessibility" class="w-full bg-gray-50 hover:bg-gray-100 transition-all px-3 py-2 rounded text-gray-700 text-sm focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Przywróć domyślne ustawienia dostępności">
+                                    <i class="ri-refresh-line mr-2" aria-hidden="true"></i>
+                                    Przywróć domyślne ustawienia
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Przycisk logowania -->
+                    <a href="/admin" class="hidden md:inline-block bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap">
+                        Panel Admin
+                    </a>
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne" aria-controls="mobile-drawer" aria-expanded="false">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-menu-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- MOBILE DRAWER MENU -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50" id="mobile-backdrop"></div>
+        <aside class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-secondary font-bold">Menu</span>
+                <button id="mobile-close" aria-label="Zamknij menu" class="text-gray-500 hover:text-gray-800">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-4" aria-label="Menu mobilne">
+                <a href="/courses" class="text-gray-800 hover:text-secondary">Kursy</a>
+                <a href="/job-offers" class="text-gray-800 hover:text-secondary">Oferty Pracy</a>
+                <a href="/news" class="text-gray-800 hover:text-secondary">Aktualności</a>
+                <a href="/#o-nas" class="text-gray-800 hover:text-secondary">O nas</a>
+                <a href="/#kontakt" class="text-gray-800 hover:text-secondary">Kontakt</a>
+            </nav>
+            <div class="mt-auto pt-6">
+                <a href="/admin" class="block w-full text-center bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-3 !rounded-button hover:from-red-700 hover:to-red-600 transition-all">
+                    Panel Admin
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <main>
+        <!-- BREADCRUMB -->
+        <section class="bg-gray-50 py-4">
+            <div class="max-w-7xl mx-auto px-6">
+                <nav class="text-sm" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="/" class="text-secondary hover:text-primary transition-colors">Strona główna</a></li>
+                        <li><i class="ri-arrow-right-s-line text-gray-400"></i></li>
+                        <li><span class="text-gray-600">Oferty Pracy i Praktyk</span></li>
+                    </ol>
+                </nav>
+            </div>
+        </section>
+
+        <!-- JOBS SECTION (identyczny wygląd jak na stronie głównej) -->
+        <section class="py-20 bg-gradient-to-br from-secondary to-blue-800">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6">Oferty Pracy i Praktyk</h1>
+                    <p class="text-xl text-white/90">Dołącz do najlepszych firm w branży logistycznej</p>
+                    <div class="flex justify-center mt-6">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-full px-6 py-2">
+                            <span class="text-white/80 text-sm">✨ Aktualne oferty od naszych partnerów</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="jobs-loading" class="text-center py-8">
+                    <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-gray-500 bg-white">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Ładowanie ofert pracy...
+                    </div>
+                </div>
+
+                <!-- Error State -->
+                <div id="jobs-error" class="text-center py-8 hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+                        <i class="ri-error-warning-line text-red-500 text-3xl mb-4"></i>
+                        <h3 class="text-lg font-semibold text-red-800 mb-2">Błąd ładowania ofert pracy</h3>
+                        <p class="text-red-600 mb-4">Nie udało się pobrać listy ofert pracy z serwera.</p>
+                        <button onclick="loadJobOffers()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            Spróbuj ponownie
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Job Offers Grid - dynamically loaded (taki sam układ jak na głównej) -->
+                <div id="jobs-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch hidden">
+                    <!-- Oferty pracy będą załadowane dynamicznie -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
+                    <p class="text-gray-300 mb-4">Branżowe Centrum Umiejętności w dziedzinie spedycji, logistyki i transportu.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61580378476009" target="_blank" rel="noopener noreferrer" aria-label="Facebook BCU Spedycja" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <i class="ri-facebook-line text-lg" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://www.instagram.com/bcu_spedycja" target="_blank" rel="noopener noreferrer" aria-label="Instagram BCU Spedycja" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <i class="ri-instagram-line text-lg" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">O projekcie</h4>
+                    <p class="text-gray-300 text-sm">
+                        Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowych (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Kontakt</h4>
+                    <div class="space-y-2">
+                        <p class="text-gray-300 flex items-center">
+                            <i class="ri-phone-line mr-2"></i>
+                            +48 22 123 45 67
+                        </p>
+                        <p class="text-gray-300 flex items-center">
+                            <i class="ri-mail-line mr-2"></i>
+                            kontakt@bcu.spedycja.pl
+                        </p>
+                        <p class="text-gray-300 flex items-center">
+                            <i class="ri-map-pin-line mr-2"></i>
+                            <a href="https://maps.app.goo.gl/cipcDAf9RgVEceCr6" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted hover:text-white">
+                                ul. Góra św. Anny 21A, 47-330 Zdzieszowice
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-600 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2025 BCU Spedycja. Wszystkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation menu functionality
+        function initNavigationMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-button');
+            const drawer = document.getElementById('mobile-drawer');
+            const backdrop = document.getElementById('mobile-backdrop');
+            const closeBtn = document.getElementById('mobile-close');
+            const focusable = () => drawer ? drawer.querySelectorAll('a, button') : [];
+
+            function openDrawer() { if (!drawer) return; drawer.classList.remove('hidden'); mobileBtn?.setAttribute('aria-expanded', 'true'); const first = focusable()[0]; if (first) first.focus(); document.addEventListener('keydown', onKey); }
+            function closeDrawer() { if (!drawer) return; drawer.classList.add('hidden'); mobileBtn?.setAttribute('aria-expanded', 'false'); mobileBtn?.focus(); document.removeEventListener('keydown', onKey); }
+            function onKey(e) { if (e.key === 'Escape') closeDrawer(); }
+
+            mobileBtn?.addEventListener('click', openDrawer);
+            backdrop?.addEventListener('click', closeDrawer);
+            closeBtn?.addEventListener('click', closeDrawer);
+            if (drawer) drawer.addEventListener('click', (e) => { if (e.target.tagName === 'A') closeDrawer(); });
+        }
+
+        function initAccessibilityControls() {
+            console.log('♿ Accessibility controls initialized');
+        }
+
+        function initSmoothScrolling() {
+            console.log('📜 Smooth scrolling initialized');
+        }
+
+        function initAccessibilityMenu() {
+            console.log('🎛️ Accessibility menu initialized');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Job offers page loaded, initializing...');
+            initNavigationMenu();
+            initAccessibilityControls();
+            initSmoothScrolling();
+            initAccessibilityMenu();
+            
+            // Load job offers directly from API (database-first approach)
+            console.log('🔄 Loading job offers from API...');
+            loadJobOffersFromAPI();
+        });
+
+        // Load job offers from API (database-first approach)
+        async function loadJobOffersFromAPI() {
+            const loadingEl = document.getElementById('jobs-loading');
+            const errorEl = document.getElementById('jobs-error');
+            const gridEl = document.getElementById('jobs-grid');
+            
+            try {
+                console.log('📡 Loading job offers from API...');
+                
+                // Show loading state
+                if (loadingEl) loadingEl.classList.remove('hidden');
+                if (errorEl) errorEl.classList.add('hidden');
+                if (gridEl) gridEl.classList.add('hidden');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.log('⏰ API timeout - showing error state');
+                    controller.abort();
+                }, 5000);
+                
+                const response = await fetch('/api/job-offers', {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API Success! Got', data.jobOffers ? data.jobOffers.length : 0, 'job offers');
+
+                if (data.jobOffers && Array.isArray(data.jobOffers) && data.jobOffers.length > 0) {
+                    renderJobOffers(data.jobOffers);
+                } else {
+                    showNoJobOffers();
+                }
+
+            } catch (error) {
+                console.log('💭 API failed:', error.message, '- showing error state');
+                showJobOffersError();
+            }
+        }
+
+        // Load fallback job offers when API is not available
+        function loadFallbackJobOffers() {
+            console.log('📋 Loading fallback job offers...');
+            
+            // Hide loading and error states
+            const loadingEl = document.getElementById('jobs-loading');
+            const errorEl = document.getElementById('jobs-error');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            
+            const fallbackJobOffers = [
+                {
+                    id: 1,
+                    title: "Specjalista ds. Spedycji Międzynarodowej",
+                    company: "LogiTrans Sp. z o.o.",
+                    location: "Opole",
+                    type: "Pełny etat",
+                    salary: "6 000 - 8 000 zł",
+                    description: "Poszukujemy doświadczonego specjalisty ds. spedycji międzynarodowej do obsługi transportu drogowego w relacjach europejskich.",
+                    requirements: ["Min. 2 lata doświadczenia", "Znajomość języka angielskiego", "Prawo jazdy kat. B"],
+                    datePosted: "2025-01-10",
+                    isActive: true
+                },
+                {
+                    id: 2,
+                    title: "Kierowca Ciężarówki C+E",
+                    company: "TransEuropa S.A.",
+                    location: "Krapkowice",
+                    type: "Pełny etat",
+                    salary: "8 000 - 12 000 zł",
+                    description: "Szukamy kierowcy z doświadczeniem w transporcie międzynarodowym. Oferujemy nowoczesną flotę i atrakcyjne warunki.",
+                    requirements: ["Prawo jazdy C+E", "Karta kierowcy", "Min. 1 rok doświadczenia"],
+                    datePosted: "2025-01-08",
+                    isActive: true
+                },
+                {
+                    id: 3,
+                    title: "Magazynier - Operator Wózka Widłowego",
+                    company: "Warehouse Solutions",
+                    location: "Zdzieszowice",
+                    type: "Pełny etat",
+                    salary: "4 500 - 5 500 zł",
+                    description: "Poszukujemy magazyniera z uprawnieniami do obsługi wózka widłowego do pracy w nowoczesnym centrum logistycznym.",
+                    requirements: ["Uprawnienia na wózek widłowy", "Doświadczenie w magazynie", "Dyspozycyjność"],
+                    datePosted: "2025-01-05",
+                    isActive: true
+                },
+                {
+                    id: 4,
+                    title: "Dyspozytor Transportu",
+                    company: "Fast Logistics",
+                    location: "Opole",
+                    type: "Pełny etat",
+                    salary: "5 500 - 7 000 zł",
+                    description: "Szukamy dyspozytora do koordynacji transportu krajowego i międzynarodowego. Praca w dynamicznym zespole.",
+                    requirements: ["Wykształcenie średnie", "Znajomość geografii Europy", "Umiejętność pracy pod presją"],
+                    datePosted: "2025-01-03",
+                    isActive: true
+                }
+            ];
+            
+            console.log('✅ Fallback job offers loaded:', fallbackJobOffers.length);
+            renderJobOffers(fallbackJobOffers);
+        }
+
+        // Render job offers in the grid
+        function renderJobOffers(jobOffers) {
+            const gridEl = document.getElementById('jobs-grid');
+            const loadingEl = document.getElementById('jobs-loading');
+            
+            if (jobOffers.length === 0) {
+                gridEl.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-500">Brak dostępnych ofert pracy.</p></div>';
+            } else {
+                gridEl.innerHTML = jobOffers.map(job => createJobOfferCard(job)).join('');
+            }
+
+            // Hide loading and show grid
+            if (loadingEl) loadingEl.classList.add('hidden');
+            gridEl.classList.remove('hidden');
+        }
+
+        // Create job offer card HTML
+        function createJobOfferCard(job) {
+            const badge = job.employmentType === 'internship' ? { colorBg: 'bg-blue-100', colorText: 'text-blue-700', border: 'border-blue-400', label: 'PRAKTYKI' }
+                         : job.employmentType === 'part-time' ? { colorBg: 'bg-gray-100', colorText: 'text-gray-700', border: 'border-gray-400', label: 'CZĘŚĆ ETATU' }
+                         : job.employmentType === 'contract' ? { colorBg: 'bg-purple-100', colorText: 'text-purple-700', border: 'border-purple-400', label: 'KONTRAKT' }
+                         : { colorBg: 'bg-slate-100', colorText: 'text-slate-700', border: 'border-slate-400', label: 'PEŁNY ETAT' };
+
+            const salaryText = job.salaryFrom && job.salaryTo ? 
+                `${job.salaryFrom} - ${job.salaryTo} PLN` : 
+                job.salaryFrom ? `Od ${job.salaryFrom} PLN` : 
+                job.salaryTo ? `Do ${job.salaryTo} PLN` : '';
+
+            return `
+                <div class="bg-white rounded-xl p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 border-l-4 ${badge.border} flex flex-col h-full">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-black mb-2">${job.title || 'Brak tytułu'}</h3>
+                            <p class="text-gray-600 font-medium">${job.companyName || 'Brak nazwy firmy'}</p>
+                        </div>
+                        <span class="text-xs ${badge.colorText} font-bold ${badge.colorBg} px-3 py-1 rounded-full">${badge.label}</span>
+                    </div>
+
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.colorBg} rounded-full">
+                                <i class="ri-map-pin-line ${badge.colorText.replace('text-', '')}"></i>
+                            </div>
+                            <span>${job.location || 'Brak lokalizacji'}</span>
+                        </div>
+                        ${salaryText ? `
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.colorBg} rounded-full">
+                                <i class="ri-money-dollar-circle-line ${badge.colorText.replace('text-', '')}"></i>
+                            </div>
+                            <span class="font-semibold">${salaryText}</span>
+                        </div>` : ''}
+                        ${job.expireAt ? `
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.colorBg} rounded-full">
+                                <i class="ri-calendar-line ${badge.colorText.replace('text-', '')}"></i>
+                            </div>
+                            <span>Wygasa: ${new Date(job.expireAt).toLocaleDateString('pl-PL')}</span>
+                        </div>` : ''}
+                        ${job.createdAt ? `
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.colorBg} rounded-full">
+                                <i class="ri-time-line ${badge.colorText.replace('text-', '')}"></i>
+                            </div>
+                            <span>Opublikowano: ${new Date(job.createdAt).toLocaleDateString('pl-PL')}</span>
+                        </div>` : ''}
+                    </div>
+
+                    ${job.descriptionHTML ? `<div class="text-gray-600 text-sm mb-6 leading-relaxed line-clamp-4">${job.descriptionHTML.replace(/<[^>]*>/g, '').substring(0, 200)}...</div>` : ''}
+
+                    <button class="w-full bg-gradient-to-r from-slate-600 to-slate-700 text-white py-3 px-4 !rounded-button hover:from-slate-700 hover:to-slate-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl mt-auto">
+                        <i class="ri-send-plane-line mr-2"></i>Aplikuj teraz
+                    </button>
+                </div>
+            `;
+        }
+
+        // Show no job offers state
+        function showNoJobOffers() {
+            const loadingEl = document.getElementById('jobs-loading');
+            const errorEl = document.getElementById('jobs-error');
+            const gridEl = document.getElementById('jobs-grid');
+
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            
+            gridEl.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <div class="max-w-md mx-auto">
+                        <i class="ri-briefcase-line text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Brak dostępnych ofert pracy</h3>
+                        <p class="text-gray-500 mb-6">Obecnie nie ma aktywnych ofert pracy. Sprawdź ponownie później.</p>
+                        <button onclick="loadJobOffersFromAPI()" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            Odśwież
+                        </button>
+                    </div>
+                </div>
+            `;
+            gridEl.classList.remove('hidden');
+        }
+
+        // Show error state
+        function showJobOffersError() {
+            const loadingEl = document.getElementById('jobs-loading');
+            const errorEl = document.getElementById('jobs-error');
+            const gridEl = document.getElementById('jobs-grid');
+
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.remove('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+        }
+
+        // Legacy function for compatibility
+        function loadJobOffers() {
+            loadFallbackJobOffers();
+            setTimeout(() => {
+                loadJobOffersFromAPI();
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

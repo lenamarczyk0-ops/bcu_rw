@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administratora - BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        *:focus {
+            outline: none !important;
+        }
+        
+        button:focus, a:focus, input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+        
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #10B981;
+        }
+        
+        .notification.error {
+            background: #EF4444;
+        }
+        
+        .notification.warning {
+            background: #F59E0B;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <button id="sidebar-toggle" class="p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+                        <i class="ri-menu-line text-xl"></i>
+                    </button>
+                    <div class="ml-4">
+                        <h1 class="text-xl font-semibold text-gray-900">Panel Administratora</h1>
+                        <p class="text-sm text-gray-500">BCU SPEDYCJA</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-gray-500 hover:text-gray-700">
+                        <i class="ri-home-line text-xl"></i>
+                    </a>
+                    <button id="logout-btn" class="text-gray-500 hover:text-gray-700">
+                        <i class="ri-logout-box-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div id="sidebar" class="sidebar-transition bg-white shadow-sm w-64 min-h-screen">
+            <div class="p-4">
+                <nav class="space-y-2">
+                    <a href="#dashboard" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="dashboard">
+                        <i class="ri-dashboard-line mr-3"></i>
+                        Dashboard
+                    </a>
+                    <a href="#news" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="news">
+                        <i class="ri-newspaper-line mr-3"></i>
+                        Aktualności
+                    </a>
+                    <a href="#courses" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="courses">
+                        <i class="ri-book-line mr-3"></i>
+                        Kursy
+                    </a>
+                    <a href="#jobs" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="jobs">
+                        <i class="ri-briefcase-line mr-3"></i>
+                        Oferty Pracy
+                    </a>
+                    <a href="#job-applications" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100 ml-6" data-section="job-applications">
+                        <i class="ri-user-follow-line mr-3"></i>
+                        Aplikacje
+                    </a>
+                    <a href="#materials" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="materials">
+                        <i class="ri-folder-download-line mr-3"></i>
+                        Repozytorium materiałów
+                    </a>
+                    <a href="#applications" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="applications">
+                        <i class="ri-file-user-line mr-3"></i>
+                        Zgłoszenia na kursy
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Dashboard</h2>
+                    <p class="text-gray-600">Przegląd wszystkich treści na stronie</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <i class="ri-newspaper-line text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Aktualności</p>
+                                <p class="text-2xl font-bold text-gray-900" id="news-count">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-green-100 rounded-lg">
+                                <i class="ri-book-line text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Kursy</p>
+                                <p class="text-2xl font-bold text-gray-900" id="courses-count">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-purple-100 rounded-lg">
+                                <i class="ri-briefcase-line text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Oferty Pracy</p>
+                                <p class="text-2xl font-bold text-gray-900" id="jobs-count">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-orange-100 rounded-lg">
+                                <i class="ri-eye-line text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Opublikowane</p>
+                                <p class="text-2xl font-bold text-gray-900" id="published-count">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Ostatnia aktywność</h3>
+                    </div>
+                    <div class="p-6">
+                        <div id="recent-activity" class="space-y-4">
+                            <div class="flex items-center text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Section -->
+            <div id="news-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Aktualności</h2>
+                        <p class="text-gray-600">Zarządzaj aktualnościami i newsami</p>
+                    </div>
+                    <button id="add-news-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="ri-add-line mr-2"></i>Dodaj aktualność
+                    </button>
+                </div>
+
+                <!-- News List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Lista aktualności</h3>
+                            <div class="flex space-x-2">
+                                <select id="news-status-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie</option>
+                                    <option value="published">Opublikowane</option>
+                                    <option value="draft">Szkice</option>
+                                    <option value="archived">Zarchiwizowane</option>
+                                </select>
+                                <button id="refresh-news-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="news-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie aktualności...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses Section -->
+            <div id="courses-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Kursy</h2>
+                        <p class="text-gray-600">Zarządzaj kursami i szkoleniami</p>
+                    </div>
+                    <button id="add-course-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="ri-add-line mr-2"></i>Dodaj kurs
+                    </button>
+                </div>
+
+                <!-- Courses List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Lista kursów</h3>
+                            <div class="flex space-x-2">
+                                <select id="courses-view-mode" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="list">Lista kursów</option>
+                                    <option value="grouped">Grupowanie po nazwie</option>
+                                </select>
+                                <select id="courses-status-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie</option>
+                                    <option value="published">Opublikowane</option>
+                                    <option value="draft">Szkice</option>
+                                    <option value="archived">Zarchiwizowane</option>
+                                </select>
+                                <button id="refresh-courses-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="courses-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie kursów...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs Section -->
+            <div id="jobs-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Oferty Pracy</h2>
+                        <p class="text-gray-600">Zarządzaj ofertami pracy i praktyk</p>
+                    </div>
+                    <button id="add-job-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="ri-add-line mr-2"></i>Dodaj ofertę
+                    </button>
+                </div>
+
+                <!-- Jobs List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Lista ofert pracy</h3>
+                            <div class="flex space-x-2">
+                                <select id="jobs-status-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie</option>
+                                    <option value="published">Opublikowane</option>
+                                    <option value="draft">Szkice</option>
+                                    <option value="archived">Zarchiwizowane</option>
+                                </select>
+                                <button id="refresh-jobs-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="jobs-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie ofert pracy...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Materials Section -->
+            <div id="materials-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Repozytorium materiałów edukacyjnych</h2>
+                        <p class="text-gray-600">Zarządzaj materiałami edukacyjnymi - dokumenty, prezentacje, filmy i inne zasoby</p>
+                    </div>
+                    <button id="add-material-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                        <i class="ri-add-line mr-2"></i>
+                        Dodaj materiał
+                    </button>
+                </div>
+
+                <!-- Materials List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Lista materiałów</h3>
+                            <div class="flex space-x-2">
+                                <select id="materials-type-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie typy</option>
+                                    <option value="document">Dokumenty</option>
+                                    <option value="video">Filmy</option>
+                                    <option value="presentation">Prezentacje</option>
+                                    <option value="exercise">Ćwiczenia</option>
+                                    <option value="test">Testy</option>
+                                    <option value="link">Linki</option>
+                                </select>
+                                <select id="materials-level-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie poziomy</option>
+                                    <option value="beginner">Początkujący</option>
+                                    <option value="intermediate">Średniozaawansowany</option>
+                                    <option value="advanced">Zaawansowany</option>
+                                </select>
+                                <select id="materials-public-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie</option>
+                                    <option value="true">Publiczne</option>
+                                    <option value="false">Prywatne</option>
+                                </select>
+                                <button id="refresh-materials-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="materials-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie materiałów...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Applications Section -->
+            <div id="job-applications-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Aplikacje do ofert pracy</h2>
+                        <p class="text-gray-600">Zarządzaj aplikacjami kandydatów do ofert pracy</p>
+                    </div>
+                </div>
+
+                <!-- Job Applications List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Aplikacje pogrupowane według ofert pracy</h3>
+                            <div class="flex space-x-2">
+                                <select id="job-applications-status-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie</option>
+                                    <option value="new">Nowe</option>
+                                    <option value="accepted">Zaakceptowane</option>
+                                    <option value="rejected">Odrzucone</option>
+                                    <option value="waiting">Oczekujące</option>
+                                </select>
+                                <button id="refresh-job-applications-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="job-applications-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie aplikacji...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Applications Section -->
+            <div id="applications-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Zgłoszenia na kursy</h2>
+                        <p class="text-gray-600">Zarządzaj aplikacjami uczestników na kursy</p>
+                    </div>
+                </div>
+
+                <!-- Applications List -->
+                <div class="bg-white rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Zgłoszenia pogrupowane według kursów</h3>
+                            <div class="flex space-x-2">
+                                <select id="applications-status-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie</option>
+                                    <option value="new">Nowe</option>
+                                    <option value="accepted">Zaakceptowane</option>
+                                    <option value="rejected">Odrzucone</option>
+                                    <option value="waiting">Oczekujące</option>
+                                </select>
+                                <button id="refresh-applications-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="applications-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie zgłoszeń...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        class AdminPanel {
+            constructor() {
+                this.currentSection = 'dashboard';
+                this.news = [];
+                this.courses = [];
+                this.jobs = [];
+                this.applications = [];
+                this.courseGroups = [];
+                this.applicationGroups = [];
+                this.jobApplicationGroups = [];
+                this.materials = [];
+                this.init();
+            }
+
+            async init() {
+                // Check authentication first
+                const isAuthenticated = await this.checkAuth();
+                if (!isAuthenticated) {
+                    window.location.href = '/admin-login.html';
+                    return;
+                }
+                
+                this.bindEvents();
+                this.loadDashboard();
+                
+                // Check for hash in URL
+                const hash = window.location.hash.substring(1);
+                if (hash && ['dashboard', 'news', 'courses', 'jobs', 'job-applications', 'materials', 'applications'].includes(hash)) {
+                    this.showSection(hash);
+                } else {
+                    this.showSection('dashboard');
+                }
+            }
+
+            async checkAuth() {
+                try {
+                    const response = await fetch('/api/auth/status', { 
+                        credentials: 'include' 
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.currentUser = data.user;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('Auth check error:', error);
+                    return false;
+                }
+            }
+
+            bindEvents() {
+                // Sidebar toggle
+                document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                    const sidebar = document.getElementById('sidebar');
+                    sidebar.classList.toggle('-translate-x-full');
+                });
+
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const section = item.dataset.section;
+                        this.showSection(section);
+                    });
+                });
+
+                // Add buttons
+                document.getElementById('add-news-btn').addEventListener('click', () => this.showNewsModal());
+                document.getElementById('add-course-btn').addEventListener('click', () => this.showCourseModal());
+                document.getElementById('add-job-btn').addEventListener('click', () => this.showJobModal());
+
+                // Refresh buttons
+                document.getElementById('refresh-news-btn').addEventListener('click', () => this.loadNews());
+                document.getElementById('refresh-courses-btn').addEventListener('click', () => this.loadCourses());
+                document.getElementById('refresh-jobs-btn').addEventListener('click', () => this.loadJobs());
+                document.getElementById('refresh-applications-btn').addEventListener('click', () => this.loadApplications());
+                document.getElementById('refresh-job-applications-btn').addEventListener('click', () => this.loadJobApplications());
+                document.getElementById('refresh-materials-btn').addEventListener('click', () => this.loadMaterials());
+                document.getElementById('add-material-btn').addEventListener('click', () => this.showMaterialModal());
+
+                // Filters
+                document.getElementById('news-status-filter').addEventListener('change', () => this.filterNews());
+                document.getElementById('courses-status-filter').addEventListener('change', () => this.filterCourses());
+                document.getElementById('courses-view-mode').addEventListener('change', () => this.handleViewModeChange());
+                document.getElementById('jobs-status-filter').addEventListener('change', () => this.filterJobs());
+
+                // Logout
+                document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+            }
+
+            showSection(section) {
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+                
+                // Show selected section
+                document.getElementById(`${section}-section`).classList.remove('hidden');
+                
+                // Update navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.remove('bg-gray-100', 'text-primary');
+                    item.classList.add('text-gray-700');
+                });
+                
+                document.querySelector(`[data-section="${section}"]`).classList.add('bg-gray-100', 'text-primary');
+                document.querySelector(`[data-section="${section}"]`).classList.remove('text-gray-700');
+                
+                // Update URL hash
+                window.location.hash = section;
+                
+                this.currentSection = section;
+                
+                // Load section data
+                switch(section) {
+                    case 'dashboard':
+                        this.loadDashboard();
+                        break;
+                    case 'news':
+                        this.loadNews();
+                        break;
+                    case 'courses':
+                        this.loadCourses();
+                        break;
+                    case 'jobs':
+                        this.loadJobs();
+                        break;
+                    case 'applications':
+                        this.loadApplications();
+                        break;
+                    case 'job-applications':
+                        this.loadJobApplications();
+                        break;
+                    case 'materials':
+                        this.loadMaterials();
+                        break;
+                }
+            }
+
+            async loadDashboard() {
+                try {
+                    // Load stats
+                    const [newsRes, coursesRes, jobsRes] = await Promise.all([
+                        fetch('/api/news/admin/list', { credentials: 'include' }),
+                        fetch('/api/courses/admin/list', { credentials: 'include' }),
+                        fetch('/api/job-offers/admin/list', { credentials: 'include' })
+                    ]);
+
+                    const newsData = await newsRes.json();
+                    const coursesData = await coursesRes.json();
+                    const jobsData = await jobsRes.json();
+
+                    document.getElementById('news-count').textContent = newsData.news?.length || 0;
+                    document.getElementById('courses-count').textContent = coursesData.courses?.length || 0;
+                    document.getElementById('jobs-count').textContent = jobsData.jobOffers?.length || 0;
+
+                    const publishedCount = (newsData.news?.filter(n => n.status === 'published').length || 0) +
+                                         (coursesData.courses?.filter(c => c.status === 'published').length || 0) +
+                                         (jobsData.jobOffers?.filter(j => j.status === 'published').length || 0);
+                    document.getElementById('published-count').textContent = publishedCount;
+
+                    // Load recent activity
+                    this.loadRecentActivity(newsData.news, coursesData.courses, jobsData.jobOffers);
+                } catch (error) {
+                    console.error('Error loading dashboard:', error);
+                    this.showNotification('Błąd ładowania dashboardu', 'error');
+                }
+            }
+
+            loadRecentActivity(news, courses, jobs) {
+                const activity = [];
+                
+                // Add recent news
+                if (news) {
+                    news.slice(0, 3).forEach(item => {
+                        activity.push({
+                            type: 'news',
+                            title: item.title,
+                            date: new Date(item.updatedAt || item.createdAt),
+                            status: item.status
+                        });
+                    });
+                }
+
+                // Add recent courses
+                if (courses) {
+                    courses.slice(0, 3).forEach(item => {
+                        activity.push({
+                            type: 'course',
+                            title: item.title,
+                            date: new Date(item.updatedAt || item.createdAt),
+                            status: item.status
+                        });
+                    });
+                }
+
+                // Add recent jobs
+                if (jobs) {
+                    jobs.slice(0, 3).forEach(item => {
+                        activity.push({
+                            type: 'job',
+                            title: item.title,
+                            date: new Date(item.updatedAt || item.createdAt),
+                            status: item.status
+                        });
+                    });
+                }
+
+                // Sort by date
+                activity.sort((a, b) => b.date - a.date);
+
+                // Render
+                const container = document.getElementById('recent-activity');
+                if (activity.length === 0) {
+                    container.innerHTML = '<div class="text-gray-500 text-center py-4">Brak ostatniej aktywności</div>';
+                    return;
+                }
+
+                container.innerHTML = activity.slice(0, 10).map(item => `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-white rounded-lg mr-3">
+                                <i class="ri-${item.type === 'news' ? 'newspaper' : item.type === 'course' ? 'book' : 'briefcase'}-line text-gray-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-gray-900">${item.title}</p>
+                                <p class="text-sm text-gray-500">${item.type === 'news' ? 'Aktualność' : item.type === 'course' ? 'Kurs' : 'Oferta pracy'}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                item.status === 'published' ? 'bg-green-100 text-green-800' :
+                                item.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-gray-100 text-gray-800'
+                            }">
+                                ${item.status === 'published' ? 'Opublikowane' : item.status === 'draft' ? 'Szkic' : 'Zarchiwizowane'}
+                            </span>
+                            <p class="text-sm text-gray-500 mt-1">${item.date.toLocaleDateString('pl-PL')}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadNews() {
+                try {
+                    const response = await fetch('/api/news/admin/list', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.news = data.news || [];
+                        this.renderNews();
+                        this.addEventListeners();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania aktualności');
+                    }
+                } catch (error) {
+                    console.error('Error loading news:', error);
+                    this.showNotification('Błąd ładowania aktualności: ' + error.message, 'error');
+                }
+            }
+
+            renderNews() {
+                const container = document.getElementById('news-list');
+                
+                if (this.news.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-newspaper-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak aktualności</p>
+                            <button data-action="add-news" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                                Dodaj pierwszą aktualność
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.news.map(news => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${news.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${news.excerpt || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-calendar-line mr-1"></i>${new Date(news.publishedAt || news.createdAt).toLocaleDateString('pl-PL')}</span>
+                                    <span><i class="ri-user-line mr-1"></i>${news.author ? (news.author.firstName + ' ' + news.author.lastName) : 'Admin'}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    news.isActive === false ? 'bg-red-100 text-red-800' :
+                                    news.status === 'published' ? 'bg-green-100 text-green-800' :
+                                    news.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${news.isActive === false ? 'Nieaktywny' : 
+                                      news.status === 'published' ? 'Opublikowany' : 
+                                      news.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
+                                </span>
+                                <button data-action="edit-news" data-id="${news._id}" class="text-blue-600 hover:text-blue-800">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-news" data-id="${news._id}" class="text-red-600 hover:text-red-800">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+
+            async loadCourses() {
+                try {
+                    const response = await fetch('/api/courses/admin/list', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.courses = data.courses || [];
+                        this.renderCourses();
+                        this.addEventListeners();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania kursów');
+                    }
+                } catch (error) {
+                    console.error('Error loading courses:', error);
+                    this.showNotification('Błąd ładowania kursów: ' + error.message, 'error');
+                }
+            }
+
+            renderCourses() {
+                const container = document.getElementById('courses-list');
+                
+                if (this.courses.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-book-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak kursów</p>
+                            <button data-action="add-course" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                                Dodaj pierwszy kurs
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.courses.map(course => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${course.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${course.excerpt || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
+                                    <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                </div>
+                                <div class="flex items-center space-x-2 mt-2">
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                        course.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                    }">
+                                        ${course.isActive ? 'Aktywny' : 'Nieaktywny'}
+                                    </span>
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                        course.isPaid ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
+                                    }">
+                                        ${course.isPaid ? 'Płatny' : 'Bezpłatny'}
+                                    </span>
+                                    ${course.isPaid && course.price > 0 ? `<span class="text-xs text-gray-600">${course.price} PLN</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    course.isActive === false ? 'bg-red-100 text-red-800' :
+                                    course.status === 'published' ? 'bg-green-100 text-green-800' :
+                                    course.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${course.isActive === false ? 'Nieaktywny' : 
+                                      course.status === 'published' ? 'Opublikowany' : 
+                                      course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
+                                </span>
+                                <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadJobs() {
+                try {
+                    const response = await fetch('/api/job-offers/admin/list', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.jobs = data.jobOffers || [];
+                        this.renderJobs();
+                        this.addEventListeners();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania ofert pracy');
+                    }
+                } catch (error) {
+                    console.error('Error loading jobs:', error);
+                    this.showNotification('Błąd ładowania ofert pracy: ' + error.message, 'error');
+                }
+            }
+
+            renderJobs() {
+                const container = document.getElementById('jobs-list');
+                
+                if (this.jobs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-briefcase-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak ofert pracy</p>
+                            <button data-action="add-job" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                                Dodaj pierwszą ofertę
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.jobs.map(job => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${job.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${job.companyName}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-map-pin-line mr-1"></i>${job.location}</span>
+                                    <span><i class="ri-calendar-line mr-1"></i>Wygasa: ${job.expireAt ? new Date(job.expireAt).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    job.isActive === false ? 'bg-red-100 text-red-800' :
+                                    job.status === 'published' ? 'bg-green-100 text-green-800' :
+                                    job.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${job.isActive === false ? 'Nieaktywny' : 
+                                      job.status === 'published' ? 'Opublikowany' : 
+                                      job.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
+                                </span>
+                                <button data-action="edit-job" data-id="${job._id}" class="text-blue-600 hover:text-blue-800">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-job" data-id="${job._id}" class="text-red-600 hover:text-red-800">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            showNewsModal(newsId = null) {
+                // Create modal for news
+                this.createModal('news', newsId);
+            }
+
+            showCourseModal(courseId = null) {
+                // Create modal for course
+                this.createModal('course', courseId);
+            }
+
+            showJobModal(jobId = null) {
+                // Create modal for job
+                this.createModal('job', jobId);
+            }
+
+            createModal(type, id = null) {
+                // Remove existing modal
+                const existingModal = document.getElementById('content-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                const modal = document.createElement('div');
+                modal.id = 'content-modal';
+                modal.className = 'modal show';
+                
+                const isEdit = id !== null;
+                const title = isEdit ? `Edytuj ${type === 'news' ? 'aktualność' : type === 'course' ? 'kurs' : type === 'material' ? 'materiał' : 'ofertę pracy'}` : `Dodaj ${type === 'news' ? 'aktualność' : type === 'course' ? 'kurs' : type === 'material' ? 'materiał' : 'ofertę pracy'}`;
+                
+                modal.innerHTML = `
+                    <div class="modal-content w-full max-w-4xl mx-4">
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-xl font-semibold text-gray-900">${title}</h3>
+                                <button data-action="close-modal" class="text-gray-400 hover:text-gray-600">
+                                    <i class="ri-close-line text-xl"></i>
+                                </button>
+                            </div>
+                            
+                            <form id="${type}-form" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Tytuł *</label>
+                                        <input type="text" name="title" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    ${type === 'news' ? `
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                        <select name="status" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="draft">Szkic</option>
+                                            <option value="published">Opublikowane</option>
+                                            <option value="archived">Zarchiwizowane</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="isActive" checked class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="ml-2 text-sm text-gray-700">Aktualność aktywna</span>
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Zdjęcie</label>
+                                        <div class="space-y-3">
+                                            <input type="file" id="news-image-upload" accept="image/*" class="hidden">
+                                            <input type="hidden" name="imageUrl" id="news-image-url">
+                                            
+                                            <div class="flex space-x-3">
+                                                <button type="button" data-action="upload-news-image" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                                                    <i class="ri-upload-2-line mr-2"></i>
+                                                    Wgraj zdjęcie
+                                                </button>
+                                                <button type="button" data-action="remove-news-image" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors hidden">
+                                                    <i class="ri-delete-bin-line mr-2"></i>
+                                                    Usuń zdjęcie
+                                                </button>
+                                            </div>
+                                            
+                                            <div id="news-image-preview" class="hidden">
+                                                <img id="news-preview-img" src="" alt="Podgląd" class="w-32 h-24 object-cover rounded border">
+                                                <div id="news-upload-progress" class="hidden mt-2">
+                                                    <div class="bg-gray-200 rounded-full h-2">
+                                                        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                                    </div>
+                                                    <p class="text-sm text-gray-600 mt-1">Przesyłanie...</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <p class="text-xs text-gray-500">Maksymalny rozmiar: 5MB. Obsługiwane formaty: JPG, PNG, GIF</p>
+                                        </div>
+                                    </div>
+                                    ` : type === 'course' ? `
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Data rozpoczęcia *</label>
+                                        <input type="date" name="startDate" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Czas trwania *</label>
+                                        <input type="text" name="duration" required placeholder="np. 3 miesiące" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Status kursu</label>
+                                        <select name="status" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="draft">Szkic</option>
+                                            <option value="published">Opublikowane</option>
+                                            <option value="archived">Zarchiwizowane</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center space-x-6">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="isActive" checked class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="ml-2 text-sm text-gray-700">Kurs aktywny</span>
+                                        </label>
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="isPaid" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="ml-2 text-sm text-gray-700">Kurs płatny</span>
+                                        </label>
+                                    </div>
+                                    <div id="price-field" class="hidden">
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Cena (PLN)</label>
+                                        <input type="number" name="price" min="0" placeholder="0" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    ` : `
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Nazwa firmy *</label>
+                                        <input type="text" name="companyName" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Lokalizacja *</label>
+                                        <input type="text" name="location" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div class="flex items-center">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="isActive" checked class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="ml-2 text-sm text-gray-700">Oferta aktywna</span>
+                                        </label>
+                                    </div>
+                                    `}
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Opis *</label>
+                                    <div class="border border-gray-300 rounded-md overflow-hidden">
+                                        <div class="bg-gray-50 border-b border-gray-300 px-3 py-2 flex space-x-2">
+                                            <button type="button" data-action="format-bold" data-target="excerpt" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Pogrubienie">
+                                                <i class="ri-bold"></i>
+                                            </button>
+                                            <button type="button" data-action="format-italic" data-target="excerpt" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Kursywa">
+                                                <i class="ri-italic"></i>
+                                            </button>
+                                        </div>
+                                        <textarea name="${type === 'news' ? 'excerpt' : 'excerpt'}" rows="3" required class="w-full px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary border-0 resize-none" placeholder="Krótki opis..."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Treść *</label>
+                                    <div class="border border-gray-300 rounded-md overflow-hidden">
+                                        <div class="bg-gray-50 border-b border-gray-300 px-3 py-2 flex space-x-2">
+                                            <button type="button" data-action="format-bold" data-target="contentHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Pogrubienie">
+                                                <i class="ri-bold"></i>
+                                            </button>
+                                            <button type="button" data-action="format-italic" data-target="contentHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Kursywa">
+                                                <i class="ri-italic"></i>
+                                            </button>
+                                            <button type="button" data-action="format-list" data-target="contentHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Lista">
+                                                <i class="ri-list-unordered"></i>
+                                            </button>
+                                            <button type="button" data-action="format-heading" data-target="contentHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Nagłówek">
+                                                <i class="ri-heading"></i>
+                                            </button>
+                                        </div>
+                                        <textarea name="contentHTML" rows="8" required class="w-full px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary border-0 resize-none" placeholder="Pełna treść..."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end space-x-4">
+                                    <button type="button" data-action="close-modal" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                                        Anuluj
+                                    </button>
+                                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark">
+                                        ${isEdit ? 'Zaktualizuj' : 'Dodaj'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Add event listeners for modal close buttons
+                modal.querySelectorAll('[data-action="close-modal"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        modal.remove();
+                    });
+                });
+
+                // Add event listeners for text formatting buttons
+                modal.querySelectorAll('[data-action^="format-"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const action = e.currentTarget.dataset.action;
+                        const target = e.currentTarget.dataset.target;
+                        this.formatText(action, target);
+                    });
+                });
+
+                // Add event listeners for image upload (news only)
+                if (type === 'news') {
+                    const uploadBtn = modal.querySelector('[data-action="upload-news-image"]');
+                    const removeBtn = modal.querySelector('[data-action="remove-news-image"]');
+                    const fileInput = modal.querySelector('#news-image-upload');
+                    
+                    if (uploadBtn && fileInput) {
+                        uploadBtn.addEventListener('click', () => {
+                            fileInput.click();
+                        });
+                        
+                        fileInput.addEventListener('change', (e) => {
+                            this.handleNewsImageUpload(e.target.files[0]);
+                        });
+                    }
+                    
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', () => {
+                            this.removeNewsImage();
+                        });
+                    }
+                }
+                
+                // Bind form submission
+                document.getElementById(`${type}-form`).addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleSubmit(type, id);
+                });
+                
+                // Handle isPaid checkbox for courses
+                if (type === 'course') {
+                    const isPaidCheckbox = document.querySelector('input[name="isPaid"]');
+                    const priceField = document.getElementById('price-field');
+                    
+                    if (isPaidCheckbox && priceField) {
+                        isPaidCheckbox.addEventListener('change', function() {
+                            if (this.checked) {
+                                priceField.classList.remove('hidden');
+                                priceField.querySelector('input').required = true;
+                            } else {
+                                priceField.classList.add('hidden');
+                                priceField.querySelector('input').required = false;
+                                priceField.querySelector('input').value = '0';
+                            }
+                        });
+                    }
+                }
+                
+                // Load data if editing
+                if (isEdit) {
+                    this.loadDataForEdit(type, id);
+                }
+            }
+
+            async loadDataForEdit(type, id) {
+                try {
+                    let response;
+                    if (type === 'news') {
+                        response = await fetch(`/api/news/id/${id}`, { credentials: 'include' });
+                    } else if (type === 'course') {
+                        response = await fetch(`/api/courses/id/${id}`, { credentials: 'include' });
+                    } else {
+                        response = await fetch(`/api/job-offers/id/${id}`, { credentials: 'include' });
+                    }
+                    
+                    const data = await response.json();
+                    if (response.ok) {
+                        const item = data[type] || data.course || data.jobOffer || data.article || data.news;
+                        const form = document.getElementById(`${type}-form`);
+                        
+                        // Fill form fields
+                        Object.keys(item).forEach(key => {
+                            const input = form.querySelector(`[name="${key}"]`);
+                            if (input) {
+                                if (input.type === 'checkbox') {
+                                    input.checked = Boolean(item[key]);
+                                } else if (input.type === 'date') {
+                                    input.value = new Date(item[key]).toISOString().split('T')[0];
+                                } else {
+                                    input.value = item[key];
+                                }
+                            }
+                        });
+                        
+                        // Special handling for checkboxes to trigger change events
+                        if (type === 'course') {
+                            const isPaidCheckbox = form.querySelector('input[name="isPaid"]');
+                            if (isPaidCheckbox) {
+                                isPaidCheckbox.dispatchEvent(new Event('change'));
+                            }
+                        }
+                        
+                        // Special handling for news image preview
+                        if (type === 'news' && item.imageUrl && item.imageUrl !== './imgs/bcccuu.jpg' && item.imageUrl !== '/imgs/halazdjecie.jpg') {
+                            const imageUrlInput = document.getElementById('news-image-url');
+                            const previewDiv = document.getElementById('news-image-preview');
+                            const previewImg = document.getElementById('news-preview-img');
+                            const removeBtn = document.querySelector('[data-action="remove-news-image"]');
+                            
+                            if (imageUrlInput && previewDiv && previewImg && removeBtn) {
+                                imageUrlInput.value = item.imageUrl;
+                                previewImg.src = item.imageUrl;
+                                previewDiv.classList.remove('hidden');
+                                removeBtn.classList.remove('hidden');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading data for edit:', error);
+                    this.showNotification('Błąd ładowania danych do edycji', 'error');
+                }
+            }
+
+            async handleSubmit(type, id = null) {
+                try {
+                    const form = document.getElementById(`${type}-form`);
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    // Handle checkboxes (they're not included in FormData if unchecked)
+                    if (type === 'course') {
+                        const isActiveCheckbox = form.querySelector('input[name="isActive"]');
+                        const isPaidCheckbox = form.querySelector('input[name="isPaid"]');
+                        
+                        data.isActive = isActiveCheckbox ? isActiveCheckbox.checked : false;
+                        data.isPaid = isPaidCheckbox ? isPaidCheckbox.checked : false;
+                        
+                        console.log('Course checkbox values:', { isActive: data.isActive, isPaid: data.isPaid });
+                    } else if (type === 'news' || type === 'job') {
+                        const isActiveCheckbox = form.querySelector('input[name="isActive"]');
+                        data.isActive = isActiveCheckbox ? isActiveCheckbox.checked : false;
+                        
+                        console.log(`${type} checkbox values:`, { isActive: data.isActive });
+                    }
+                    
+                    const isEdit = id !== null;
+                    const url = isEdit ? 
+                        (type === 'news' ? `/api/news/${id}` : 
+                         type === 'course' ? `/api/courses/${id}` : 
+                         `/api/job-offers/${id}`) :
+                        (type === 'news' ? '/api/news' : 
+                         type === 'course' ? '/api/courses' : 
+                         '/api/job-offers');
+                    
+                    const method = isEdit ? 'PUT' : 'POST';
+                    
+                    console.log('Sending data:', data);
+                    console.log('URL:', url, 'Method:', method);
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `HTTP ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    this.showNotification(
+                        isEdit ? `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : 'Oferta pracy'} została zaktualizowana` : 
+                                `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : 'Oferta pracy'} została dodana`, 
+                        'success'
+                    );
+                    
+                    // Close modal
+                    document.getElementById('content-modal').remove();
+                    
+                    // Reload data
+                    if (type === 'news') {
+                        this.loadNews();
+                    } else if (type === 'course') {
+                        this.loadCourses();
+                    } else {
+                        this.loadJobs();
+                    }
+                    
+                    // Reload dashboard
+                    this.loadDashboard();
+                    
+                } catch (error) {
+                    console.error('Error saving:', error);
+                    this.showNotification('Błąd zapisywania: ' + error.message, 'error');
+                }
+            }
+
+            async editNews(id) {
+                this.showNewsModal(id);
+            }
+
+            async editCourse(id) {
+                this.showCourseModal(id);
+            }
+
+            async editJob(id) {
+                this.showJobModal(id);
+            }
+
+            async deleteNews(id) {
+                if (confirm('Czy na pewno chcesz usunąć tę aktualność?')) {
+                    await this.deleteItem('news', id);
+                }
+            }
+
+            async deleteCourse(id) {
+                if (confirm('Czy na pewno chcesz usunąć ten kurs?')) {
+                    await this.deleteItem('course', id);
+                }
+            }
+
+            async deleteJob(id) {
+                if (confirm('Czy na pewno chcesz usunąć tę ofertę pracy?')) {
+                    await this.deleteItem('job', id);
+                }
+            }
+
+            async deleteItem(type, id) {
+                try {
+                    const url = type === 'news' ? `/api/news/${id}` : 
+                               type === 'course' ? `/api/courses/${id}` : 
+                               `/api/job-offers/${id}`;
+                    
+                    const response = await fetch(url, {
+                        method: 'DELETE',
+                        credentials: 'include'
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || `HTTP ${response.status}`);
+                    }
+                    
+                    this.showNotification(
+                        `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : type === 'application' ? 'Zgłoszenie' : 'Oferta pracy'} została usunięta`, 
+                        'success'
+                    );
+                    
+                    // Reload data
+                    if (type === 'news') {
+                        this.loadNews();
+                    } else if (type === 'course') {
+                        this.loadCourses();
+                    } else if (type === 'application') {
+                        this.loadApplications();
+                    } else {
+                        this.loadJobs();
+                    }
+                    
+                    // Reload dashboard
+                    this.loadDashboard();
+                    
+                } catch (error) {
+                    console.error('Error deleting:', error);
+                    this.showNotification('Błąd usuwania: ' + error.message, 'error');
+                }
+            }
+
+            filterNews() {
+                const filter = document.getElementById('news-status-filter').value;
+                // Implementation for filtering news
+            }
+
+            async handleViewModeChange() {
+                const viewMode = document.getElementById('courses-view-mode').value;
+                if (viewMode === 'grouped') {
+                    await this.loadGroupedCourses();
+                } else {
+                    await this.loadCourses();
+                }
+            }
+
+            async loadGroupedCourses() {
+                try {
+                    const response = await fetch('/api/courses/admin/grouped', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.groups) {
+                        this.courseGroups = data.groups || [];
+                        this.renderGroupedCourses();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania grupowanych kursów');
+                    }
+                } catch (error) {
+                    console.error('Error loading grouped courses:', error);
+                    this.showNotification('Błąd ładowania grupowanych kursów: ' + error.message, 'error');
+                }
+            }
+
+            renderGroupedCourses() {
+                const container = document.getElementById('courses-list');
+                
+                if (this.courseGroups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-book-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak kursów do grupowania</p>
+                            <button data-action="add-course" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                                <i class="ri-add-line mr-2"></i>
+                                Dodaj pierwszy kurs
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.courseGroups.map(group => `
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">${group.title}</h4>
+                                <div class="flex flex-wrap gap-2 text-sm text-gray-600">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">${group.totalCourses} kursów</span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded">${group.totalApplications} zgłoszeń</span>
+                                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded">${group.activeCount} aktywnych</span>
+                                    ${group.nextStartDate ? `<span class="bg-orange-100 text-orange-800 px-2 py-1 rounded">Najbliższy: ${new Date(group.nextStartDate).toLocaleDateString('pl-PL')}</span>` : ''}
+                                </div>
+                            </div>
+                            <button data-action="toggle-group" data-title="${group.title}" class="text-gray-500 hover:text-gray-700">
+                                <i class="ri-arrow-down-s-line group-toggle-icon"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="group-courses hidden">
+                            ${group.courses.map(course => `
+                                <div class="border-l-4 border-gray-300 pl-4 py-2 mb-2 bg-gray-50 rounded-r">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <p class="font-medium text-gray-900 mb-1">${course.title}</p>
+                                            <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
+                                                <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                                    course.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                }">${course.isActive !== false ? 'Aktywny' : 'Nieaktywny'}</span>
+                                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                                    course.status === 'published' ? 'bg-green-100 text-green-800' :
+                                                    course.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-gray-100 text-gray-800'
+                                                }">${
+                                                    course.status === 'published' ? 'Opublikowany' : 
+                                                    course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'
+                                                }</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex space-x-1">
+                                            <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                
+                this.addEventListeners();
+            }
+
+            filterCourses() {
+                const filter = document.getElementById('courses-status-filter').value;
+                const viewMode = document.getElementById('courses-view-mode').value;
+                
+                if (viewMode === 'grouped') {
+                    this.loadGroupedCourses();
+                } else {
+                    this.loadCourses();
+                }
+            }
+
+            filterJobs() {
+                const filter = document.getElementById('jobs-status-filter').value;
+                // Implementation for filtering jobs
+            }
+
+            async loadApplications() {
+                try {
+                    // Zawsze używaj widoku pogrupowanego według kursów
+                    const response = await fetch('/api/applications/admin/grouped', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.groups) {
+                        this.applicationGroups = data.groups || [];
+                        this.renderGroupedApplications();
+                        this.addEventListeners();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania zgłoszeń');
+                    }
+                } catch (error) {
+                    console.error('Error loading applications:', error);
+                    this.showNotification('Błąd ładowania zgłoszeń: ' + error.message, 'error');
+                }
+            }
+
+            renderGroupedApplications() {
+                const container = document.getElementById('applications-list');
+                
+                if (this.applicationGroups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-folder-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak zgłoszeń na kursy</p>
+                            <p class="text-xs text-gray-400">Zgłoszenia będą automatycznie grupowane według nazw kursów</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.applicationGroups.map(group => `
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4 bg-white shadow-sm">
+                        <div class="flex items-start justify-between mb-4 cursor-pointer" data-action="toggle-application-group" data-group="${group.courseTitle}">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <i class="ri-folder-line text-blue-600 mr-2"></i>
+                                    <h4 class="text-lg font-semibold text-gray-900">${group.courseTitle}</h4>
+                                </div>
+                                <div class="flex flex-wrap gap-2 text-sm">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.totalApplications} zgłoszeń
+                                    </span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.statusCounts.accepted} zaakceptowane
+                                    </span>
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.statusCounts.new + group.statusCounts.waiting} oczekujące
+                                    </span>
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.statusCounts.rejected} odrzucone
+                                    </span>
+                                    ${group.startDate ? `<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        Start: ${new Date(group.startDate).toLocaleDateString('pl-PL')}
+                                    </span>` : ''}
+                                </div>
+                            </div>
+                            <button class="text-gray-500 hover:text-gray-700 p-1">
+                                <i class="ri-arrow-down-s-line application-group-toggle-icon"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="application-group-content hidden">
+                            <div class="border-t border-gray-200 pt-4">
+                                ${group.applications.map(app => `
+                                    <div class="border-l-4 border-blue-300 pl-4 py-3 mb-3 bg-gray-50 rounded-r-lg hover:bg-gray-100 transition-colors">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <h5 class="font-medium text-gray-900 mb-1">${app.firstName} ${app.lastName}</h5>
+                                                <p class="text-sm text-gray-600 mb-2">${app.email} • ${app.phone}</p>
+                                                ${app.company ? `<p class="text-xs text-gray-500 mb-1">Firma: ${app.company}</p>` : ''}
+                                                ${app.position ? `<p class="text-xs text-gray-500 mb-1">Stanowisko: ${app.position}</p>` : ''}
+                                                <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                    <span><i class="ri-calendar-line mr-1"></i>${new Date(app.createdAt).toLocaleDateString('pl-PL')}</span>
+                                                    <span><i class="ri-user-line mr-1"></i>${app.experience}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2 ml-4">
+                                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                                    app.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                                                    app.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                                    app.status === 'waiting' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-blue-100 text-blue-800'
+                                                }">
+                                                    ${app.status === 'accepted' ? 'Zaakceptowane' : 
+                                                      app.status === 'rejected' ? 'Odrzucone' : 
+                                                      app.status === 'waiting' ? 'Oczekujące' : 'Nowe'}
+                                                </span>
+                                                <button data-action="view-application" data-id="${app._id}" class="text-blue-600 hover:text-blue-800" title="Zobacz szczegóły">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                                <button data-action="accept-application" data-id="${app._id}" class="text-green-600 hover:text-green-800" title="Zaakceptuj">
+                                                    <i class="ri-check-line"></i>
+                                                </button>
+                                                <button data-action="reject-application" data-id="${app._id}" class="text-red-600 hover:text-red-800" title="Odrzuć">
+                                                    <i class="ri-close-line"></i>
+                                                </button>
+                                                <button data-action="delete-application" data-id="${app._id}" class="text-red-600 hover:text-red-800" title="Usuń zgłoszenie">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async viewApplication(id) {
+                try {
+                    const response = await fetch(`/api/applications/id/${id}`, { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const app = data.application;
+                        alert(`Zgłoszenie: ${app.firstName} ${app.lastName}\nEmail: ${app.email}\nTelefon: ${app.phone}\nKurs: ${app.courseTitle || app.course?.title || 'Brak'}\nStatus: ${app.status}\nData: ${new Date(app.createdAt).toLocaleDateString('pl-PL')}`);
+                    }
+                } catch (error) {
+                    this.showNotification('Błąd ładowania zgłoszenia: ' + error.message, 'error');
+                }
+            }
+
+            async updateApplicationStatus(id, status) {
+                try {
+                    const response = await fetch(`/api/applications/${id}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({ status })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.showNotification(`Zgłoszenie zostało ${status === 'accepted' ? 'zaakceptowane' : 'odrzucone'}`, 'success');
+                        this.loadApplications(); // Reload course applications list
+                        this.loadJobApplications(); // Reload job applications list
+                    } else {
+                        throw new Error(data.message || 'Błąd aktualizacji');
+                    }
+                } catch (error) {
+                    this.showNotification('Błąd aktualizacji zgłoszenia: ' + error.message, 'error');
+                }
+            }
+
+            async deleteApplication(id) {
+                if (confirm('Czy na pewno chcesz usunąć to zgłoszenie? Ta operacja jest nieodwracalna.')) {
+                    try {
+                        const response = await fetch(`/api/applications/${id}`, {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            this.showNotification('Zgłoszenie zostało usunięte', 'success');
+                            this.loadApplications(); // Reload course applications list
+                            this.loadJobApplications(); // Reload job applications list
+                        } else {
+                            throw new Error(data.message || 'Błąd usuwania');
+                        }
+                    } catch (error) {
+                        this.showNotification('Błąd usuwania zgłoszenia: ' + error.message, 'error');
+                    }
+                }
+            }
+
+            async loadJobApplications() {
+                try {
+                    // Używaj widoku pogrupowanego według ofert pracy
+                    const response = await fetch('/api/applications/admin/job-applications/grouped', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.groups) {
+                        this.jobApplicationGroups = data.groups || [];
+                        this.renderGroupedJobApplications();
+                        this.addEventListeners();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania aplikacji');
+                    }
+                } catch (error) {
+                    console.error('Error loading job applications:', error);
+                    this.showNotification('Błąd ładowania aplikacji: ' + error.message, 'error');
+                }
+            }
+
+            renderGroupedJobApplications() {
+                const container = document.getElementById('job-applications-list');
+                
+                if (this.jobApplicationGroups.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-briefcase-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak aplikacji do ofert pracy</p>
+                            <p class="text-xs text-gray-400">Aplikacje będą automatycznie grupowane według nazw ofert pracy</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.jobApplicationGroups.map(group => `
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4 bg-white shadow-sm">
+                        <div class="flex items-start justify-between mb-4 cursor-pointer" data-action="toggle-job-application-group" data-group="${group.jobOfferTitle}">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <i class="ri-briefcase-line text-blue-600 mr-2"></i>
+                                    <h4 class="text-lg font-semibold text-gray-900">${group.jobOfferTitle}</h4>
+                                </div>
+                                <div class="flex items-center mb-2 text-sm text-gray-600">
+                                    <i class="ri-building-line mr-1"></i>
+                                    <span class="mr-4">${group.companyName}</span>
+                                    <i class="ri-map-pin-line mr-1"></i>
+                                    <span>${group.location}</span>
+                                    ${group.expireAt ? `<span class="ml-4 text-red-600"><i class="ri-calendar-line mr-1"></i>Wygasa: ${new Date(group.expireAt).toLocaleDateString('pl-PL')}</span>` : ''}
+                                </div>
+                                <div class="flex flex-wrap gap-2 text-sm">
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.totalApplications} aplikacji
+                                    </span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.statusCounts.accepted} zaakceptowane
+                                    </span>
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.statusCounts.new + group.statusCounts.waiting} oczekujące
+                                    </span>
+                                    <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${group.statusCounts.rejected} odrzucone
+                                    </span>
+                                </div>
+                            </div>
+                            <button class="text-gray-500 hover:text-gray-700 p-1">
+                                <i class="ri-arrow-down-s-line job-application-group-toggle-icon"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="job-application-group-content hidden">
+                            <div class="border-t border-gray-200 pt-4">
+                                ${group.applications.map(app => `
+                                    <div class="border-l-4 border-blue-300 pl-4 py-3 mb-3 bg-gray-50 rounded-r-lg hover:bg-gray-100 transition-colors">
+                                        <div class="flex items-start justify-between">
+                                            <div class="flex-1">
+                                                <h5 class="font-medium text-gray-900 mb-1">${app.firstName} ${app.lastName}</h5>
+                                                <p class="text-sm text-gray-600 mb-2">${app.email} • ${app.phone}</p>
+                                                ${app.company ? `<p class="text-xs text-gray-500 mb-1">Obecna firma: ${app.company}</p>` : ''}
+                                                ${app.position ? `<p class="text-xs text-gray-500 mb-1">Obecne stanowisko: ${app.position}</p>` : ''}
+                                                <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                    <span><i class="ri-calendar-line mr-1"></i>${new Date(app.createdAt).toLocaleDateString('pl-PL')}</span>
+                                                    <span><i class="ri-user-line mr-1"></i>Doświadczenie: ${app.experience}</span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center space-x-2 ml-4">
+                                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                                    app.status === 'accepted' ? 'bg-green-100 text-green-800' :
+                                                    app.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                                    app.status === 'waiting' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-blue-100 text-blue-800'
+                                                }">
+                                                    ${app.status === 'accepted' ? 'Zaakceptowane' : 
+                                                      app.status === 'rejected' ? 'Odrzucone' : 
+                                                      app.status === 'waiting' ? 'Oczekujące' : 'Nowe'}
+                                                </span>
+                                                <button data-action="view-application" data-id="${app._id}" class="text-blue-600 hover:text-blue-800" title="Zobacz szczegóły">
+                                                    <i class="ri-eye-line"></i>
+                                                </button>
+                                                <button data-action="accept-application" data-id="${app._id}" class="text-green-600 hover:text-green-800" title="Zaakceptuj">
+                                                    <i class="ri-check-line"></i>
+                                                </button>
+                                                <button data-action="reject-application" data-id="${app._id}" class="text-red-600 hover:text-red-800" title="Odrzuć">
+                                                    <i class="ri-close-line"></i>
+                                                </button>
+                                                <button data-action="delete-application" data-id="${app._id}" class="text-red-600 hover:text-red-800" title="Usuń aplikację">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            async loadMaterials() {
+                try {
+                    const response = await fetch('/api/materials', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.materials) {
+                        this.materials = data.materials || [];
+                        this.renderMaterials();
+                        this.addEventListeners();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania materiałów');
+                    }
+                } catch (error) {
+                    console.error('Error loading materials:', error);
+                    this.showNotification('Błąd ładowania materiałów: ' + error.message, 'error');
+                }
+            }
+
+            renderMaterials() {
+                const container = document.getElementById('materials-list');
+                
+                if (this.materials.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-folder-download-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak materiałów edukacyjnych</p>
+                            <button data-action="add-material" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                                <i class="ri-add-line mr-2"></i>
+                                Dodaj pierwszy materiał
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.materials.map(material => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center mb-2">
+                                    <i class="ri-${this.getMaterialIcon(material.type)}-line text-blue-600 mr-2"></i>
+                                    <h4 class="font-medium text-gray-900">${material.title}</h4>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-3">${material.description || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-xs text-gray-500 mb-2">
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium ${this.getTypeColor(material.type)}">
+                                        ${this.getTypeLabel(material.type)}
+                                    </span>
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium ${this.getLevelColor(material.level)}">
+                                        ${this.getLevelLabel(material.level)}
+                                    </span>
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium ${material.isPublic ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                                        ${material.isPublic ? 'Publiczny' : 'Prywatny'}
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                    <span><i class="ri-bookmark-line mr-1"></i>Temat: ${material.topic}</span>
+                                    <span><i class="ri-download-line mr-1"></i>Pobrań: ${material.downloadCount || 0}</span>
+                                    <span><i class="ri-calendar-line mr-1"></i>${new Date(material.createdAt).toLocaleDateString('pl-PL')}</span>
+                                    ${material.courses && material.courses.length > 0 ? `<span><i class="ri-book-line mr-1"></i>Kursy: ${material.courses.length}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button data-action="preview-material" data-id="${material._id}" class="text-blue-600 hover:text-blue-800" title="Podgląd">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                                <button data-action="download-material" data-id="${material._id}" class="text-green-600 hover:text-green-800" title="Pobierz">
+                                    <i class="ri-download-line"></i>
+                                </button>
+                                <button data-action="edit-material" data-id="${material._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-material" data-id="${material._id}" class="text-red-600 hover:text-red-800" title="Usuń">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getMaterialIcon(type) {
+                const icons = {
+                    'document': 'file-text',
+                    'video': 'video',
+                    'presentation': 'slideshow',
+                    'exercise': 'pencil',
+                    'test': 'question',
+                    'link': 'external-link'
+                };
+                return icons[type] || 'file';
+            }
+
+            getTypeColor(type) {
+                const colors = {
+                    'document': 'bg-blue-100 text-blue-800',
+                    'video': 'bg-red-100 text-red-800',
+                    'presentation': 'bg-orange-100 text-orange-800',
+                    'exercise': 'bg-green-100 text-green-800',
+                    'test': 'bg-purple-100 text-purple-800',
+                    'link': 'bg-cyan-100 text-cyan-800'
+                };
+                return colors[type] || 'bg-gray-100 text-gray-800';
+            }
+
+            getTypeLabel(type) {
+                const labels = {
+                    'document': 'Dokument',
+                    'video': 'Film',
+                    'presentation': 'Prezentacja',
+                    'exercise': 'Ćwiczenie',
+                    'test': 'Test',
+                    'link': 'Link'
+                };
+                return labels[type] || type;
+            }
+
+            getLevelColor(level) {
+                const colors = {
+                    'beginner': 'bg-green-100 text-green-800',
+                    'intermediate': 'bg-yellow-100 text-yellow-800',
+                    'advanced': 'bg-red-100 text-red-800'
+                };
+                return colors[level] || 'bg-gray-100 text-gray-800';
+            }
+
+            getLevelLabel(level) {
+                const labels = {
+                    'beginner': 'Początkujący',
+                    'intermediate': 'Średniozaawansowany',
+                    'advanced': 'Zaawansowany'
+                };
+                return labels[level] || level;
+            }
+
+            showMaterialModal(materialId = null) {
+                // Create modal for material
+                this.createModal('material', materialId);
+            }
+
+            async previewMaterial(id) {
+                try {
+                    const response = await fetch(`/api/materials/${id}`, { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.material) {
+                        const material = data.material;
+                        alert(`Materiał: ${material.title}\nTyp: ${this.getTypeLabel(material.type)}\nTemat: ${material.topic}\nPoziom: ${this.getLevelLabel(material.level)}\nOpis: ${material.description || 'Brak opisu'}\nURL: ${material.fileUrl}`);
+                    }
+                } catch (error) {
+                    this.showNotification('Błąd ładowania materiału: ' + error.message, 'error');
+                }
+            }
+
+            async downloadMaterial(id) {
+                try {
+                    const response = await fetch(`/api/materials/download/${id}`, { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.downloadUrl) {
+                        // Otwórz link w nowej karcie
+                        window.open(data.downloadUrl, '_blank');
+                        this.showNotification('Materiał został otwarty w nowej karcie', 'success');
+                    }
+                } catch (error) {
+                    this.showNotification('Błąd pobierania materiału: ' + error.message, 'error');
+                }
+            }
+
+            async editMaterial(id) {
+                this.showMaterialModal(id);
+            }
+
+            async deleteMaterial(id) {
+                if (confirm('Czy na pewno chcesz usunąć ten materiał? Ta operacja jest nieodwracalna.')) {
+                    try {
+                        const response = await fetch(`/api/materials/${id}`, {
+                            method: 'DELETE',
+                            credentials: 'include'
+                        });
+                        
+                        if (response.ok) {
+                            this.showNotification('Materiał został usunięty', 'success');
+                            this.loadMaterials(); // Reload list
+                        } else {
+                            const data = await response.json();
+                            throw new Error(data.message || 'Błąd usuwania');
+                        }
+                    } catch (error) {
+                        this.showNotification('Błąd usuwania materiału: ' + error.message, 'error');
+                    }
+                }
+            }
+
+            addEventListeners() {
+                // Remove existing event listeners to avoid duplicates
+                document.querySelectorAll('[data-action]').forEach(button => {
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
+                });
+
+                // Add event listeners for news actions
+                document.querySelectorAll('[data-action="add-news"]').forEach(button => {
+                    button.addEventListener('click', () => this.showNewsModal());
+                });
+                
+                document.querySelectorAll('[data-action="edit-news"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.editNews(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="delete-news"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.deleteNews(id);
+                    });
+                });
+
+                // Add event listeners for course actions
+                document.querySelectorAll('[data-action="add-course"]').forEach(button => {
+                    button.addEventListener('click', () => this.showCourseModal());
+                });
+                
+                document.querySelectorAll('[data-action="edit-course"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.editCourse(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="delete-course"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.deleteCourse(id);
+                    });
+                });
+
+                // Add event listeners for job actions
+                document.querySelectorAll('[data-action="add-job"]').forEach(button => {
+                    button.addEventListener('click', () => this.showJobModal());
+                });
+                
+                document.querySelectorAll('[data-action="edit-job"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.editJob(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="delete-job"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.deleteJob(id);
+                    });
+                });
+
+                // Add event listeners for application actions
+                document.querySelectorAll('[data-action="view-application"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.viewApplication(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="accept-application"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.updateApplicationStatus(id, 'accepted');
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="reject-application"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.updateApplicationStatus(id, 'rejected');
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="delete-application"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.deleteApplication(id);
+                    });
+                });
+                
+                // Group toggle handlers (for courses)
+                document.querySelectorAll('[data-action="toggle-group"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const groupElement = e.currentTarget.closest('.border');
+                        const coursesDiv = groupElement.querySelector('.group-courses');
+                        const icon = e.currentTarget.querySelector('.group-toggle-icon');
+                        
+                        if (coursesDiv.classList.contains('hidden')) {
+                            coursesDiv.classList.remove('hidden');
+                            icon.classList.remove('ri-arrow-down-s-line');
+                            icon.classList.add('ri-arrow-up-s-line');
+                        } else {
+                            coursesDiv.classList.add('hidden');
+                            icon.classList.remove('ri-arrow-up-s-line');
+                            icon.classList.add('ri-arrow-down-s-line');
+                        }
+                    });
+                });
+                
+                // Application group toggle handlers
+                document.querySelectorAll('[data-action="toggle-application-group"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const groupElement = e.currentTarget.closest('.border');
+                        const contentDiv = groupElement.querySelector('.application-group-content');
+                        const icon = e.currentTarget.querySelector('.application-group-toggle-icon');
+                        
+                        if (contentDiv.classList.contains('hidden')) {
+                            contentDiv.classList.remove('hidden');
+                            icon.classList.remove('ri-arrow-down-s-line');
+                            icon.classList.add('ri-arrow-up-s-line');
+                        } else {
+                            contentDiv.classList.add('hidden');
+                            icon.classList.remove('ri-arrow-up-s-line');
+                            icon.classList.add('ri-arrow-down-s-line');
+                        }
+                    });
+                });
+                
+                // Job Application group toggle handlers
+                document.querySelectorAll('[data-action="toggle-job-application-group"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const groupElement = e.currentTarget.closest('.border');
+                        const contentDiv = groupElement.querySelector('.job-application-group-content');
+                        const icon = e.currentTarget.querySelector('.job-application-group-toggle-icon');
+                        
+                        if (contentDiv.classList.contains('hidden')) {
+                            contentDiv.classList.remove('hidden');
+                            icon.classList.remove('ri-arrow-down-s-line');
+                            icon.classList.add('ri-arrow-up-s-line');
+                        } else {
+                            contentDiv.classList.add('hidden');
+                            icon.classList.remove('ri-arrow-up-s-line');
+                            icon.classList.add('ri-arrow-down-s-line');
+                        }
+                    });
+                });
+                
+                // Material action handlers
+                document.querySelectorAll('[data-action="preview-material"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.previewMaterial(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="download-material"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.downloadMaterial(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="edit-material"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.editMaterial(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="delete-material"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.deleteMaterial(id);
+                    });
+                });
+
+            }
+
+            formatText(action, targetField) {
+                const textarea = document.querySelector(`textarea[name="${targetField}"]`);
+                if (!textarea) return;
+
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const selectedText = textarea.value.substring(start, end);
+                
+                if (selectedText === '') {
+                    alert('Zaznacz tekst do formatowania');
+                    return;
+                }
+
+                let formattedText = '';
+                
+                switch (action) {
+                    case 'format-bold':
+                        formattedText = `<strong>${selectedText}</strong>`;
+                        break;
+                    case 'format-italic':
+                        formattedText = `<em>${selectedText}</em>`;
+                        break;
+                    case 'format-list':
+                        const listItems = selectedText.split('\n').filter(item => item.trim()).map(item => `<li>${item.trim()}</li>`).join('\n');
+                        formattedText = `<ul>\n${listItems}\n</ul>`;
+                        break;
+                    case 'format-heading':
+                        formattedText = `<h3>${selectedText}</h3>`;
+                        break;
+                    default:
+                        return;
+                }
+
+                // Replace selected text with formatted version
+                const newValue = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+                textarea.value = newValue;
+                
+                // Set cursor position after formatted text
+                const newCursorPos = start + formattedText.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+                textarea.focus();
+            }
+
+            async handleNewsImageUpload(file) {
+                if (!file) return;
+                
+                // Validate file size (5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    this.showNotification('Plik jest za duży. Maksymalny rozmiar to 5MB.', 'error');
+                    return;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    this.showNotification('Można wgrać tylko pliki obrazów (JPG, PNG, GIF).', 'error');
+                    return;
+                }
+                
+                const progressDiv = document.getElementById('news-upload-progress');
+                const progressBar = progressDiv.querySelector('.bg-blue-600');
+                const previewDiv = document.getElementById('news-image-preview');
+                const previewImg = document.getElementById('news-preview-img');
+                const imageUrlInput = document.getElementById('news-image-url');
+                const removeBtn = document.querySelector('[data-action="remove-news-image"]');
+                
+                try {
+                    // Show progress
+                    progressDiv.classList.remove('hidden');
+                    progressBar.style.width = '0%';
+                    
+                    // Create FormData
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    // Upload to server
+                    const response = await fetch('/api/news/upload-image', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formData
+                    });
+                    
+                    progressBar.style.width = '100%';
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Błąd uploadu');
+                    }
+                    
+                    const result = await response.json();
+                    
+                    // Update UI
+                    imageUrlInput.value = result.imageUrl;
+                    previewImg.src = result.imageUrl;
+                    previewDiv.classList.remove('hidden');
+                    removeBtn.classList.remove('hidden');
+                    progressDiv.classList.add('hidden');
+                    
+                    this.showNotification('Zdjęcie zostało wgrane pomyślnie!', 'success');
+                    
+                } catch (error) {
+                    progressDiv.classList.add('hidden');
+                    this.showNotification('Błąd podczas wgrywania zdjęcia: ' + error.message, 'error');
+                }
+            }
+
+            removeNewsImage() {
+                const imageUrlInput = document.getElementById('news-image-url');
+                const previewDiv = document.getElementById('news-image-preview');
+                const removeBtn = document.querySelector('[data-action="remove-news-image"]');
+                
+                imageUrlInput.value = '';
+                previewDiv.classList.add('hidden');
+                removeBtn.classList.add('hidden');
+                
+                this.showNotification('Zdjęcie zostało usunięte', 'success');
+            }
+
+            async logout() {
+                if (confirm('Czy na pewno chcesz się wylogować?')) {
+                    try {
+                        await fetch('/api/auth/logout', {
+                            method: 'POST',
+                            credentials: 'include'
+                        });
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                    }
+                    
+                    window.location.href = '/admin-login.html';
+                }
+            }
+        }
+
+        // Initialize admin panel
+        const adminPanel = new AdminPanel();
+    </script>
+</body>
+</html>
