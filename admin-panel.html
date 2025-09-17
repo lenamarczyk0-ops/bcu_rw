@@ -1869,53 +1869,21 @@
 
                 // Generate application details HTML
                 detailsContainer.innerHTML = `
-                    <!-- Basic Information Section -->
+                    <!-- Course Information Section - First -->
                     <div class="print-section">
-                        <div class="print-section-title">Informacje podstawowe</div>
+                        <div class="print-section-title">Kurs</div>
                         <div class="print-field">
-                            <div class="print-field-label">Numer zgłoszenia:</div>
-                            <div class="print-field-value">${application._id || 'Brak'}</div>
+                            <div class="print-field-label">Nazwa kursu:</div>
+                            <div class="print-field-value">${application.courseTitle || application.course?.title || 'Brak'}</div>
                         </div>
-                        <div class="print-field">
-                            <div class="print-field-label">Data zgłoszenia:</div>
-                            <div class="print-field-value">${new Date(application.createdAt).toLocaleDateString('pl-PL', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}</div>
-                        </div>
-                        <div class="print-field">
-                            <div class="print-field-label">Status:</div>
-                            <div class="print-field-value">
-                                <span class="print-status ${application.status}">${statusLabels[application.status] || application.status}</span>
-                            </div>
-                        </div>
-                        ${application.reviewedAt ? `
-                        <div class="print-field">
-                            <div class="print-field-label">Data weryfikacji:</div>
-                            <div class="print-field-value">${new Date(application.reviewedAt).toLocaleDateString('pl-PL', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            })}</div>
-                        </div>
-                        ` : ''}
                     </div>
 
-                    <!-- Personal Information Section -->
+                    <!-- Personal Information Section - Second -->
                     <div class="print-section">
                         <div class="print-section-title">Dane osobowe</div>
                         <div class="print-field">
-                            <div class="print-field-label">Imię:</div>
-                            <div class="print-field-value">${application.firstName || 'Brak'}</div>
-                        </div>
-                        <div class="print-field">
-                            <div class="print-field-label">Nazwisko:</div>
-                            <div class="print-field-value">${application.lastName || 'Brak'}</div>
+                            <div class="print-field-label">Imię i nazwisko:</div>
+                            <div class="print-field-value">${application.firstName || 'Brak'} ${application.lastName || ''}</div>
                         </div>
                         <div class="print-field">
                             <div class="print-field-label">Email:</div>
@@ -1939,21 +1907,35 @@
                         ` : ''}
                     </div>
 
-                    <!-- Course Information Section -->
+                    <!-- Basic Information Section - Third -->
                     <div class="print-section">
-                        <div class="print-section-title">Informacje o kursie</div>
+                        <div class="print-section-title">Informacje o zgłoszeniu</div>
                         <div class="print-field">
-                            <div class="print-field-label">Nazwa kursu:</div>
-                            <div class="print-field-value">${application.courseTitle || application.course?.title || 'Brak'}</div>
-                        </div>
-                        <div class="print-field">
-                            <div class="print-field-label">Typ zgłoszenia:</div>
-                            <div class="print-field-value">${application.applicationType === 'course' ? 'Kurs szkoleniowy' : 'Oferta pracy'}</div>
+                            <div class="print-field-label">Data zgłoszenia:</div>
+                            <div class="print-field-value">${new Date(application.createdAt).toLocaleDateString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</div>
                         </div>
                         <div class="print-field">
                             <div class="print-field-label">Poziom doświadczenia:</div>
                             <div class="print-field-value">${experienceLabels[application.experience] || application.experience || 'Brak'}</div>
                         </div>
+                        ${application.reviewedAt ? `
+                        <div class="print-field">
+                            <div class="print-field-label">Data weryfikacji:</div>
+                            <div class="print-field-value">${new Date(application.reviewedAt).toLocaleDateString('pl-PL', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}</div>
+                        </div>
+                        ` : ''}
                     </div>
 
                     ${application.motivation ? `
@@ -2733,7 +2715,7 @@
                 <!-- Header -->
                 <div class="print-header">
                     <div class="print-logo">BCU SPEDYCJA</div>
-                    <div class="print-subtitle">Centrum Kształcenia Kolejowego</div>
+                    <div class="print-subtitle">Branżowe Centrum Umiejętności Spedycja</div>
                     <div style="font-size: 12pt; color: #666;">
                         Zgłoszenie na kurs szkoleniowy
                     </div>
@@ -2746,7 +2728,7 @@
 
                 <!-- Footer -->
                 <div class="print-footer">
-                    <div>BCU SPEDYCJA - Centrum Kształcenia Kolejowego</div>
+                    <div>BCU SPEDYCJA - Branżowe Centrum Umiejętności Spedycja</div>
                     <div>Data wydruku: <span id="printDate"></span></div>
                 </div>
             </div>
