@@ -62,7 +62,35 @@ router.post('/', [
       status: 'new'
     };
 
-    if (course) {
+    if (applicationPayload.applicationType === 'job') {
+      // Handle job application
+      if (jobOffer) {
+        // Ścieżka z modelem oferty pracy (Mongoose)
+        const jobExists = await JobOffer.findOne({ _id: jobOffer, status: 'published' });
+        if (!jobExists) {
+          return res.status(404).json({ message: 'Oferta pracy nie została znaleziona lub nie jest dostępna' });
+        }
+
+        // Sprawdź duplikat dla tej samej oferty pracy (ObjectId)
+        const existingApplication = await Application.findOne({ jobOffer, email });
+        if (existingApplication) {
+          return res.status(400).json({ message: 'Już złożyłeś aplikację na tę ofertę pracy' });
+        }
+
+        applicationPayload.jobOffer = jobOffer;
+      } else {
+        // Ścieżka fallback (oferty plikowe)
+        if (!jobOfferTitle) {
+          return res.status(400).json({ message: 'Brak jobOfferTitle dla aplikacji' });
+        }
+        // Sprawdź duplikat dla tytułu oferty + email
+        const existingApplication = await Application.findOne({ jobOfferTitle, email });
+        if (existingApplication) {
+          return res.status(400).json({ message: 'Już złożyłeś aplikację na tę ofertę pracy' });
+        }
+        applicationPayload.jobOfferTitle = jobOfferTitle;
+      }
+    } else if (course) {
       // Ścieżka z modelem kursu (Mongoose)
       const courseExists = await Course.findOne({ _id: course, status: 'published' });
       if (!courseExists) {
@@ -98,34 +126,6 @@ router.post('/', [
       }
       applicationPayload.courseTitle = courseTitle;
       if (courseFileId) applicationPayload.courseFileId = String(courseFileId);
-    } else if (applicationPayload.applicationType === 'job') {
-      // Handle job application
-      if (jobOffer) {
-        // Ścieżka z modelem oferty pracy (Mongoose)
-        const jobExists = await JobOffer.findOne({ _id: jobOffer, status: 'published' });
-        if (!jobExists) {
-          return res.status(404).json({ message: 'Oferta pracy nie została znaleziona lub nie jest dostępna' });
-        }
-
-        // Sprawdź duplikat dla tej samej oferty pracy (ObjectId)
-        const existingApplication = await Application.findOne({ jobOffer, email });
-        if (existingApplication) {
-          return res.status(400).json({ message: 'Już złożyłeś aplikację na tę ofertę pracy' });
-        }
-
-        applicationPayload.jobOffer = jobOffer;
-      } else {
-        // Ścieżka fallback (oferty plikowe)
-        if (!jobOfferTitle) {
-          return res.status(400).json({ message: 'Brak jobOfferTitle dla aplikacji' });
-        }
-        // Sprawdź duplikat dla tytułu oferty + email
-        const existingApplication = await Application.findOne({ jobOfferTitle, email });
-        if (existingApplication) {
-          return res.status(400).json({ message: 'Już złożyłeś aplikację na tę ofertę pracy' });
-        }
-        applicationPayload.jobOfferTitle = jobOfferTitle;
-      }
     }
 
     const application = new Application(applicationPayload);
