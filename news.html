@@ -711,8 +711,25 @@
             }
             
             try {
-                // Load article from API
-                const response = await fetch(`/api/news/id/${articleId}`, {
+                // Try by ID first
+                let response = await fetch(`/api/news/id/${articleId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                let data;
+                if (response.ok) {
+                    data = await response.json();
+                    if (data && data.success && data.news) {
+                        showFullArticle(data.news);
+                        return;
+                    }
+                }
+
+                // Fallback: try by slug
+                response = await fetch(`/api/news/${articleId}`, {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
@@ -723,10 +740,9 @@
                     throw new Error(`HTTP ${response.status}`);
                 }
 
-                const data = await response.json();
-                
-                if (data.success && data.news) {
-                    showFullArticle(data.news);
+                data = await response.json();
+                if (data && (data.article || data.news)) {
+                    showFullArticle(data.article || data.news);
                 } else {
                     throw new Error('Article not found');
                 }
