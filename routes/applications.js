@@ -2,13 +2,16 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Application = require('../models/Application');
 const Course = require('../models/Course');
+const JobOffer = require('../models/JobOffer');
 const { requireAuth, requireApplicationAccess } = require('../auth/middleware');
 
 const router = express.Router();
 
-// Submit application for course (public)
+// Submit application for course or job (public)
 router.post('/', [
+  body('applicationType').optional().isIn(['course', 'job']),
   body('course').optional().isMongoId(),
+  body('jobOffer').optional().isMongoId(),
   body('firstName').trim().isLength({ min: 2 }),
   body('lastName').trim().isLength({ min: 2 }),
   body('email').isEmail().normalizeEmail(),
@@ -19,10 +22,16 @@ router.post('/', [
   body('motivation').optional().trim(),
   body('consentRODO').isBoolean().custom(value => value === true),
   body('consentMarketing').optional().isBoolean(),
-  // Wymagaj co najmniej jednego: course (ObjectId) lub courseTitle (fallback)
+  // Wymagaj odpowiednich pól w zależności od typu aplikacji
   body().custom(body => {
-    if (!body.course && !body.courseTitle) {
-      throw new Error('Wymagane: course lub courseTitle');
+    if (body.applicationType === 'job') {
+      if (!body.jobOffer && !body.jobOfferTitle) {
+        throw new Error('Wymagane: jobOffer lub jobOfferTitle dla aplikacji na pracę');
+      }
+    } else {
+      if (!body.course && !body.courseTitle) {
+        throw new Error('Wymagane: course lub courseTitle dla aplikacji na kurs');
+      }
     }
     return true;
   })
@@ -36,9 +45,10 @@ router.post('/', [
       });
     }
 
-    const { course, courseTitle, courseFileId, firstName, lastName, email, phone, company, position, experience, motivation, consentRODO, consentMarketing } = req.body;
+    const { applicationType, course, courseTitle, courseFileId, jobOffer, jobOfferTitle, firstName, lastName, email, phone, company, position, experience, motivation, consentRODO, consentMarketing } = req.body;
 
     let applicationPayload = {
+      applicationType: applicationType || 'course',
       firstName,
       lastName,
       email,
@@ -88,6 +98,34 @@ router.post('/', [
       }
       applicationPayload.courseTitle = courseTitle;
       if (courseFileId) applicationPayload.courseFileId = String(courseFileId);
+    } else if (applicationPayload.applicationType === 'job') {
+      // Handle job application
+      if (jobOffer) {
+        // Ścieżka z modelem oferty pracy (Mongoose)
+        const jobExists = await JobOffer.findOne({ _id: jobOffer, status: 'published' });
+        if (!jobExists) {
+          return res.status(404).json({ message: 'Oferta pracy nie została znaleziona lub nie jest dostępna' });
+        }
+
+        // Sprawdź duplikat dla tej samej oferty pracy (ObjectId)
+        const existingApplication = await Application.findOne({ jobOffer, email });
+        if (existingApplication) {
+          return res.status(400).json({ message: 'Już złożyłeś aplikację na tę ofertę pracy' });
+        }
+
+        applicationPayload.jobOffer = jobOffer;
+      } else {
+        // Ścieżka fallback (oferty plikowe)
+        if (!jobOfferTitle) {
+          return res.status(400).json({ message: 'Brak jobOfferTitle dla aplikacji' });
+        }
+        // Sprawdź duplikat dla tytułu oferty + email
+        const existingApplication = await Application.findOne({ jobOfferTitle, email });
+        if (existingApplication) {
+          return res.status(400).json({ message: 'Już złożyłeś aplikację na tę ofertę pracy' });
+        }
+        applicationPayload.jobOfferTitle = jobOfferTitle;
+      }
     }
 
     const application = new Application(applicationPayload);
@@ -95,9 +133,16 @@ router.post('/', [
     if (application.course) {
       await application.populate('course', 'title startDate');
     }
+    if (application.jobOffer) {
+      await application.populate('jobOffer', 'title location');
+    }
+
+    const message = applicationPayload.applicationType === 'job' ? 
+      'Aplikacja na pracę została złożona pomyślnie' : 
+      'Aplikacja na kurs została złożona pomyślnie';
 
     res.status(201).json({ 
-      message: 'Aplikacja została złożona pomyślnie',
+      message,
       application 
     });
   } catch (error) {

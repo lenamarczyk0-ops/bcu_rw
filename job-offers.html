@@ -457,6 +457,9 @@
             // Hide loading and show grid
             if (loadingEl) loadingEl.classList.add('hidden');
             gridEl.classList.remove('hidden');
+            
+            // Add event listeners for job applications
+            addJobApplicationListeners();
         }
 
         // Create job offer card HTML
@@ -513,7 +516,7 @@
 
                     ${job.descriptionHTML ? `<div class="text-gray-600 text-sm mb-6 leading-relaxed line-clamp-4">${job.descriptionHTML.replace(/<[^>]*>/g, '').substring(0, 200)}...</div>` : ''}
 
-                    <button class="w-full bg-gradient-to-r from-slate-600 to-slate-700 text-white py-3 px-4 !rounded-button hover:from-slate-700 hover:to-slate-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl mt-auto">
+                    <button data-action="apply-job" data-job-id="${job._id || job.id}" data-job-title="${job.title || 'Oferta pracy'}" class="w-full bg-gradient-to-r from-slate-600 to-slate-700 text-white py-3 px-4 !rounded-button hover:from-slate-700 hover:to-slate-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl mt-auto">
                         <i class="ri-send-plane-line mr-2"></i>Aplikuj teraz
                     </button>
                 </div>
@@ -562,6 +565,209 @@
                 loadJobOffersFromAPI();
             }, 1000);
         }
+
+        // Job application system
+        let currentJobApplication = null;
+
+        // Show job application modal
+        function showJobApplicationModal(jobId, jobTitle) {
+            currentJobApplication = { jobId, jobTitle };
+            
+            const modal = document.getElementById('job-application-modal');
+            document.getElementById('job-modal-title').textContent = jobTitle;
+            
+            // Reset form
+            document.getElementById('job-application-form').reset();
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Hide job application modal
+        function hideJobApplicationModal() {
+            const modal = document.getElementById('job-application-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            currentJobApplication = null;
+        }
+
+        // Submit job application
+        async function submitJobApplication() {
+            if (!currentJobApplication) return;
+
+            const form = document.getElementById('job-application-form');
+            const formData = new FormData(form);
+            const submitBtn = document.getElementById('submit-job-btn');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Wysyłanie...';
+
+            try {
+                const applicationData = {
+                    applicationType: 'job',
+                    jobOffer: currentJobApplication.jobId,
+                    jobOfferTitle: currentJobApplication.jobTitle,
+                    firstName: formData.get('firstName'),
+                    lastName: formData.get('lastName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    company: formData.get('company'),
+                    position: formData.get('position'),
+                    experience: formData.get('experience'),
+                    motivation: formData.get('motivation'),
+                    consentRODO: formData.get('consentRODO') === 'on',
+                    consentMarketing: formData.get('consentMarketing') === 'on'
+                };
+
+                const response = await fetch('/api/applications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(applicationData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Aplikacja została wysłana pomyślnie! Skontaktujemy się z Tobą wkrótce.');
+                    hideJobApplicationModal();
+                } else {
+                    throw new Error(result.message || 'Błąd podczas wysyłania aplikacji');
+                }
+            } catch (error) {
+                console.error('Error submitting job application:', error);
+                alert('Błąd podczas wysyłania aplikacji: ' + error.message);
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="ri-send-plane-line mr-2"></i>Wyślij aplikację';
+            }
+        }
+
+        // Add event listeners for job applications
+        function addJobApplicationListeners() {
+            // Apply job buttons
+            document.querySelectorAll('[data-action="apply-job"]').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const jobId = e.currentTarget.dataset.jobId;
+                    const jobTitle = e.currentTarget.dataset.jobTitle;
+                    showJobApplicationModal(jobId, jobTitle);
+                });
+            });
+        }
+
+        // Initialize job applications
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modal close events
+            document.getElementById('close-job-modal').addEventListener('click', hideJobApplicationModal);
+            document.getElementById('job-application-modal').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) hideJobApplicationModal();
+            });
+            
+            // Form submit
+            document.getElementById('submit-job-btn').addEventListener('click', submitJobApplication);
+        });
     </script>
+
+    <!-- Job Application Modal -->
+    <div id="job-application-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Aplikuj na pracę</h2>
+                        <p class="text-gray-600 mt-1" id="job-modal-title">Nazwa oferty</p>
+                    </div>
+                    <button id="close-job-modal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <form id="job-application-form" class="space-y-6">
+                    <!-- Personal Information -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imię *</label>
+                            <input type="text" name="firstName" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nazwisko *</label>
+                            <input type="text" name="lastName" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
+                            <input type="tel" name="phone" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+
+                    <!-- Professional Information -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Obecna firma</label>
+                            <input type="text" name="company" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Obecne stanowisko</label>
+                            <input type="text" name="position" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Doświadczenie zawodowe</label>
+                        <select name="experience" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                            <option value="none">Brak doświadczenia</option>
+                            <option value="beginner">Początkujący (do 2 lat)</option>
+                            <option value="intermediate">Średnio zaawansowany (2-5 lat)</option>
+                            <option value="advanced">Zaawansowany (powyżej 5 lat)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Motywacja / Dodatkowe informacje</label>
+                        <textarea name="motivation" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Dlaczego chcesz pracować w tej firmie? Jakie są Twoje mocne strony?"></textarea>
+                    </div>
+
+                    <!-- Consents -->
+                    <div class="space-y-3">
+                        <label class="flex items-start space-x-3">
+                            <input type="checkbox" name="consentRODO" required class="mt-1 rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="text-sm text-gray-700">
+                                Wyrażam zgodę na przetwarzanie moich danych osobowych w celu rozpatrzenia mojej aplikacji zgodnie z RODO *
+                            </span>
+                        </label>
+                        <label class="flex items-start space-x-3">
+                            <input type="checkbox" name="consentMarketing" class="mt-1 rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="text-sm text-gray-700">
+                                Wyrażam zgodę na otrzymywanie informacji o nowych ofertach pracy
+                            </span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-4">
+                <button type="button" id="cancel-job-btn" onclick="hideJobApplicationModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                    Anuluj
+                </button>
+                <button type="button" id="submit-job-btn" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                    <i class="ri-send-plane-line mr-2"></i>Wyślij aplikację
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
