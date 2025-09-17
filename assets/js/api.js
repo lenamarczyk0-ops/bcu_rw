@@ -549,6 +549,9 @@ function openArticle(articleId) {
     window.location.href = `/article.html?id=${encodeURIComponent(articleId)}`;
 }
 
+// Make function globally available
+window.openArticle = openArticle;
+
 // Legacy function for compatibility - redirects to new system
 async function showNewsModal(slug) {
     openArticle(slug);
