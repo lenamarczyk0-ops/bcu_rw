@@ -524,7 +524,7 @@ async function loadNews() {
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">${article.title}</h3>
                     <p class="text-gray-600 text-sm mb-4 line-clamp-3">${article.excerpt || ''}</p>
-                    <button onclick="showNewsModal('${article.slug}')" class="text-primary hover:text-primary-dark font-medium text-sm">
+                    <button onclick="openArticle('${article._id || article.slug}')" class="text-primary hover:text-primary-dark font-medium text-sm">
                         Czytaj więcej →
                     </button>
                 </div>
@@ -537,57 +537,27 @@ async function loadNews() {
     }
 }
 
-async function showNewsModal(slug) {
-    try {
-        const response = await api.getNewsArticle(slug);
-        const article = response.article;
-        
-        const modalHTML = `
-            <div id="news-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-2">${article.title}</h2>
-                                <div class="flex items-center text-sm text-gray-500 mb-4">
-                                    <span>${new Date(article.publishedAt).toLocaleDateString('pl-PL')}</span>
-                                    <span class="mx-2">•</span>
-                                    <span>${article.author.firstName} ${article.author.lastName}</span>
-                                </div>
-                            </div>
-                            <button onclick="closeNewsModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-                        </div>
-                        
-                        <div class="mb-6">
-                            <img src="${article.imageUrl}" alt="${article.title}" class="w-full h-64 object-cover rounded-lg">
-                        </div>
-                        
-                        <div class="prose max-w-none">
-                            ${article.contentHTML}
-                        </div>
-                        
-                        <div class="mt-6">
-                            <button onclick="closeNewsModal()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
-                                Zamknij
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-    } catch (error) {
-        console.error('Error loading news article:', error);
-        showNotification('Błąd podczas ładowania artykułu', 'error');
+// Open article in dedicated page
+function openArticle(articleId) {
+    if (!articleId) {
+        console.error('No article ID provided');
+        showNotification('Błąd: Brak identyfikatora artykułu', 'error');
+        return;
     }
+    
+    // Navigate to article page
+    window.location.href = `/article.html?id=${encodeURIComponent(articleId)}`;
 }
 
+// Legacy function for compatibility - redirects to new system
+async function showNewsModal(slug) {
+    openArticle(slug);
+}
+
+// Legacy function for compatibility
 function closeNewsModal() {
-    const modal = document.getElementById('news-modal');
-    if (modal) {
-        modal.remove();
-    }
+    // No longer needed with dedicated pages
+    console.log('Modal system replaced with dedicated article pages');
 }
 
 // Job offers loading functions

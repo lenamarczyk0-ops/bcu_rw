@@ -519,7 +519,7 @@
                             </div>
                         </div>
                         
-                        <button class="w-full bg-secondary hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+                        <button onclick="openArticle('${article._id || article.slug}')" class="w-full bg-secondary hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
                             <i class="ri-arrow-right-line mr-2"></i>
                             Czytaj więcej
                         </button>
@@ -550,6 +550,17 @@
                 </div>
             `;
             gridEl.classList.remove('hidden');
+        }
+
+        // Open article in dedicated page
+        function openArticle(articleId) {
+            if (!articleId) {
+                console.error('No article ID provided');
+                return;
+            }
+            
+            // Navigate to article page
+            window.location.href = `/article.html?id=${encodeURIComponent(articleId)}`;
         }
 
         // Legacy function for compatibility

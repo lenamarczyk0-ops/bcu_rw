@@ -737,6 +737,9 @@
                 document.getElementById('courses-status-filter').addEventListener('change', () => this.filterCourses());
                 document.getElementById('courses-view-mode').addEventListener('change', () => this.handleViewModeChange());
                 document.getElementById('jobs-status-filter').addEventListener('change', () => this.filterJobs());
+                document.getElementById('materials-type-filter').addEventListener('change', () => this.filterMaterials());
+                document.getElementById('materials-level-filter').addEventListener('change', () => this.filterMaterials());
+                document.getElementById('materials-public-filter').addEventListener('change', () => this.filterMaterials());
 
                 // Logout
                 document.getElementById('logout-btn').addEventListener('click', () => this.logout());
@@ -1593,7 +1596,65 @@
 
             filterNews() {
                 const filter = document.getElementById('news-status-filter').value;
-                // Implementation for filtering news
+                const container = document.getElementById('news-list');
+                
+                if (!this.news || this.news.length === 0) {
+                    return;
+                }
+                
+                let filteredNews = this.news;
+                
+                if (filter) {
+                    filteredNews = this.news.filter(news => {
+                        return news.status === filter;
+                    });
+                }
+                
+                // Re-render filtered news
+                if (filteredNews.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-newspaper-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak aktualności ${filter ? `ze statusem "${this.getStatusLabel(filter)}"` : ''}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = filteredNews.map(news => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${news.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${news.excerpt || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-calendar-line mr-1"></i>${new Date(news.publishedAt || news.createdAt).toLocaleDateString('pl-PL')}</span>
+                                    <span><i class="ri-user-line mr-1"></i>${news.author ? (news.author.firstName + ' ' + news.author.lastName) : 'Admin'}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    news.isActive === false ? 'bg-red-100 text-red-800' :
+                                    news.status === 'published' ? 'bg-green-100 text-green-800' :
+                                    news.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${news.isActive === false ? 'Nieaktywny' : 
+                                      news.status === 'published' ? 'Opublikowany' :
+                                      news.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
+                                </span>
+                                <button data-action="edit-news" data-id="${news._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-news" data-id="${news._id}" class="text-red-600 hover:text-red-800" title="Usuń">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                this.addEventListeners();
             }
 
             async handleViewModeChange() {
@@ -1699,17 +1760,335 @@
             filterCourses() {
                 const filter = document.getElementById('courses-status-filter').value;
                 const viewMode = document.getElementById('courses-view-mode').value;
+                const container = document.getElementById('courses-list');
+                
+                if (!this.courses || this.courses.length === 0) {
+                    return;
+                }
+                
+                let filteredCourses = this.courses;
+                
+                if (filter) {
+                    filteredCourses = this.courses.filter(course => {
+                        return course.status === filter;
+                    });
+                }
                 
                 if (viewMode === 'grouped') {
-                    this.loadGroupedCourses();
+                    this.renderGroupedCourses(filteredCourses);
                 } else {
-                    this.loadCourses();
+                    this.renderCoursesList(filteredCourses);
                 }
+            }
+
+            renderCoursesList(courses) {
+                const container = document.getElementById('courses-list');
+                
+                if (courses.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-book-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak kursów</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = courses.map(course => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${course.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${course.excerpt || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
+                                    <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                </div>
+                                <div class="flex items-center space-x-2 mt-2">
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                        course.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                    }">
+                                        ${course.isActive ? 'Aktywny' : 'Nieaktywny'}
+                                    </span>
+                                    <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                        course.isPaid ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
+                                    }">
+                                        ${course.isPaid ? 'Płatny' : 'Bezpłatny'}
+                                    </span>
+                                    ${course.isPaid && course.price > 0 ? `<span class="text-xs text-gray-600">${course.price} PLN</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    course.status === 'published' ? 'bg-green-100 text-green-800' :
+                                    course.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${course.status === 'published' ? 'Opublikowany' :
+                                      course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
+                                </span>
+                                <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800" title="Usuń">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                this.addEventListeners();
+            }
+
+            renderGroupedCourses(courses) {
+                const container = document.getElementById('courses-list');
+                
+                if (courses.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-book-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak kursów</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Group courses by title
+                const groupedCourses = courses.reduce((groups, course) => {
+                    const groupName = course.title;
+                    if (!groups[groupName]) {
+                        groups[groupName] = [];
+                    }
+                    groups[groupName].push(course);
+                    return groups;
+                }, {});
+
+                const groupsArray = Object.keys(groupedCourses).map(title => ({
+                    title,
+                    courses: groupedCourses[title],
+                    count: groupedCourses[title].length
+                }));
+
+                container.innerHTML = groupsArray.map(group => `
+                    <div class="border border-gray-200 rounded-lg p-4 mb-4 bg-white shadow-sm">
+                        <div class="flex items-start justify-between mb-4 cursor-pointer" data-action="toggle-course-group" data-group="${group.title}">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-1">${group.title}</h4>
+                                <p class="text-sm text-gray-500">Liczba kursów: ${group.count}</p>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="ri-arrow-down-s-line text-gray-400 group-toggle-icon"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="group-courses hidden">
+                            ${group.courses.map(course => `
+                                <div class="border-l-4 border-gray-300 pl-4 py-2 mb-2 bg-gray-50 rounded-r">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <p class="font-medium text-gray-900 mb-1">${course.title}</p>
+                                            <div class="flex items-center space-x-4 text-xs text-gray-500">
+                                                <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
+                                                <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                                    course.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                                }">${course.isActive !== false ? 'Aktywny' : 'Nieaktywny'}</span>
+                                                <span class="px-2 py-1 rounded-full text-xs font-medium ${
+                                                    course.status === 'published' ? 'bg-green-100 text-green-800' :
+                                                    course.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-gray-100 text-gray-800'
+                                                }">${
+                                                    course.status === 'published' ? 'Opublikowany' :
+                                                    course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'
+                                                }</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2 ml-4">
+                                            <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800 text-xs" title="Edytuj">
+                                                <i class="ri-edit-line"></i>
+                                            </button>
+                                            <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800 text-xs" title="Usuń">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                
+                this.addEventListeners();
             }
 
             filterJobs() {
                 const filter = document.getElementById('jobs-status-filter').value;
-                // Implementation for filtering jobs
+                const container = document.getElementById('jobs-list');
+                
+                if (!this.jobs || this.jobs.length === 0) {
+                    return;
+                }
+                
+                let filteredJobs = this.jobs;
+                
+                if (filter) {
+                    filteredJobs = this.jobs.filter(job => {
+                        return job.status === filter;
+                    });
+                }
+                
+                // Re-render filtered jobs
+                if (filteredJobs.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-briefcase-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak ofert pracy ${filter ? `ze statusem "${this.getStatusLabel(filter)}"` : ''}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = filteredJobs.map(job => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${job.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${job.excerpt || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-map-pin-line mr-1"></i>${job.location || 'Brak lokalizacji'}</span>
+                                    <span><i class="ri-time-line mr-1"></i>${job.workType || 'Brak informacji'}</span>
+                                    ${job.salary ? `<span><i class="ri-money-dollar-circle-line mr-1"></i>${job.salary}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    job.status === 'published' ? 'bg-green-100 text-green-800' :
+                                    job.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-gray-100 text-gray-800'
+                                }">
+                                    ${job.status === 'published' ? 'Opublikowana' :
+                                      job.status === 'draft' ? 'Szkic' : 'Zarchiwizowana'}
+                                </span>
+                                <button data-action="edit-job" data-id="${job._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-job" data-id="${job._id}" class="text-red-600 hover:text-red-800" title="Usuń">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                this.addEventListeners();
+            }
+
+            filterMaterials() {
+                const typeFilter = document.getElementById('materials-type-filter').value;
+                const levelFilter = document.getElementById('materials-level-filter').value;
+                const publicFilter = document.getElementById('materials-public-filter').value;
+                const container = document.getElementById('materials-list');
+                
+                if (!this.materials || this.materials.length === 0) {
+                    return;
+                }
+                
+                let filteredMaterials = this.materials;
+                
+                // Apply type filter
+                if (typeFilter) {
+                    filteredMaterials = filteredMaterials.filter(material => {
+                        return material.type === typeFilter;
+                    });
+                }
+                
+                // Apply level filter
+                if (levelFilter) {
+                    filteredMaterials = filteredMaterials.filter(material => {
+                        return material.level === levelFilter;
+                    });
+                }
+                
+                // Apply public filter
+                if (publicFilter) {
+                    const isPublic = publicFilter === 'true';
+                    filteredMaterials = filteredMaterials.filter(material => {
+                        return material.isPublic === isPublic;
+                    });
+                }
+                
+                // Re-render filtered materials
+                if (filteredMaterials.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="ri-file-list-line text-4xl text-gray-400 mb-4"></i>
+                            <p class="text-gray-500 mb-4">Brak materiałów spełniających kryteria filtrowania</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = filteredMaterials.map(material => `
+                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <h4 class="font-medium text-gray-900 mb-2">${material.title}</h4>
+                                <p class="text-sm text-gray-600 mb-3">${material.description || 'Brak opisu...'}</p>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                    <span><i class="ri-file-line mr-1"></i>Typ: ${this.getMaterialTypeLabel(material.type)}</span>
+                                    <span><i class="ri-bar-chart-line mr-1"></i>Poziom: ${this.getMaterialLevelLabel(material.level)}</span>
+                                    ${material.fileSize ? `<span><i class="ri-file-text-line mr-1"></i>${material.fileSize}</span>` : ''}
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 ml-4">
+                                <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                    material.isPublic ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                }">
+                                    ${material.isPublic ? 'Publiczny' : 'Prywatny'}
+                                </span>
+                                <button data-action="edit-material" data-id="${material._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
+                                    <i class="ri-edit-line"></i>
+                                </button>
+                                <button data-action="delete-material" data-id="${material._id}" class="text-red-600 hover:text-red-800" title="Usuń">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                this.addEventListeners();
+            }
+
+            getStatusLabel(status) {
+                const labels = {
+                    'published': 'Opublikowane',
+                    'draft': 'Szkice',
+                    'archived': 'Zarchiwizowane'
+                };
+                return labels[status] || status;
+            }
+
+            getMaterialTypeLabel(type) {
+                const labels = {
+                    'document': 'Dokument',
+                    'video': 'Film',
+                    'image': 'Obraz',
+                    'audio': 'Audio',
+                    'test': 'Test',
+                    'link': 'Link'
+                };
+                return labels[type] || type;
+            }
+
+            getMaterialLevelLabel(level) {
+                const labels = {
+                    'beginner': 'Początkujący',
+                    'intermediate': 'Średniozaawansowany',
+                    'advanced': 'Zaawansowany'
+                };
+                return labels[level] || level;
             }
 
             async loadApplications() {

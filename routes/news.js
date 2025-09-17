@@ -96,8 +96,40 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get news by ID (admin)
-router.get('/id/:id', requireAuth, requireInstructor, async (req, res) => {
+// Get published news by ID (public)
+router.get('/id/:id', async (req, res) => {
+  try {
+    const news = await News.findOne({
+      _id: req.params.id,
+      status: 'published',
+      $or: [
+        { isActive: true },
+        { isActive: { $exists: false } }
+      ]
+    }).populate('author', 'firstName lastName');
+
+    if (!news) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Artykuł nie został znaleziony' 
+      });
+    }
+
+    res.json({ 
+      success: true,
+      news 
+    });
+  } catch (error) {
+    console.error('Get news by ID error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd serwera' 
+    });
+  }
+});
+
+// Get news by ID (admin only)
+router.get('/admin/id/:id', requireAuth, requireInstructor, async (req, res) => {
   try {
     const news = await News.findById(req.params.id)
       .populate('author', 'firstName lastName');
