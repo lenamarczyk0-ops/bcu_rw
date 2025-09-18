@@ -112,6 +112,35 @@ router.get('/course/:courseId', async (req, res) => {
   }
 });
 
+// Download material for admin/instructor (authenticated)
+router.get('/admin/download/:id', requireAuth, requireInstructor, async (req, res) => {
+  try {
+    let filter = { _id: req.params.id };
+
+    // If not admin/redaktor, only allow downloading own materials
+    if (req.user.role !== 'admin' && req.user.role !== 'redaktor') {
+      filter.author = req.user._id;
+    }
+
+    const material = await Material.findOne(filter);
+
+    if (!material) {
+      return res.status(404).json({ message: 'Materiał nie został znaleziony lub nie masz uprawnień do jego pobrania' });
+    }
+
+    // Increment download count
+    await material.incrementDownload();
+
+    res.json({ 
+      downloadUrl: material.fileUrl,
+      fileName: material.fileName || material.title
+    });
+  } catch (error) {
+    console.error('Admin download material error:', error);
+    res.status(500).json({ message: 'Błąd serwera' });
+  }
+});
+
 // Download material (public)
 router.get('/download/:id', async (req, res) => {
   try {

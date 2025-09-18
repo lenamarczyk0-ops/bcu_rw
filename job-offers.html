@@ -615,6 +615,7 @@
             try {
                 // Add job application specific data
                 formData.append('applicationType', 'job');
+                formData.append('jobOfferTitle', currentJobApplication.jobTitle);
 
                 const response = await fetch('/api/applications', {
                     method: 'POST',

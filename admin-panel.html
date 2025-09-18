@@ -2901,13 +2901,15 @@
 
             async downloadMaterial(id) {
                 try {
-                    const response = await fetch(`/api/materials/download/${id}`, { credentials: 'include' });
+                    const response = await fetch(`/api/materials/admin/download/${id}`, { credentials: 'include' });
                     const data = await response.json();
                     
                     if (response.ok && data.downloadUrl) {
                         // Otwórz link w nowej karcie
                         window.open(data.downloadUrl, '_blank');
                         this.showNotification('Materiał został otwarty w nowej karcie', 'success');
+                    } else {
+                        throw new Error(data.message || 'Błąd pobierania materiału');
                     }
                 } catch (error) {
                     this.showNotification('Błąd pobierania materiału: ' + error.message, 'error');
