@@ -260,7 +260,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <button class="flex items-center text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100" data-section="users" onclick="window.adminPanel.showSection('users')">
+                    <button class="flex items-center text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md hover:bg-gray-100" data-section="users" onclick="console.log('👆 Users button clicked'); window.adminPanel.showSection('users')">
                         <i class="ri-user-settings-line mr-2"></i>
                         <span class="hidden sm:inline">Użytkownicy</span>
                     </button>
@@ -527,6 +527,10 @@
                         <i class="ri-add-line mr-2"></i>
                         Dodaj materiał
                     </button>
+                    <button onclick="testMaterialUpload()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                        <i class="ri-bug-line mr-2"></i>
+                        Test Upload
+                    </button>
                 </div>
 
                 <!-- Materials List -->
@@ -681,6 +685,9 @@
                                 </select>
                                 <button id="refresh-users-btn" class="text-gray-500 hover:text-gray-700">
                                     <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                                <button onclick="testUsersAPI()" class="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+                                    Test API
                                 </button>
                             </div>
                         </div>
@@ -852,11 +859,18 @@
             }
 
             showSection(section) {
+                console.log('🔄 Switching to section:', section);
                 // Hide all sections
                 document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
                 
                 // Show selected section
-                document.getElementById(`${section}-section`).classList.remove('hidden');
+                const sectionElement = document.getElementById(`${section}-section`);
+                console.log('🎯 Target section element:', sectionElement);
+                if (sectionElement) {
+                    sectionElement.classList.remove('hidden');
+                } else {
+                    console.error('❌ Section element not found:', `${section}-section`);
+                }
                 
                 // Update navigation
                 document.querySelectorAll('.nav-item').forEach(item => {
@@ -896,7 +910,10 @@
                         this.loadMaterials();
                         break;
                     case 'users':
-                        this.loadUsers();
+                        console.log('🔄 Loading users section...');
+                        this.checkUserPermissions().then(() => {
+                            this.loadUsers();
+                        });
                         break;
                 }
             }
@@ -1544,13 +1561,20 @@
                     const fileInput = modal.querySelector('#material-file-upload');
                     
                     if (uploadBtn && fileInput) {
+                        console.log('✅ Upload button and file input found for materials');
                         uploadBtn.addEventListener('click', () => {
+                            console.log('👆 Upload button clicked');
                             fileInput.click();
                         });
                         
                         fileInput.addEventListener('change', (e) => {
+                            console.log('📁 File selected:', e.target.files[0]?.name);
                             this.handleMaterialFileUpload(e.target.files[0]);
                         });
+                    } else {
+                        console.error('❌ Upload button or file input not found');
+                        console.log('Upload button:', uploadBtn);
+                        console.log('File input:', fileInput);
                     }
                 }
                 
@@ -3499,10 +3523,17 @@
             }
 
             async handleMaterialFileUpload(file) {
-                if (!file) return;
+                console.log('📁 Starting file upload:', file?.name, 'Size:', file?.size, 'Type:', file?.type);
+                if (!file) {
+                    console.warn('❌ No file provided to upload');
+                    return;
+                }
                 
                 // Validate file size (10MB for materials)
-                if (file.size > 10 * 1024 * 1024) {
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                console.log(`📏 File size check: ${file.size} bytes (max: ${maxSize})`);
+                if (file.size > maxSize) {
+                    console.warn('❌ File too large:', file.size, 'bytes');
                     this.showNotification('Plik jest za duży. Maksymalny rozmiar to 10MB.', 'error');
                     return;
                 }
@@ -3520,7 +3551,9 @@
                     'application/x-rar-compressed'
                 ];
                 
+                console.log('🔍 File type check:', file.type, 'Allowed:', allowedTypes.includes(file.type));
                 if (!allowedTypes.includes(file.type)) {
+                    console.warn('❌ Unsupported file type:', file.type);
                     this.showNotification('Nieobsługiwany typ pliku. Obsługiwane formaty: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP, RAR', 'error');
                     return;
                 }
@@ -3530,6 +3563,7 @@
                 const fileUrlInput = document.querySelector('input[name="fileUrl"]');
                 
                 try {
+                    console.log('🚀 Starting upload process...');
                     // Show progress
                     progressDiv.classList.remove('hidden');
                     progressBar.style.width = '0%';
@@ -3537,22 +3571,27 @@
                     // Create FormData
                     const formData = new FormData();
                     formData.append('file', file);
+                    console.log('📦 FormData created with file');
                     
-                    // Upload to server (we'll create this endpoint)
+                    // Upload to server
+                    console.log('🌐 Sending request to /api/materials/upload-file');
                     const response = await fetch('/api/materials/upload-file', {
                         method: 'POST',
                         credentials: 'include',
                         body: formData
                     });
+                    console.log('📡 Response received:', response.status, response.statusText);
                     
                     progressBar.style.width = '100%';
                     
                     if (!response.ok) {
                         const errorData = await response.json();
+                        console.error('❌ Upload failed:', response.status, errorData);
                         throw new Error(errorData.message || 'Błąd uploadu');
                     }
                     
                     const result = await response.json();
+                    console.log('✅ Upload successful:', result);
                     
                     // Update UI
                     fileUrlInput.value = result.fileUrl;
@@ -3561,6 +3600,7 @@
                     this.showNotification('Plik został wgrany pomyślnie!', 'success');
                     
                 } catch (error) {
+                    console.error('💥 Error uploading file:', error);
                     progressDiv.classList.add('hidden');
                     this.showNotification('Błąd podczas wgrywania pliku: ' + error.message, 'error');
                 }
@@ -3581,10 +3621,43 @@
                 }
             }
 
+            // Check user permissions for admin actions
+            async checkUserPermissions() {
+                try {
+                    console.log('🔑 Checking user permissions...');
+                    const response = await fetch('/api/auth/me', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.user) {
+                        console.log('👤 Current user:', data.user.email, 'Role:', data.user.role);
+                        
+                        if (data.user.role !== 'admin') {
+                            console.warn('⚠️ User is not admin, showing permission message');
+                            const container = document.getElementById('users-list');
+                            container.innerHTML = `
+                                <div class="text-center py-8 text-amber-600">
+                                    <i class="ri-shield-line text-4xl mb-2"></i>
+                                    <p class="font-semibold">Brak uprawnień administratora</p>
+                                    <p class="text-sm text-gray-500 mb-4">Twoja rola: ${data.user.role}</p>
+                                    <p class="text-sm text-gray-500">Tylko administratorzy mogą zarządzać użytkownikami</p>
+                                </div>
+                            `;
+                            return false;
+                        }
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('❌ Error checking permissions:', error);
+                }
+                return false;
+            }
+
             // Users management
             async loadUsers() {
                 try {
+                    console.log('🔍 Loading users...');
                     const response = await fetch('/api/auth/users', { credentials: 'include' });
+                    console.log('📡 Users API response status:', response.status);
                     
                     if (response.status === 403) {
                         const container = document.getElementById('users-list');
@@ -3810,6 +3883,104 @@
             } catch (error) {
                 console.error('Error deleting user:', error);
                 window.adminPanel.showNotification('Błąd usuwania: ' + error.message, 'error');
+            }
+        }
+
+        // Test Material Upload function
+        window.testMaterialUpload = function() {
+            console.log('🧪 Testing Material Upload System...');
+            
+            // Check if modal elements exist
+            const modal = document.getElementById('material-modal');
+            const uploadBtn = document.querySelector('[data-action="upload-material-file"]');
+            const fileInput = document.getElementById('material-file-upload');
+            
+            console.log('🔍 Modal elements check:');
+            console.log('Modal:', modal);
+            console.log('Upload button:', uploadBtn);
+            console.log('File input:', fileInput);
+            
+            // Test opening modal
+            try {
+                console.log('📝 Opening material modal...');
+                window.adminPanel.showMaterialModal();
+                
+                setTimeout(() => {
+                    const modalAfter = document.getElementById('material-modal');
+                    const uploadBtnAfter = document.querySelector('[data-action="upload-material-file"]');
+                    const fileInputAfter = document.getElementById('material-file-upload');
+                    
+                    console.log('🔍 After modal open:');
+                    console.log('Modal visible:', !modalAfter?.classList.contains('hidden'));
+                    console.log('Upload button:', uploadBtnAfter);
+                    console.log('File input:', fileInputAfter);
+                    
+                    if (uploadBtnAfter) {
+                        console.log('✅ Upload system seems to be working');
+                        
+                        // Test API endpoint
+                        console.log('🧪 Testing upload API endpoint...');
+                        fetch('/api/materials/upload-file', {
+                            method: 'POST',
+                            credentials: 'include',
+                            body: new FormData() // Empty form to test endpoint existence
+                        })
+                        .then(response => {
+                            console.log('📡 Upload API response:', response.status);
+                            if (response.status === 400) {
+                                console.log('✅ API endpoint exists (400 = no file provided)');
+                                alert('✅ System uploadu działa!\n\nEndpoint API: ✅\nInterfejs: ✅\n\nMożesz teraz testować upload plików');
+                            } else {
+                                console.log('⚠️ Unexpected API response:', response.status);
+                                alert('⚠️ API endpoint odpowiada, ale z nieoczekiwanym statusem: ' + response.status);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('❌ API test failed:', error);
+                            alert('❌ Problem z API: ' + error.message);
+                        });
+                        
+                    } else {
+                        console.error('❌ Upload button not found after modal open');
+                        alert('❌ Problem z przyciskiem uploadu\n\nSprawdź console.log');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                console.error('💥 Error testing upload:', error);
+                alert('💥 Błąd testowania: ' + error.message);
+            }
+        }
+
+        // Test Users API function
+        window.testUsersAPI = async function() {
+            console.log('🧪 Testing Users API...');
+            
+            try {
+                // Test /api/auth/me first
+                console.log('1️⃣ Testing /api/auth/me...');
+                const meResponse = await fetch('/api/auth/me', { credentials: 'include' });
+                const meData = await meResponse.json();
+                console.log('👤 Me Response:', meResponse.status, meData);
+                
+                // Test /api/auth/users
+                console.log('2️⃣ Testing /api/auth/users...');
+                const usersResponse = await fetch('/api/auth/users', { credentials: 'include' });
+                console.log('👥 Users Response Status:', usersResponse.status);
+                
+                if (usersResponse.ok) {
+                    const usersData = await usersResponse.json();
+                    console.log('✅ Users Data:', usersData);
+                    alert(`✅ API działa!\n\nTwoja rola: ${meData.user?.role}\nZnaleziono ${usersData.users?.length || 0} użytkowników`);
+                } else {
+                    const errorData = await usersResponse.json();
+                    console.log('❌ Users Error:', errorData);
+                    alert(`❌ Błąd API: ${usersResponse.status}\n${errorData.message || 'Nieznany błąd'}\n\nTwoja rola: ${meData.user?.role}`);
+                }
+                
+            } catch (error) {
+                console.error('💥 Test Error:', error);
+                alert(`💥 Błąd testu: ${error.message}`);
             }
         }
 

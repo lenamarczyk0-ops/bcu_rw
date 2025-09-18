@@ -525,8 +525,8 @@ function openArticle(articleId) {
         return;
     }
     
-    // Navigate to article page
-    window.location.href = `/article.html?id=${encodeURIComponent(articleId)}`;
+    // Navigate to article page with clean URL
+    window.location.href = `/article/${encodeURIComponent(articleId)}`;
 }
 
 // Make function globally available

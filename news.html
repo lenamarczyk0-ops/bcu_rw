@@ -703,53 +703,15 @@
             gridEl.classList.remove('hidden');
         }
 
-        // Show full article on the same page
-        async function openArticle(articleId) {
+        // Redirect to dedicated article page
+        function openArticle(articleId) {
             if (!articleId) {
                 console.error('No article ID provided');
                 return;
             }
             
-            try {
-                // Try by ID first
-                let response = await fetch(`/api/news/id/${articleId}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                let data;
-                if (response.ok) {
-                    data = await response.json();
-                    if (data && data.success && data.news) {
-                        showFullArticle(data.news);
-                        return;
-                    }
-                }
-
-                // Fallback: try by slug
-                response = await fetch(`/api/news/${articleId}`, {
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                data = await response.json();
-                if (data && (data.article || data.news)) {
-                    showFullArticle(data.article || data.news);
-                } else {
-                    throw new Error('Article not found');
-                }
-            } catch (error) {
-                console.error('Error loading article:', error);
-                alert('Nie udało się załadować artykułu. Spróbuj ponownie.');
-            }
+            // Redirect to dedicated article page with clean URL
+            window.location.href = `/article/${encodeURIComponent(articleId)}`;
         }
 
         // Display full article

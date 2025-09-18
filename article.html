@@ -373,8 +373,16 @@
                         <!-- Treść artykułu będzie wstawiona tutaj -->
                     </div>
 
+                    <!-- Back to News Button -->
+                    <div class="mt-12 pt-8 border-t border-gray-200 text-center">
+                        <a href="/news" class="inline-flex items-center bg-secondary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Więcej aktualności
+                        </a>
+                    </div>
+
                     <!-- Mobile Share Buttons -->
-                    <div class="share-buttons lg:hidden mt-12 pt-8 border-t border-gray-200">
+                    <div class="share-buttons lg:hidden mt-8 pt-8 border-t border-gray-200">
                         <h3 class="text-lg font-semibold text-center mb-4">Udostępnij artykuł</h3>
                         <div class="flex justify-center space-x-4">
                             <button onclick="shareArticle('facebook')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
@@ -452,6 +460,13 @@
     <script>
         // Get article ID from URL
         function getArticleId() {
+            // Try to get ID from path parameter first (e.g. /article/123)
+            const pathParts = window.location.pathname.split('/');
+            if (pathParts[1] === 'article' && pathParts[2]) {
+                return pathParts[2];
+            }
+            
+            // Fallback to query parameter (e.g. /article.html?id=123)
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get('id') || urlParams.get('slug');
         }

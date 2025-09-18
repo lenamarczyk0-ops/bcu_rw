@@ -684,6 +684,28 @@ app.get('/news', (req, res) => {
   }
 });
 
+// Single article pages
+app.get('/article/:id', (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '../article.html');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error serving article page:', error);
+    res.status(500).send('Błąd serwera - strona artykułu niedostępna');
+  }
+});
+
+// Alternative article route with query parameter (for backward compatibility)
+app.get('/article.html', (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '../article.html');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error serving article page:', error);
+    res.status(500).send('Błąd serwera - strona artykułu niedostępna');
+  }
+});
+
 // Admin login page
 app.get('/admin-login', (req, res) => {
   try {
