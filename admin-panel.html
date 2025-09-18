@@ -1377,9 +1377,9 @@
                                     </div>
                                     ` : type === 'course' ? `
                                     <div class="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Czas trwania *</label>
-                                        <input type="text" name="duration" required placeholder="np. 3 miesiące" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Liczba tygodni *</label>
+                                            <input type="number" name="weeks" required min="1" placeholder="np. 4" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Liczba godzin *</label>
@@ -1933,8 +1933,8 @@
                                         <div class="flex-1">
                                             <p class="font-medium text-gray-900 mb-1">${course.title}</p>
                                             <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                                <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
-                                                <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                                <span><i class="ri-time-line mr-1"></i>${course.weeks || 0} tyg. / ${course.hours || 0}h</span>
+                                                <span><i class="ri-calendar-line mr-1"></i>${course.duration || 'Automatycznie generowany'}</span>
                                                 <span class="px-2 py-1 rounded-full text-xs font-medium ${
                                                     course.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                                 }">${course.isActive !== false ? 'Aktywny' : 'Nieaktywny'}</span>
@@ -2100,8 +2100,8 @@
                                         <div class="flex-1">
                                             <p class="font-medium text-gray-900 mb-1">${course.title}</p>
                                             <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                                <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
-                                                <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                                <span><i class="ri-time-line mr-1"></i>${course.weeks || 0} tyg. / ${course.hours || 0}h</span>
+                                                <span><i class="ri-calendar-line mr-1"></i>${course.duration || 'Automatycznie generowany'}</span>
                                                 <span class="px-2 py-1 rounded-full text-xs font-medium ${
                                                     course.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                                 }">${course.isActive !== false ? 'Aktywny' : 'Nieaktywny'}</span>

@@ -31,8 +31,14 @@ const courseSchema = new mongoose.Schema({
   },
   duration: {
     type: String,
-    required: true,
+    required: false,
     trim: true
+  },
+  weeks: {
+    type: Number,
+    required: true,
+    min: 1,
+    default: 1
   },
   targetGroup: {
     type: String,
@@ -88,11 +94,18 @@ const courseSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Generate slug before saving
+// Generate slug and duration before saving
 courseSchema.pre('save', function(next) {
   if (this.isModified('title')) {
     this.slug = slugify(this.title, { lower: true, strict: true });
   }
+  
+  // Auto-generate duration from weeks and hours if not provided
+  if (!this.duration && this.weeks && this.hours) {
+    const weeksText = this.weeks === 1 ? '1 tydzień' : `${this.weeks} tygodni`;
+    this.duration = `${weeksText} (${this.hours}h)`;
+  }
+  
   next();
 });
 
