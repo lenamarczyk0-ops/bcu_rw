@@ -170,7 +170,7 @@ router.post('/', requireAuth, [
   body('title').notEmpty().withMessage('Tytuł jest wymagany'),
   body('excerpt').notEmpty().withMessage('Opis jest wymagany'),
   body('contentHTML').notEmpty().withMessage('Treść jest wymagana'),
-  body('startDate').isISO8601().withMessage('Data rozpoczęcia jest wymagana'),
+  body('startDate').optional().isISO8601().withMessage('Data rozpoczęcia musi być prawidłową datą'),
   body('duration').notEmpty().withMessage('Czas trwania jest wymagany'),
   body('targetGroup').isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),

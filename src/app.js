@@ -334,7 +334,6 @@ app.post('/api/seed-courses', async (req, res) => {
         excerpt: 'Poznaj nowoczesne strategie marketingowe dla firm transportowych. Dowiedz się jak skutecznie promować usługi logistyczne i budować markę w branży TSL.',
         contentHTML: '<h2>Marketing firmy transportowej</h2><p>Ten kurs dotyczy nowoczesnych strategii marketingowych dedykowanych firmom transportowym. Poznasz techniki promocji usług logistycznych, budowania marki oraz skutecznego dotarcia do klientów w branży TSL.</p><h3>Program kursu:</h3><ul><li>Analiza rynku transportowego</li><li>Strategie marketingu cyfrowego</li><li>Budowanie relacji z klientami</li><li>Marketing usług logistycznych</li></ul>',
         imageUrl: './imgs/transport-logistics-concept.jpg',
-        startDate: new Date('2025-02-15'),
         duration: '40 godzin',
         targetGroup: 'uczniowie i studenci',
         hours: 15,
