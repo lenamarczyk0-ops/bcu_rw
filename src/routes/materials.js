@@ -608,7 +608,7 @@ router.post('/upload-file', requireAuth, requireInstructor, (req, res) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: 'bcu-spedycja/materials', // Organize in folders
-          resource_type: 'auto', // Auto-detect file type
+          resource_type: 'raw', // Use 'raw' for PDF and document files
           public_id: `material-${Date.now()}-${Math.round(Math.random() * 1E9)}`,
           use_filename: true,
           unique_filename: false
@@ -644,6 +644,58 @@ router.post('/upload-file', requireAuth, requireInstructor, (req, res) => {
       });
     }
   });
+});
+
+// Helper endpoint to fix Cloudinary URLs (change from 'image' to 'raw' resource type)
+router.post('/fix-cloudinary-urls', requireAuth, requireInstructor, async (req, res) => {
+  try {
+    // Only admins can run this operation
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Tylko administratorzy mogą wykonać tę operację' });
+    }
+
+    const materials = await Material.find({
+      fileUrl: { $regex: 'cloudinary.com.*image/upload' }
+    });
+
+    console.log(`Found ${materials.length} materials with image/upload URLs`);
+    
+    let fixed = 0;
+    const results = [];
+
+    for (const material of materials) {
+      const oldUrl = material.fileUrl;
+      
+      // Replace 'image/upload' with 'raw/upload' in Cloudinary URLs
+      if (oldUrl.includes('image/upload')) {
+        const newUrl = oldUrl.replace('image/upload', 'raw/upload');
+        
+        material.fileUrl = newUrl;
+        await material.save();
+        
+        fixed++;
+        results.push({
+          id: material._id,
+          title: material.title,
+          oldUrl: oldUrl,
+          newUrl: newUrl
+        });
+        
+        console.log(`Fixed: ${material.title} - ${oldUrl} -> ${newUrl}`);
+      }
+    }
+
+    res.json({
+      message: `Naprawiono ${fixed} URL-i materiałów`,
+      fixed: fixed,
+      total: materials.length,
+      results: results
+    });
+
+  } catch (error) {
+    console.error('Fix Cloudinary URLs error:', error);
+    res.status(500).json({ message: 'Błąd serwera', debug: error.message });
+  }
 });
 
 module.exports = router;
