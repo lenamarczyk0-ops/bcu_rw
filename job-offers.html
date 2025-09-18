@@ -140,10 +140,15 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Przycisk logowania -->
-                    <a href="/admin" class="hidden md:inline-block bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap">
-                        Panel Admin
-                    </a>
+                    <!-- Przyciski logowania i rejestracji -->
+                    <div class="hidden md:flex flex-col space-y-1">
+                        <a href="/admin" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap text-center">
+                            Zaloguj
+                        </a>
+                        <a href="/register.html" class="text-white hover:text-neutral transition-colors text-center text-sm">
+                            Rejestracja
+                        </a>
+                    </div>
                     <!-- Mobile menu button -->
                     <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne" aria-controls="mobile-drawer" aria-expanded="false">
                         <div class="w-6 h-6 flex items-center justify-center">

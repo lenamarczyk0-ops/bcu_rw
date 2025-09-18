@@ -68,6 +68,22 @@
                 <p class="text-xl text-gray-600">Pobierz dokumenty, prezentacje i materiały edukacyjne</p>
             </div>
 
+            <!-- Debug Panel -->
+            <div class="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <h3 class="text-sm font-medium text-yellow-800 mb-2">Debug Panel</h3>
+                <div class="flex space-x-2 flex-wrap gap-2">
+                    <button onclick="testAPI()" class="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600">
+                        Test API Connection
+                    </button>
+                    <button onclick="window.location.reload()" class="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600">
+                        Reload Page
+                    </button>
+                    <button onclick="console.log('Functions available:', {downloadMaterial: typeof window.downloadMaterial, testMaterialUrl: typeof window.testMaterialUrl})" class="px-3 py-1 bg-purple-500 text-white text-sm rounded hover:bg-purple-600">
+                        Check Functions
+                    </button>
+                </div>
+            </div>
+            
             <!-- Loading State -->
             <div id="materials-loading" class="text-center py-8">
                 <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-gray-500 bg-white">
@@ -173,41 +189,197 @@
                                 ${material.level ? `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">${material.level}</span>` : ''}
                             </div>
                             
-                            <button onclick="downloadMaterial('${material._id || material.id}')" class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition-colors font-medium">
-                                <i class="ri-download-line mr-2"></i>
-                                Pobierz
-                            </button>
+                            <div class="space-y-2">
+                                <button onclick="console.log('Download button clicked for:', '${material._id || material.id}'); downloadMaterial('${material._id || material.id}')" class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition-colors font-medium">
+                                    <i class="ri-download-line mr-2"></i>
+                                    Pobierz
+                                </button>
+                                <button onclick="console.log('Test button clicked for:', '${material._id || material.id}'); testMaterialUrl('${material._id || material.id}')" class="w-full bg-gray-500 text-white py-1 px-4 rounded text-sm hover:bg-gray-600 transition-colors">
+                                    <i class="ri-bug-line mr-1"></i>
+                                    Test URL
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        // Download material
-        async function downloadMaterial(materialId) {
+        // Download material - make it globally accessible
+        window.downloadMaterial = async function(materialId) {
             try {
+                console.log('Attempting to download material:', materialId);
+                
+                // First try the regular download endpoint
                 const response = await fetch(`/api/materials/download/${materialId}`, {
                     credentials: 'include'
                 });
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Download response:', data);
                     
-                    // Create download link
-                    const a = document.createElement('a');
-                    a.href = data.downloadUrl;
-                    a.download = data.fileName;
-                    a.target = '_blank';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    // Check if we have a valid URL
+                    if (!data.downloadUrl) {
+                        throw new Error('Brak URL do pobrania');
+                    }
+                    
+                    // Try to download using the provided URL
+                    try {
+                        const a = document.createElement('a');
+                        a.href = data.downloadUrl;
+                        a.download = data.fileName || 'material';
+                        a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        
+                        console.log('Download initiated successfully');
+                        showNotification('Pobieranie rozpoczęte...', 'success');
+                        
+                    } catch (linkError) {
+                        console.warn('Direct download failed, trying proxy method:', linkError);
+                        
+                        // Fallback to proxy method
+                        window.open(`/api/materials/proxy/${materialId}`, '_blank');
+                        showNotification('Próba pobierania przez serwer proxy...', 'info');
+                    }
+                    
                 } else {
                     const errorData = await response.json();
-                    throw new Error(errorData.message || 'Błąd pobierania pliku');
+                    console.error('Download API error:', errorData);
+                    
+                    // Try the proxy method as fallback
+                    console.log('Trying proxy method as fallback...');
+                    window.open(`/api/materials/proxy/${materialId}`, '_blank');
+                    showNotification('Próba pobierania przez alternatywną metodę...', 'info');
                 }
+                
             } catch (error) {
                 console.error('Download error:', error);
-                alert('Błąd pobierania pliku: ' + error.message);
+                showNotification('Błąd pobierania pliku: ' + error.message, 'error');
+            }
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white max-w-sm transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                type === 'warning' ? 'bg-yellow-500' :
+                'bg-blue-500'
+            }`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-${type === 'success' ? 'check' : type === 'error' ? 'error-warning' : 'information'}-line mr-2"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        // Test material URL - make it globally accessible
+        window.testMaterialUrl = async function(materialId) {
+            try {
+                console.log('Testing material URL:', materialId);
+                showNotification('Testowanie dostępności URL...', 'info');
+                
+                const response = await fetch(`/api/materials/test-url/${materialId}`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('URL test result:', data);
+                    
+                    // Show detailed information
+                    const message = `
+                        <div class="text-left">
+                            <strong>URL Test Result:</strong><br>
+                            <strong>Plik:</strong> ${data.title}<br>
+                            <strong>URL:</strong> ${data.fileUrl}<br>
+                            <strong>Dostępny:</strong> ${data.accessible ? '✅ TAK' : '❌ NIE'}<br>
+                            ${data.status ? `<strong>Status HTTP:</strong> ${data.status}<br>` : ''}
+                            ${data.error ? `<strong>Błąd:</strong> ${data.error}<br>` : ''}
+                            ${data.testSkipped ? `<strong>Test pominięty:</strong> ${data.testSkipped}<br>` : ''}
+                        </div>
+                    `;
+                    
+                    // Create a larger notification for detailed info
+                    const notification = document.createElement('div');
+                    notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md transition-all duration-300 ${
+                        data.accessible ? 'bg-green-500' : 'bg-red-500'
+                    } text-white`;
+                    
+                    notification.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="flex-1">
+                                ${message}
+                            </div>
+                            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200 flex-shrink-0">
+                                <i class="ri-close-line"></i>
+                            </button>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Auto remove after 10 seconds
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 10000);
+                    
+                } else {
+                    const errorData = await response.json();
+                    console.error('URL test error:', errorData);
+                    showNotification('Błąd testowania URL: ' + errorData.message, 'error');
+                }
+                
+            } catch (error) {
+                console.error('Test URL error:', error);
+                showNotification('Błąd testowania URL: ' + error.message, 'error');
+            }
+        }
+        
+        // Test API function
+        window.testAPI = async function() {
+            try {
+                console.log('Testing API connection...');
+                showNotification('Testing API connection...', 'info');
+                
+                const response = await fetch('/api/materials/public', {
+                    credentials: 'include'
+                });
+                
+                const data = await response.json();
+                console.log('API test result:', response.status, data);
+                
+                if (response.ok) {
+                    showNotification(`API działa! Znaleziono ${data.materials ? data.materials.length : 0} materiałów`, 'success');
+                } else {
+                    showNotification(`API błąd: ${data.message || 'Unknown error'}`, 'error');
+                }
+                
+            } catch (error) {
+                console.error('API test error:', error);
+                showNotification('Błąd połączenia z API: ' + error.message, 'error');
             }
         }
 
@@ -237,9 +409,17 @@
                         emptyEl.classList.remove('hidden');
                     } else {
                         // Show materials
+                        console.log('Loading materials:', materials.length, 'items');
+                        console.log('First material:', materials[0]);
                         gridEl.innerHTML = materials.map(createMaterialCard).join('');
                         loadingEl.classList.add('hidden');
                         gridEl.classList.remove('hidden');
+                        
+                        // Debug: Check if buttons are working
+                        setTimeout(() => {
+                            const buttons = gridEl.querySelectorAll('button');
+                            console.log('Found buttons:', buttons.length);
+                        }, 100);
                     }
                 } else {
                     throw new Error(data.message || 'Błąd ładowania materiałów');

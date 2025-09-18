@@ -185,18 +185,18 @@ async function showCourseModal(slug) {
                         </div>
                         
                         <div class="mb-4">
-                            <div class="grid grid-cols-2 gap-4 text-sm">
-                                <div>
-                                    <strong>Data rozpoczęcia:</strong><br>
-                                    ${new Date(course.startDate).toLocaleDateString('pl-PL')}
-                                </div>
+                            <div class="grid grid-cols-3 gap-4 text-sm">
                                 <div>
                                     <strong>Czas trwania:</strong><br>
-                                    ${course.duration}
+                                    ${course.weeks || 0} tygodni
                                 </div>
                                 <div>
-                                    <strong>Maks. uczestników:</strong><br>
-                                    ${course.maxParticipants}
+                                    <strong>Liczba godzin:</strong><br>
+                                    ${course.hours || 0}h
+                                </div>
+                                <div>
+                                    <strong>Max uczestników:</strong><br>
+                                    ${course.maxParticipants || 20}
                                 </div>
                                 <div>
                                     <strong>Cena:</strong><br>

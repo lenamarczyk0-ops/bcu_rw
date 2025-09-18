@@ -6,6 +6,15 @@ const Material = require('../models/Material');
 const Course = require('../models/Course');
 const { requireAuth, requireInstructor } = require('../auth/middleware');
 
+// For Node.js versions without built-in fetch
+let fetch;
+try {
+  fetch = globalThis.fetch || require('node-fetch');
+} catch (e) {
+  console.warn('Fetch not available, URL validation disabled');
+  fetch = null;
+}
+
 const router = express.Router();
 
 // Configure Cloudinary
@@ -40,14 +49,22 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Multer upload configuration for materials
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit for materials
-  },
-  fileFilter: fileFilter
-});
+// Multer upload configuration for materials - different limits based on user role
+const createUploadMiddleware = (maxSize) => {
+  return multer({
+    storage: storage,
+    limits: {
+      fileSize: maxSize
+    },
+    fileFilter: fileFilter
+  });
+};
+
+// Default upload for instructors (10MB)
+const upload = createUploadMiddleware(10 * 1024 * 1024);
+
+// Admin upload (20MB)
+const adminUpload = createUploadMiddleware(20 * 1024 * 1024);
 
 // Get all public materials (public)
 router.get('/public', async (req, res) => {
@@ -153,16 +170,148 @@ router.get('/download/:id', async (req, res) => {
       return res.status(404).json({ message: 'Materiał nie został znaleziony' });
     }
 
+    console.log('Downloading material:', {
+      id: material._id,
+      title: material.title,
+      fileUrl: material.fileUrl,
+      fileName: material.fileName
+    });
+
+    // Check if the URL is accessible
+    if (!material.fileUrl) {
+      return res.status(400).json({ message: 'Brak URL pliku' });
+    }
+
+    // If it's a Cloudinary URL, try to validate it (if fetch is available)
+    if (material.fileUrl.includes('cloudinary.com') && fetch) {
+      try {
+        // Test if the Cloudinary URL is accessible
+        const testResponse = await fetch(material.fileUrl, { method: 'HEAD' });
+        if (!testResponse.ok) {
+          console.error('Cloudinary URL not accessible:', material.fileUrl, 'Status:', testResponse.status);
+          return res.status(404).json({ 
+            message: 'Plik nie jest dostępny na serwerze',
+            debug: `Cloudinary status: ${testResponse.status}`
+          });
+        }
+      } catch (fetchError) {
+        console.error('Error testing Cloudinary URL:', fetchError);
+        // Don't fail completely, just log the error and continue
+        console.warn('Continuing with download despite validation error');
+      }
+    }
+
     // Increment download count
     await material.incrementDownload();
 
     res.json({ 
       downloadUrl: material.fileUrl,
-      fileName: material.fileName || material.title
+      fileName: material.fileName || material.title,
+      fileSize: material.fileSize,
+      contentType: material.fileUrl.includes('.pdf') ? 'application/pdf' : 'application/octet-stream'
     });
   } catch (error) {
     console.error('Download material error:', error);
-    res.status(500).json({ message: 'Błąd serwera' });
+    res.status(500).json({ message: 'Błąd serwera', debug: error.message });
+  }
+});
+
+// Alternative download route that proxies the file or redirects
+router.get('/proxy/:id', async (req, res) => {
+  try {
+    const material = await Material.findOne({ 
+      _id: req.params.id,
+      isPublic: true
+    });
+
+    if (!material) {
+      return res.status(404).json({ message: 'Materiał nie został znaleziony' });
+    }
+
+    if (!material.fileUrl) {
+      return res.status(400).json({ message: 'Brak URL pliku' });
+    }
+
+    console.log('Proxying material download:', {
+      id: material._id,
+      title: material.title,
+      fileUrl: material.fileUrl,
+      fileName: material.fileName
+    });
+
+    // Increment download count
+    await material.incrementDownload();
+
+    // For Cloudinary URLs, try direct redirect first (simpler and more reliable)
+    if (material.fileUrl.includes('cloudinary.com')) {
+      console.log('Redirecting to Cloudinary URL directly');
+      
+      // Set headers to force download
+      res.set({
+        'Content-Disposition': `attachment; filename="${material.fileName || material.title || 'material'}.pdf"`
+      });
+      
+      // Redirect to the Cloudinary URL
+      return res.redirect(302, material.fileUrl);
+    }
+
+    // For other URLs, also redirect
+    console.log('Redirecting to external URL');
+    res.redirect(302, material.fileUrl);
+
+  } catch (error) {
+    console.error('Proxy download error:', error);
+    res.status(500).json({ 
+      message: 'Błąd serwera', 
+      debug: error.message,
+      url: req.originalUrl
+    });
+  }
+});
+
+// Test endpoint to check if Cloudinary URL is accessible
+router.get('/test-url/:id', async (req, res) => {
+  try {
+    const material = await Material.findOne({ 
+      _id: req.params.id,
+      isPublic: true
+    });
+
+    if (!material) {
+      return res.status(404).json({ message: 'Materiał nie został znaleziony' });
+    }
+
+    const urlInfo = {
+      materialId: material._id,
+      title: material.title,
+      fileUrl: material.fileUrl,
+      fileName: material.fileName,
+      fileSize: material.fileSize,
+      isCloudinary: material.fileUrl.includes('cloudinary.com'),
+      downloadCount: material.downloadCount
+    };
+
+    // If fetch is available, test the URL
+    if (fetch && material.fileUrl.includes('cloudinary.com')) {
+      try {
+        const testResponse = await fetch(material.fileUrl, { method: 'HEAD' });
+        urlInfo.status = testResponse.status;
+        urlInfo.statusText = testResponse.statusText;
+        urlInfo.accessible = testResponse.ok;
+        urlInfo.headers = Object.fromEntries(testResponse.headers.entries());
+      } catch (fetchError) {
+        urlInfo.accessible = false;
+        urlInfo.error = fetchError.message;
+      }
+    } else {
+      urlInfo.testSkipped = 'Fetch not available or not Cloudinary URL';
+    }
+
+    res.json(urlInfo);
+
+  } catch (error) {
+    console.error('Test URL error:', error);
+    res.status(500).json({ message: 'Błąd serwera', debug: error.message });
   }
 });
 
@@ -403,14 +552,18 @@ router.get('/stats/overview', requireAuth, requireInstructor, async (req, res) =
 
 // Upload file for materials to Cloudinary
 router.post('/upload-file', requireAuth, requireInstructor, (req, res) => {
-  upload.single('file')(req, res, async (err) => {
+  // Choose upload middleware based on user role
+  const uploadMiddleware = req.user.role === 'admin' ? adminUpload : upload;
+  const maxSizeMB = req.user.role === 'admin' ? '20MB' : '10MB';
+  
+  uploadMiddleware.single('file')(req, res, async (err) => {
     if (err) {
       console.error('Multer error:', err);
       
       if (err.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({
           success: false,
-          message: 'Plik jest za duży. Maksymalny rozmiar to 10MB.'
+          message: `Plik jest za duży. Maksymalny rozmiar to ${maxSizeMB}.`
         });
       }
       

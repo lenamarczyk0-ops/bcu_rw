@@ -483,7 +483,6 @@
                         <a href="/news" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do aktualności">Aktualności</a>
                         <a href="#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
                         <a href="#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
-                        <a href="/register.html" class="text-white hover:text-neutral transition-colors" aria-label="Zarejestruj się">Rejestracja</a>
                     </nav>
                     <!-- Ikona materiałów -->
                     <div class="hidden md:flex items-center">
@@ -546,9 +545,14 @@
                             </div>
                         </div>
                     </div>
-                    <a href="/admin" class="hidden md:inline-block bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap">
-                        Panel Admin
-                    </a>
+                    <div class="hidden md:flex flex-col space-y-1">
+                        <a href="/admin" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap text-center">
+                            Zaloguj
+                        </a>
+                        <a href="/register.html" class="text-white hover:text-neutral transition-colors text-center text-sm">
+                            Rejestracja
+                        </a>
+                    </div>
                     <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne" aria-controls="mobile-drawer" aria-expanded="false">
                         <div class="w-6 h-6 flex items-center justify-center">
                             <i class="ri-menu-line"></i>
@@ -576,9 +580,12 @@
                 <a href="#o-nas" class="text-gray-800 hover:text-secondary">O nas</a>
                 <a href="#kontakt" class="text-gray-800 hover:text-secondary">Kontakt</a>
             </nav>
-            <div class="mt-auto pt-6">
+            <div class="mt-auto pt-6 space-y-3">
                 <a href="/admin" class="block w-full text-center bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-3 !rounded-button hover:from-red-700 hover:to-red-600 transition-all">
-                    Panel Admin
+                    Zaloguj
+                </a>
+                <a href="/register.html" class="block w-full text-center text-gray-800 hover:text-secondary border border-gray-300 px-4 py-3 rounded-lg transition-all">
+                    Rejestracja
                 </a>
             </div>
         </aside>
@@ -2122,28 +2129,29 @@
                         
                         <!-- Course details -->
                         <div class="mb-3 text-xs bg-black/20 rounded-lg p-2.5 backdrop-blur-sm">
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <div class="flex items-start ${gradient.highlight}">
-                                    <i class="ri-calendar-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
-                                    <div class="min-w-0">
-                                        <div class="text-xs opacity-75 mb-0.5">Data rozpoczęcia</div>
-                                        <div class="font-semibold text-xs leading-tight">${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Do ustalenia'}</div>
-                                    </div>
-                                </div>
+                            <div class="grid grid-cols-3 gap-2.5">
                                 <div class="flex items-start ${gradient.highlight}">
                                     <i class="ri-time-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
                                     <div class="min-w-0">
                                         <div class="text-xs opacity-75 mb-0.5">Czas trwania</div>
-                                        <div class="font-semibold text-xs leading-tight">${course.duration || 'Do ustalenia'}</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.weeks || 0} tyg.</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-timer-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Liczba godzin</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.hours || 0}h</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-group-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Max</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.maxParticipants || 20}</div>
                                     </div>
                                 </div>
                             </div>
-                            ${course.maxParticipants ? `
-                            <div class="flex items-center justify-center ${gradient.highlight} pt-2 mt-2 border-t border-white/10">
-                                <i class="ri-group-line mr-1.5 text-yellow-400 text-sm"></i>
-                                <span class="font-semibold text-xs">Max ${course.maxParticipants} uczestników</span>
-                            </div>
-                            ` : ''}
                         </div>
                         
                         <!-- CTA Buttons -->

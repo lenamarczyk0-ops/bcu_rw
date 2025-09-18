@@ -1155,10 +1155,13 @@
                                       course.status === 'published' ? 'Opublikowany' : 
                                       course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
                                 </span>
-                                <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800">
+                                <button data-action="preview-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Podgląd">
+                                    <i class="ri-eye-line"></i>
+                                </button>
+                                <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
                                     <i class="ri-edit-line"></i>
                                 </button>
-                                <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800">
+                                <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800" title="Usuń">
                                     <i class="ri-delete-bin-line"></i>
                                 </button>
                             </div>
@@ -1949,10 +1952,13 @@
                                             </div>
                                         </div>
                                         <div class="flex space-x-1">
-                                            <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800">
+                                            <button data-action="preview-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Podgląd">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
+                                            <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
                                                 <i class="ri-edit-line"></i>
                                             </button>
-                                            <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800">
+                                            <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800" title="Usuń">
                                                 <i class="ri-delete-bin-line"></i>
                                             </button>
                                         </div>
@@ -2038,6 +2044,9 @@
                                     ${course.status === 'published' ? 'Opublikowany' :
                                       course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
                                 </span>
+                                <button data-action="preview-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Podgląd">
+                                    <i class="ri-eye-line"></i>
+                                </button>
                                 <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Edytuj">
                                     <i class="ri-edit-line"></i>
                                 </button>
@@ -2116,6 +2125,9 @@
                                             </div>
                                         </div>
                                         <div class="flex items-center space-x-2 ml-4">
+                                            <button data-action="preview-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800 text-xs" title="Podgląd">
+                                                <i class="ri-eye-line"></i>
+                                            </button>
                                             <button data-action="edit-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800 text-xs" title="Edytuj">
                                                 <i class="ri-edit-line"></i>
                                             </button>
@@ -2892,11 +2904,249 @@
                     
                     if (response.ok && data.material) {
                         const material = data.material;
-                        alert(`Materiał: ${material.title}\nTyp: ${this.getTypeLabel(material.type)}\nTemat: ${material.topic}\nPoziom: ${this.getLevelLabel(material.level)}\nOpis: ${material.description || 'Brak opisu'}\nURL: ${material.fileUrl}`);
+                        this.showMaterialPreviewModal(material);
                     }
                 } catch (error) {
                     this.showNotification('Błąd ładowania materiału: ' + error.message, 'error');
                 }
+            }
+
+            showMaterialPreviewModal(material) {
+                // Remove existing modal
+                const existingModal = document.getElementById('preview-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                const modal = document.createElement('div');
+                modal.id = 'preview-modal';
+                modal.className = 'modal show';
+                
+                modal.innerHTML = `
+                    <div class="modal-content w-full max-w-3xl mx-4">
+                        <div class="bg-white rounded-lg shadow-xl">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h2 class="text-xl font-bold text-gray-900 mb-2">${material.title}</h2>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600">
+                                            <span><i class="ri-bookmark-line mr-1"></i>Typ: ${this.getMaterialTypeLabel(material.type)}</span>
+                                            <span><i class="ri-tag-line mr-1"></i>Temat: ${material.topic}</span>
+                                            <span><i class="ri-bar-chart-line mr-1"></i>Poziom: ${this.getMaterialLevelLabel(material.level)}</span>
+                                        </div>
+                                    </div>
+                                    <button data-action="close-preview" class="text-gray-500 hover:text-gray-700 text-2xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition-colors">&times;</button>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                ${material.description ? `
+                                    <div class="mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Opis materiału</h3>
+                                        <div class="prose max-w-none text-gray-700">${material.description}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <strong class="text-gray-900">URL pliku:</strong>
+                                        <p class="text-gray-600 break-all">${material.fileUrl}</p>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-900">Status:</strong>
+                                        <span class="inline-block px-2 py-1 rounded-full text-xs font-medium ml-2 ${
+                                            material.isPublic ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                                        }">
+                                            ${material.isPublic ? 'Publiczny' : 'Prywatny'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-900">Liczba pobrań:</strong>
+                                        <p class="text-gray-600">${material.downloadCount || 0}</p>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-900">Data utworzenia:</strong>
+                                        <p class="text-gray-600">${new Date(material.createdAt).toLocaleDateString('pl-PL')}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 border-t border-gray-200 flex justify-end space-x-4">
+                                <button data-action="download-preview" data-id="${material._id}" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                    <i class="ri-download-line mr-2"></i>
+                                    Pobierz plik
+                                </button>
+                                <button data-action="close-preview" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                                    Zamknij
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Add event listeners
+                modal.querySelectorAll('[data-action="close-preview"]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        modal.remove();
+                    });
+                });
+                
+                const downloadBtn = modal.querySelector('[data-action="download-preview"]');
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.downloadMaterial(id);
+                        modal.remove();
+                    });
+                }
+                
+                // Close on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            async previewCourse(id) {
+                try {
+                    const response = await fetch(`/api/courses/${id}`, { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok && data.course) {
+                        const course = data.course;
+                        this.showCoursePreviewModal(course);
+                    }
+                } catch (error) {
+                    this.showNotification('Błąd ładowania kursu: ' + error.message, 'error');
+                }
+            }
+
+            showCoursePreviewModal(course) {
+                // Remove existing modal
+                const existingModal = document.getElementById('preview-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                const modal = document.createElement('div');
+                modal.id = 'preview-modal';
+                modal.className = 'modal show';
+                
+                modal.innerHTML = `
+                    <div class="modal-content w-full max-w-4xl mx-4">
+                        <div class="bg-white rounded-lg shadow-xl">
+                            <div class="p-6 border-b border-gray-200">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-gray-900 mb-2">${course.title}</h2>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                                            <span><i class="ri-time-line mr-1"></i>Czas trwania: ${course.duration || 'Brak informacji'}</span>
+                                            <span><i class="ri-calendar-line mr-1"></i>Tygodni: ${course.weeks || 0}</span>
+                                            <span><i class="ri-timer-line mr-1"></i>Godzin: ${course.hours || 0}</span>
+                                            <span><i class="ri-group-line mr-1"></i>Grupa: ${course.targetGroup || 'dorośli'}</span>
+                                            <span><i class="ri-user-line mr-1"></i>Max: ${course.maxParticipants || 20}</span>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                                course.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                            }">
+                                                ${course.isActive ? 'Aktywny' : 'Nieaktywny'}
+                                            </span>
+                                            <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                                course.isPaid ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'
+                                            }">
+                                                ${course.isPaid ? 'Płatny' : 'Bezpłatny'}
+                                            </span>
+                                            ${course.isPaid && course.price > 0 ? `<span class="text-xs text-gray-600">${course.price} PLN</span>` : ''}
+                                            <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
+                                                course.status === 'published' ? 'bg-green-100 text-green-800' :
+                                                course.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
+                                                'bg-gray-100 text-gray-800'
+                                            }">
+                                                ${course.status === 'published' ? 'Opublikowany' :
+                                                  course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button data-action="close-preview" class="text-gray-500 hover:text-gray-700 text-2xl hover:bg-gray-100 rounded-full w-8 h-8 flex items-center justify-center transition-colors">&times;</button>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6">
+                                ${course.excerpt ? `
+                                    <div class="mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Krótki opis</h3>
+                                        <p class="text-gray-700">${course.excerpt}</p>
+                                    </div>
+                                ` : ''}
+                                
+                                ${course.contentHTML ? `
+                                    <div class="mb-4">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-3">Program kursu</h3>
+                                        <div class="prose max-w-none text-gray-700">${course.contentHTML}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <strong class="text-gray-900">Autor:</strong>
+                                        <p class="text-gray-600">${course.author ? course.author.firstName + ' ' + course.author.lastName : 'Brak autora'}</p>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-900">Slug URL:</strong>
+                                        <p class="text-gray-600">${course.slug || 'Automatycznie generowany'}</p>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-900">Data utworzenia:</strong>
+                                        <p class="text-gray-600">${new Date(course.createdAt).toLocaleDateString('pl-PL')}</p>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-900">Ostatnia aktualizacja:</strong>
+                                        <p class="text-gray-600">${new Date(course.updatedAt).toLocaleDateString('pl-PL')}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-6 border-t border-gray-200 flex justify-end space-x-4">
+                                <button data-action="edit-preview" data-id="${course._id}" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                                    <i class="ri-edit-line mr-2"></i>
+                                    Edytuj kurs
+                                </button>
+                                <button data-action="close-preview" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">
+                                    Zamknij
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Add event listeners
+                modal.querySelectorAll('[data-action="close-preview"]').forEach(button => {
+                    button.addEventListener('click', () => {
+                        modal.remove();
+                    });
+                });
+                
+                const editBtn = modal.querySelector('[data-action="edit-preview"]');
+                if (editBtn) {
+                    editBtn.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.editCourse(id);
+                        modal.remove();
+                    });
+                }
+                
+                // Close on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
             }
 
             async downloadMaterial(id) {
@@ -3096,6 +3346,13 @@
                     button.addEventListener('click', (e) => {
                         const id = e.currentTarget.dataset.id;
                         this.previewMaterial(id);
+                    });
+                });
+                
+                document.querySelectorAll('[data-action="preview-course"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        this.previewCourse(id);
                     });
                 });
                 
