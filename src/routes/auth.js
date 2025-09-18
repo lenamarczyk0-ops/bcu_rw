@@ -306,5 +306,44 @@ router.delete('/users/:id', requireAdmin, async (req, res) => {
   }
 });
 
+// Admin: Promote user to admin (emergency endpoint)
+router.post('/promote-admin', requireAuth, async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ message: 'Email jest wymagany' });
+    }
+
+    // Only allow if there are no admin users
+    const adminCount = await User.countDocuments({ role: 'admin' });
+    if (adminCount > 0) {
+      return res.status(403).json({ message: 'Administrator już istnieje w systemie' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'Użytkownik nie został znaleziony' });
+    }
+
+    user.role = 'admin';
+    user.isActive = true;
+    user.isVerified = true;
+    await user.save();
+
+    res.json({ 
+      message: 'Użytkownik został awansowany na administratora',
+      user: { 
+        _id: user._id, 
+        email: user.email, 
+        role: user.role 
+      }
+    });
+  } catch (error) {
+    console.error('Promote admin error:', error);
+    res.status(500).json({ message: 'Błąd serwera' });
+  }
+});
+
 module.exports = router;
 
