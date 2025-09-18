@@ -336,6 +336,8 @@ app.post('/api/seed-courses', async (req, res) => {
         imageUrl: './imgs/transport-logistics-concept.jpg',
         startDate: new Date('2025-02-15'),
         duration: '40 godzin',
+        targetGroup: 'uczniowie i studenci',
+        hours: 15,
         maxParticipants: 25,
         price: 1500,
         isPaid: true,

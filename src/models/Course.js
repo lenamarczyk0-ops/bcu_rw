@@ -34,6 +34,18 @@ const courseSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  targetGroup: {
+    type: String,
+    required: true,
+    enum: ['uczniowie i studenci', 'nauczyciele', 'dorośli'],
+    default: 'dorośli'
+  },
+  hours: {
+    type: Number,
+    required: true,
+    min: 1,
+    default: 30
+  },
   maxParticipants: {
     type: Number,
     default: 20

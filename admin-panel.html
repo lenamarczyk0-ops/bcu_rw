@@ -1127,6 +1127,8 @@
                                 <div class="flex items-center space-x-4 text-sm text-gray-500">
                                     <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
                                     <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                    <span><i class="ri-group-line mr-1"></i>${course.targetGroup || 'dorośli'}</span>
+                                    <span><i class="ri-timer-line mr-1"></i>${course.hours || 30}h</span>
                                 </div>
                                 <div class="flex items-center space-x-2 mt-2">
                                     <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
@@ -1331,6 +1333,18 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Czas trwania *</label>
                                         <input type="text" name="duration" required placeholder="np. 3 miesiące" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Grupa docelowa *</label>
+                                        <select name="targetGroup" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="uczniowie i studenci">Uczniowie i studenci</option>
+                                            <option value="nauczyciele">Nauczyciele</option>
+                                            <option value="dorośli" selected>Dorośli</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Liczba godzin *</label>
+                                        <input type="number" name="hours" required min="1" placeholder="np. 30" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Status kursu</label>
@@ -1912,6 +1926,8 @@
                                 <div class="flex items-center space-x-4 text-sm text-gray-500">
                                     <span><i class="ri-calendar-line mr-1"></i>Start: ${course.startDate ? new Date(course.startDate).toLocaleDateString('pl-PL') : 'Brak daty'}</span>
                                     <span><i class="ri-time-line mr-1"></i>${course.duration || 'Brak informacji'}</span>
+                                    <span><i class="ri-group-line mr-1"></i>${course.targetGroup || 'dorośli'}</span>
+                                    <span><i class="ri-timer-line mr-1"></i>${course.hours || 30}h</span>
                                 </div>
                                 <div class="flex items-center space-x-2 mt-2">
                                     <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
@@ -2272,11 +2288,8 @@
                                             <div class="flex-1">
                                                 <h5 class="font-medium text-gray-900 mb-1">${app.firstName} ${app.lastName}</h5>
                                                 <p class="text-sm text-gray-600 mb-2">${app.email} • ${app.phone}</p>
-                                                ${app.company ? `<p class="text-xs text-gray-500 mb-1">Firma: ${app.company}</p>` : ''}
-                                                ${app.position ? `<p class="text-xs text-gray-500 mb-1">Stanowisko: ${app.position}</p>` : ''}
                                                 <div class="flex items-center space-x-4 text-xs text-gray-500">
                                                     <span><i class="ri-calendar-line mr-1"></i>${new Date(app.createdAt).toLocaleDateString('pl-PL')}</span>
-                                                    <span><i class="ri-user-line mr-1"></i>${app.experience}</span>
                                                 </div>
                                             </div>
                                             <div class="flex items-center space-x-2 ml-4">
@@ -2348,13 +2361,6 @@
                     'waiting': 'Oczekuje'
                 };
 
-                const experienceLabels = {
-                    'none': 'Brak doświadczenia',
-                    'beginner': 'Początkujący',
-                    'intermediate': 'Średnio zaawansowany',
-                    'advanced': 'Zaawansowany'
-                };
-
                 // Generate application details HTML
                 detailsContainer.innerHTML = `
                     <!-- Course Information Section - First -->
@@ -2381,18 +2387,6 @@
                             <div class="print-field-label">Telefon:</div>
                             <div class="print-field-value">${application.phone || 'Brak'}</div>
                         </div>
-                        ${application.company ? `
-                        <div class="print-field">
-                            <div class="print-field-label">Firma:</div>
-                            <div class="print-field-value">${application.company}</div>
-                        </div>
-                        ` : ''}
-                        ${application.position ? `
-                        <div class="print-field">
-                            <div class="print-field-label">Stanowisko:</div>
-                            <div class="print-field-value">${application.position}</div>
-                        </div>
-                        ` : ''}
                     </div>
 
                     <!-- Basic Information Section - Third -->
@@ -2407,10 +2401,6 @@
                                 hour: '2-digit',
                                 minute: '2-digit'
                             })}</div>
-                        </div>
-                        <div class="print-field">
-                            <div class="print-field-label">Poziom doświadczenia:</div>
-                            <div class="print-field-value">${experienceLabels[application.experience] || application.experience || 'Brak'}</div>
                         </div>
                         ${application.reviewedAt ? `
                         <div class="print-field">

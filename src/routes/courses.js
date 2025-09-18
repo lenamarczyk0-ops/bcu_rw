@@ -172,6 +172,8 @@ router.post('/', requireAuth, [
   body('contentHTML').notEmpty().withMessage('Treść jest wymagana'),
   body('startDate').isISO8601().withMessage('Data rozpoczęcia jest wymagana'),
   body('duration').notEmpty().withMessage('Czas trwania jest wymagany'),
+  body('targetGroup').isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
+  body('hours').isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
   body('isPaid').optional().isBoolean(),
   body('isActive').optional().isBoolean(),
   body('price').optional().isFloat({ min: 0 })
@@ -216,6 +218,8 @@ router.put('/:id', requireAuth, [
   body('contentHTML').optional().notEmpty().withMessage('Treść nie może być pusta'),
   body('startDate').optional().isISO8601().withMessage('Nieprawidłowa data rozpoczęcia'),
   body('duration').optional().notEmpty().withMessage('Czas trwania nie może być pusty'),
+  body('targetGroup').optional().isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
+  body('hours').optional().isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
   body('isActive').optional().isBoolean().withMessage('isActive musi być boolean'),
   body('isPaid').optional().isBoolean().withMessage('isPaid musi być boolean')
 ], async (req, res) => {

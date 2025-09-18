@@ -271,26 +271,6 @@ window.submitCourseApplication = function(courseId, courseTitle) {
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Firma</label>
-                            <input type="text" name="company" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Stanowisko</label>
-                            <input type="text" name="position" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Doświadczenie</label>
-                            <select name="experience" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                                <option value="none">Brak doświadczenia</option>
-                                <option value="beginner">Początkujący</option>
-                                <option value="intermediate">Średniozaawansowany</option>
-                                <option value="advanced">Zaawansowany</option>
-                            </select>
-                        </div>
-                        
-                        <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Wiadomość (opcjonalnie)</label>
                             <textarea name="motivation" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary"></textarea>
                         </div>
