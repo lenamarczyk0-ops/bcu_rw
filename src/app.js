@@ -706,6 +706,17 @@ app.get('/article.html', (req, res) => {
   }
 });
 
+// Test page for articles system
+app.get('/test-articles', (req, res) => {
+  try {
+    const filePath = path.join(__dirname, '../test-articles.html');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error serving test articles page:', error);
+    res.status(500).send('Błąd serwera - strona testowa niedostępna');
+  }
+});
+
 // Admin login page
 app.get('/admin-login', (req, res) => {
   try {

@@ -519,14 +519,22 @@ async function loadNews() {
 
 // Open article in dedicated page
 function openArticle(articleId) {
+    console.log('🔍 Opening article:', articleId);
+    
     if (!articleId) {
-        console.error('No article ID provided');
-        showNotification('Błąd: Brak identyfikatora artykułu', 'error');
+        console.error('❌ No article ID provided');
+        if (typeof showNotification === 'function') {
+            showNotification('Błąd: Brak identyfikatora artykułu', 'error');
+        } else {
+            alert('Błąd: Brak identyfikatora artykułu');
+        }
         return;
     }
     
     // Navigate to article page with clean URL
-    window.location.href = `/article/${encodeURIComponent(articleId)}`;
+    const articleUrl = `/article/${encodeURIComponent(articleId)}`;
+    console.log('🌐 Redirecting to:', articleUrl);
+    window.location.href = articleUrl;
 }
 
 // Make function globally available

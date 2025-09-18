@@ -460,27 +460,38 @@
     <script>
         // Get article ID from URL
         function getArticleId() {
+            console.log('🔍 Getting article ID from URL:', window.location.href);
+            
             // Try to get ID from path parameter first (e.g. /article/123)
             const pathParts = window.location.pathname.split('/');
+            console.log('📍 Path parts:', pathParts);
+            
             if (pathParts[1] === 'article' && pathParts[2]) {
+                console.log('✅ Found ID in path:', pathParts[2]);
                 return pathParts[2];
             }
             
             // Fallback to query parameter (e.g. /article.html?id=123)
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id') || urlParams.get('slug');
+            const queryId = urlParams.get('id') || urlParams.get('slug');
+            console.log('🔄 Fallback to query parameter:', queryId);
+            
+            return queryId;
         }
 
         // Load article content
         async function loadArticle() {
             const articleId = getArticleId();
+            console.log('📰 Loading article with ID:', articleId);
             
             if (!articleId) {
+                console.error('❌ No article ID found');
                 showError();
                 return;
             }
 
             try {
+                console.log('🌐 Fetching article from API...');
                 const response = await fetch(`/api/news/id/${articleId}`, {
                     headers: {
                         'Accept': 'application/json',
@@ -488,19 +499,26 @@
                     }
                 });
 
+                console.log('📡 API Response:', response.status, response.statusText);
+
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                    const errorText = await response.text();
+                    console.error('❌ API Error Response:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
                 }
 
                 const data = await response.json();
+                console.log('📄 Article data received:', data);
                 
                 if (data.success && data.news) {
+                    console.log('✅ Displaying article:', data.news.title);
                     displayArticle(data.news);
                 } else {
+                    console.error('❌ Invalid response format:', data);
                     throw new Error('Article not found');
                 }
             } catch (error) {
-                console.error('Error loading article:', error);
+                console.error('💥 Error loading article:', error);
                 showError();
             }
         }
