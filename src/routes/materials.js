@@ -1,10 +1,53 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 const Material = require('../models/Material');
 const Course = require('../models/Course');
 const { requireAuth, requireInstructor } = require('../auth/middleware');
 
 const router = express.Router();
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Multer configuration for memory storage (Cloudinary upload)
+const storage = multer.memoryStorage();
+
+// File filter - various document types
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/zip',
+    'application/x-rar-compressed',
+    'text/plain'
+  ];
+  
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Nieobsługiwany typ pliku'), false);
+  }
+};
+
+// Multer upload configuration for materials
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit for materials
+  },
+  fileFilter: fileFilter
+});
 
 // Get all public materials (public)
 router.get('/public', async (req, res) => {
@@ -327,6 +370,98 @@ router.get('/stats/overview', requireAuth, requireInstructor, async (req, res) =
     console.error('Get material stats error:', error);
     res.status(500).json({ message: 'Błąd serwera' });
   }
+});
+
+// Upload file for materials to Cloudinary
+router.post('/upload-file', requireAuth, requireInstructor, (req, res) => {
+  upload.single('file')(req, res, async (err) => {
+    if (err) {
+      console.error('Multer error:', err);
+      
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          success: false,
+          message: 'Plik jest za duży. Maksymalny rozmiar to 10MB.'
+        });
+      }
+      
+      if (err.message === 'Nieobsługiwany typ pliku') {
+        return res.status(400).json({
+          success: false,
+          message: 'Nieobsługiwany typ pliku. Obsługiwane formaty: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP, RAR, TXT'
+        });
+      }
+      
+      return res.status(400).json({
+        success: false,
+        message: 'Błąd przesyłania pliku: ' + err.message
+      });
+    }
+    
+    if (!req.file) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Nie wybrano pliku' 
+      });
+    }
+
+    try {
+      // Check if Cloudinary is configured
+      if (!process.env.CLOUDINARY_CLOUD_NAME) {
+        console.warn('Cloudinary not configured, falling back to local storage');
+        
+        // Fallback to local storage if Cloudinary not configured
+        const fileUrl = `/materials/uploads/material-${Date.now()}-${Math.round(Math.random() * 1E9)}.${req.file.originalname.split('.').pop()}`;
+        
+        return res.json({
+          success: true,
+          message: 'Plik został przesłany (lokalnie)',
+          fileUrl: fileUrl,
+          fileName: req.file.originalname,
+          fileSize: req.file.size
+        });
+      }
+
+      // Upload to Cloudinary
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'bcu-spedycja/materials', // Organize in folders
+          resource_type: 'auto', // Auto-detect file type
+          public_id: `material-${Date.now()}-${Math.round(Math.random() * 1E9)}`,
+          use_filename: true,
+          unique_filename: false
+        },
+        (error, result) => {
+          if (error) {
+            console.error('Cloudinary upload error:', error);
+            return res.status(500).json({
+              success: false,
+              message: 'Błąd przesyłania do Cloudinary: ' + error.message
+            });
+          }
+
+          res.json({
+            success: true,
+            message: 'Plik został pomyślnie przesłany',
+            fileUrl: result.secure_url,
+            fileName: req.file.originalname,
+            fileSize: req.file.size,
+            cloudinaryId: result.public_id
+          });
+        }
+      );
+
+      // Pipe the buffer to Cloudinary
+      uploadStream.end(req.file.buffer);
+
+    } catch (error) {
+      console.error('Upload error:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Błąd serwera podczas przesyłania pliku'
+      });
+    }
+  });
 });
 
 module.exports = router;

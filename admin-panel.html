@@ -1325,6 +1325,56 @@
                                             <p class="text-xs text-gray-500">Maksymalny rozmiar: 5MB. Obsługiwane formaty: JPG, PNG, GIF</p>
                                         </div>
                                     </div>
+                                    ` : type === 'material' ? `
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Typ materiału *</label>
+                                        <select name="type" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="document">Dokument</option>
+                                            <option value="video">Film</option>
+                                            <option value="presentation">Prezentacja</option>
+                                            <option value="exercise">Ćwiczenie</option>
+                                            <option value="test">Test</option>
+                                            <option value="link">Link</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Temat *</label>
+                                        <input type="text" name="topic" required placeholder="np. Logistyka, Transport" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Poziom trudności *</label>
+                                        <select name="level" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="beginner">Początkujący</option>
+                                            <option value="intermediate">Średniozaawansowany</option>
+                                            <option value="advanced">Zaawansowany</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">URL pliku *</label>
+                                        <div class="space-y-3">
+                                            <input type="url" name="fileUrl" required placeholder="https://example.com/file.pdf" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <div class="flex space-x-3">
+                                                <input type="file" id="material-file-upload" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.zip,.rar" class="hidden">
+                                                <button type="button" data-action="upload-material-file" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                                    <i class="ri-upload-2-line mr-2"></i>
+                                                    Wgraj plik
+                                                </button>
+                                            </div>
+                                            <div id="material-upload-progress" class="hidden">
+                                                <div class="bg-gray-200 rounded-full h-2">
+                                                    <div class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                                </div>
+                                                <p class="text-sm text-gray-600 mt-1">Przesyłanie pliku...</p>
+                                            </div>
+                                            <p class="text-xs text-gray-500">Możesz podać bezpośredni URL do pliku lub wgrać plik z komputera</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <label class="flex items-center">
+                                            <input type="checkbox" name="isPublic" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
+                                            <span class="ml-2 text-sm text-gray-700">Materiał publiczny</span>
+                                        </label>
+                                    </div>
                                     ` : type === 'course' ? `
                                     <div class="grid grid-cols-2 gap-4">
                                     <div>
@@ -1388,6 +1438,12 @@
                                     `}
                                 </div>
                                 
+                                ${type === 'material' ? `
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Opis</label>
+                                    <textarea name="description" rows="4" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Opcjonalny opis materiału..."></textarea>
+                                </div>
+                                ` : `
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Opis *</label>
                                     <div class="border border-gray-300 rounded-md overflow-hidden">
@@ -1423,6 +1479,7 @@
                                         <textarea name="contentHTML" rows="8" required class="w-full px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary border-0 resize-none" placeholder="Pełna treść..."></textarea>
                                     </div>
                                 </div>
+                                `}
                                 
                                 <div class="flex justify-end space-x-4">
                                     <button type="button" data-action="close-modal" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
@@ -1478,6 +1535,22 @@
                     }
                 }
                 
+                // Add event listeners for file upload (materials only)
+                if (type === 'material') {
+                    const uploadBtn = modal.querySelector('[data-action="upload-material-file"]');
+                    const fileInput = modal.querySelector('#material-file-upload');
+                    
+                    if (uploadBtn && fileInput) {
+                        uploadBtn.addEventListener('click', () => {
+                            fileInput.click();
+                        });
+                        
+                        fileInput.addEventListener('change', (e) => {
+                            this.handleMaterialFileUpload(e.target.files[0]);
+                        });
+                    }
+                }
+                
                 // Bind form submission
                 document.getElementById(`${type}-form`).addEventListener('submit', (e) => {
                     e.preventDefault();
@@ -1516,13 +1589,15 @@
                         response = await fetch(`/api/news/id/${id}`, { credentials: 'include' });
                     } else if (type === 'course') {
                         response = await fetch(`/api/courses/id/${id}`, { credentials: 'include' });
+                    } else if (type === 'material') {
+                        response = await fetch(`/api/materials/${id}`, { credentials: 'include' });
                     } else {
                         response = await fetch(`/api/job-offers/id/${id}`, { credentials: 'include' });
                     }
                     
                     const data = await response.json();
                     if (response.ok) {
-                        const item = data[type] || data.course || data.jobOffer || data.article || data.news;
+                        const item = data[type] || data.course || data.jobOffer || data.article || data.news || data.material;
                         const form = document.getElementById(`${type}-form`);
                         
                         // Fill form fields
@@ -1588,15 +1663,22 @@
                         data.isActive = isActiveCheckbox ? isActiveCheckbox.checked : false;
                         
                         console.log(`${type} checkbox values:`, { isActive: data.isActive });
+                    } else if (type === 'material') {
+                        const isPublicCheckbox = form.querySelector('input[name="isPublic"]');
+                        data.isPublic = isPublicCheckbox ? isPublicCheckbox.checked : false;
+                        
+                        console.log('Material checkbox values:', { isPublic: data.isPublic });
                     }
                     
                     const isEdit = id !== null;
                     const url = isEdit ? 
                         (type === 'news' ? `/api/news/${id}` : 
                          type === 'course' ? `/api/courses/${id}` : 
+                         type === 'material' ? `/api/materials/${id}` :
                          `/api/job-offers/${id}`) :
                         (type === 'news' ? '/api/news' : 
                          type === 'course' ? '/api/courses' : 
+                         type === 'material' ? '/api/materials' :
                          '/api/job-offers');
                     
                     const method = isEdit ? 'PUT' : 'POST';
@@ -1622,8 +1704,8 @@
                     const result = await response.json();
                     
                     this.showNotification(
-                        isEdit ? `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : 'Oferta pracy'} została zaktualizowana` : 
-                                `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : 'Oferta pracy'} została dodana`, 
+                        isEdit ? `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : type === 'material' ? 'Materiał' : 'Oferta pracy'} została zaktualizowana` : 
+                                `${type === 'news' ? 'Aktualność' : type === 'course' ? 'Kurs' : type === 'material' ? 'Materiał' : 'Oferta pracy'} została dodana`, 
                         'success'
                     );
                     
@@ -1635,6 +1717,8 @@
                         this.loadNews();
                     } else if (type === 'course') {
                         this.loadCourses();
+                    } else if (type === 'material') {
+                        this.loadMaterials();
                     } else {
                         this.loadJobs();
                     }
@@ -3151,6 +3235,74 @@
                 removeBtn.classList.add('hidden');
                 
                 this.showNotification('Zdjęcie zostało usunięte', 'success');
+            }
+
+            async handleMaterialFileUpload(file) {
+                if (!file) return;
+                
+                // Validate file size (10MB for materials)
+                if (file.size > 10 * 1024 * 1024) {
+                    this.showNotification('Plik jest za duży. Maksymalny rozmiar to 10MB.', 'error');
+                    return;
+                }
+                
+                // Validate file type
+                const allowedTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'application/vnd.ms-powerpoint',
+                    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                    'application/vnd.ms-excel',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/zip',
+                    'application/x-rar-compressed'
+                ];
+                
+                if (!allowedTypes.includes(file.type)) {
+                    this.showNotification('Nieobsługiwany typ pliku. Obsługiwane formaty: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, ZIP, RAR', 'error');
+                    return;
+                }
+                
+                const progressDiv = document.getElementById('material-upload-progress');
+                const progressBar = progressDiv.querySelector('.bg-green-600');
+                const fileUrlInput = document.querySelector('input[name="fileUrl"]');
+                
+                try {
+                    // Show progress
+                    progressDiv.classList.remove('hidden');
+                    progressBar.style.width = '0%';
+                    
+                    // Create FormData
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    // Upload to server (we'll create this endpoint)
+                    const response = await fetch('/api/materials/upload-file', {
+                        method: 'POST',
+                        credentials: 'include',
+                        body: formData
+                    });
+                    
+                    progressBar.style.width = '100%';
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Błąd uploadu');
+                    }
+                    
+                    const result = await response.json();
+                    
+                    // Update UI
+                    fileUrlInput.value = result.fileUrl;
+                    progressDiv.classList.add('hidden');
+                    
+                    this.showNotification('Plik został wgrany pomyślnie!', 'success');
+                    
+                } catch (error) {
+                    progressDiv.classList.add('hidden');
+                    this.showNotification('Błąd podczas wgrywania pliku: ' + error.message, 'error');
+                }
             }
 
             async logout() {
