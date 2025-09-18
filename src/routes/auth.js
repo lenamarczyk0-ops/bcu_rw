@@ -283,5 +283,28 @@ router.put('/users/:id', requireAdmin, [
   }
 });
 
+// Admin: Delete user
+router.delete('/users/:id', requireAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Użytkownik nie został znaleziony' });
+    }
+
+    // Prevent admin from deleting themselves
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({ message: 'Nie możesz usunąć własnego konta' });
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+
+    res.json({ message: 'Użytkownik został usunięty' });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ message: 'Błąd serwera' });
+  }
+});
+
 module.exports = router;
 

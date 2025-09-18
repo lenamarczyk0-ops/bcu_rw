@@ -308,6 +308,10 @@
                         <i class="ri-file-user-line mr-3"></i>
                         Zgłoszenia na kursy
                     </a>
+                    <a href="#users" class="nav-item flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-100" data-section="users">
+                        <i class="ri-user-settings-line mr-3"></i>
+                        Użytkownicy
+                    </a>
                 </nav>
             </div>
         </div>
@@ -648,6 +652,99 @@
         </div>
     </div>
 
+            <!-- Users Section -->
+            <div id="users-section" class="section hidden">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Zarządzanie użytkownikami</h2>
+                        <p class="text-gray-600">Zatwierdzaj, usuwaj i nadawaj role użytkownikom</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-medium text-gray-900">Lista użytkowników</h3>
+                            <div class="flex space-x-2">
+                                <select id="users-role-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie role</option>
+                                    <option value="admin">Administrator</option>
+                                    <option value="wykladowca">Wykładowca</option>
+                                    <option value="redaktor">Redaktor</option>
+                                    <option value="pracodawca">Pracodawca</option>
+                                    <option value="kursant">Kursant</option>
+                                </select>
+                                <select id="users-status-filter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                                    <option value="">Wszystkie statusy</option>
+                                    <option value="true">Aktywni</option>
+                                    <option value="false">Nieaktywni</option>
+                                </select>
+                                <button id="refresh-users-btn" class="text-gray-500 hover:text-gray-700">
+                                    <i class="ri-refresh-line text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div id="users-list" class="space-y-4">
+                            <div class="flex items-center justify-center py-8 text-gray-500">
+                                <i class="ri-loader-4-line animate-spin mr-3"></i>
+                                Ładowanie użytkowników...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <!-- User Edit Modal -->
+    <div id="user-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900" id="user-modal-title">Edytuj użytkownika</h3>
+                    <button onclick="hideUserModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="user-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Rola</label>
+                        <select name="role" id="user-role" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                            <option value="kursant">Kursant</option>
+                            <option value="wykladowca">Wykładowca</option>
+                            <option value="redaktor">Redaktor</option>
+                            <option value="pracodawca">Pracodawca</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="isActive" id="user-active" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Konto aktywne</span>
+                        </label>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="isVerified" id="user-verified" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-700">Email zweryfikowany</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button type="button" onclick="hideUserModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    Anuluj
+                </button>
+                <button type="button" onclick="saveUser()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">
+                    Zapisz
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
@@ -663,6 +760,8 @@
                 this.applicationGroups = [];
                 this.jobApplicationGroups = [];
                 this.materials = [];
+                this.users = [];
+                this.currentUser = null;
                 this.escapeListenerAdded = false;
                 this.init();
             }
@@ -680,7 +779,7 @@
                 
                 // Check for hash in URL
                 const hash = window.location.hash.substring(1);
-                if (hash && ['dashboard', 'news', 'courses', 'jobs', 'job-applications', 'materials', 'applications'].includes(hash)) {
+                if (hash && ['dashboard', 'news', 'courses', 'jobs', 'job-applications', 'materials', 'applications', 'users'].includes(hash)) {
                     this.showSection(hash);
                 } else {
                     this.showSection('dashboard');
@@ -735,6 +834,7 @@
                 document.getElementById('refresh-job-applications-btn').addEventListener('click', () => this.loadJobApplications());
                 document.getElementById('refresh-materials-btn').addEventListener('click', () => this.loadMaterials());
                 document.getElementById('add-material-btn').addEventListener('click', () => this.showMaterialModal());
+                document.getElementById('refresh-users-btn').addEventListener('click', () => this.loadUsers());
 
                 // Filters
                 document.getElementById('news-status-filter').addEventListener('change', () => this.filterNews());
@@ -744,6 +844,8 @@
                 document.getElementById('materials-type-filter').addEventListener('change', () => this.filterMaterials());
                 document.getElementById('materials-level-filter').addEventListener('change', () => this.filterMaterials());
                 document.getElementById('materials-public-filter').addEventListener('change', () => this.filterMaterials());
+                document.getElementById('users-role-filter').addEventListener('change', () => this.filterUsers());
+                document.getElementById('users-status-filter').addEventListener('change', () => this.filterUsers());
 
                 // Logout
                 document.getElementById('logout-btn').addEventListener('click', () => this.logout());
@@ -792,6 +894,9 @@
                         break;
                     case 'materials':
                         this.loadMaterials();
+                        break;
+                    case 'users':
+                        this.loadUsers();
                         break;
                 }
             }
@@ -3070,10 +3175,208 @@
                     window.location.href = '/admin-login.html';
                 }
             }
+
+            // Users management
+            async loadUsers() {
+                try {
+                    const response = await fetch('/api/auth/users', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.users = data.users || [];
+                        this.renderUsers();
+                    } else {
+                        throw new Error(data.message || 'Błąd ładowania użytkowników');
+                    }
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                    this.showNotification('Błąd ładowania użytkowników: ' + error.message, 'error');
+                }
+            }
+
+            filterUsers() {
+                const roleFilter = document.getElementById('users-role-filter').value;
+                const statusFilter = document.getElementById('users-status-filter').value;
+                
+                let filteredUsers = this.users;
+                
+                if (roleFilter) {
+                    filteredUsers = filteredUsers.filter(user => user.role === roleFilter);
+                }
+                
+                if (statusFilter !== '') {
+                    const isActive = statusFilter === 'true';
+                    filteredUsers = filteredUsers.filter(user => user.isActive === isActive);
+                }
+                
+                this.renderUsers(filteredUsers);
+            }
+
+            renderUsers(users = this.users) {
+                const container = document.getElementById('users-list');
+                
+                if (users.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="ri-user-line text-4xl mb-2"></i>
+                            <p>Brak użytkowników</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = users.map(user => `
+                    <div class="border border-gray-200 rounded-lg p-4 bg-white hover:shadow-md transition-shadow">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-3 mb-2">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-primary-light text-white rounded-full flex items-center justify-center">
+                                            <i class="ri-user-line"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-900">${user.firstName} ${user.lastName}</h3>
+                                        <p class="text-gray-600 text-sm">${user.email}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex flex-wrap gap-2 text-xs">
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${this.getRoleBadgeColor(user.role)}">${this.getRoleLabel(user.role)}</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">${user.isActive ? 'Aktywny' : 'Nieaktywny'}</span>
+                                    ${user.isVerified ? '<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Zweryfikowany</span>' : ''}
+                                    ${user.companyName ? `<span class="text-gray-500">${user.companyName}</span>` : ''}
+                                </div>
+                                
+                                <div class="mt-2 text-xs text-gray-500">
+                                    <span>Zarejestrowany: ${new Date(user.createdAt).toLocaleDateString('pl-PL')}</span>
+                                    ${user.lastLogin ? `<span class="ml-4">Ostatnie logowanie: ${new Date(user.lastLogin).toLocaleDateString('pl-PL')}</span>` : ''}
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button onclick="editUser('${user._id}')" class="text-blue-600 hover:text-blue-800 px-3 py-1 rounded border border-blue-200 hover:border-blue-300 text-sm">
+                                    <i class="ri-edit-line mr-1"></i>Edytuj
+                                </button>
+                                <button onclick="deleteUser('${user._id}', '${user.firstName} ${user.lastName}')" class="text-red-600 hover:text-red-800 px-3 py-1 rounded border border-red-200 hover:border-red-300 text-sm">
+                                    <i class="ri-delete-bin-line mr-1"></i>Usuń
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            getRoleLabel(role) {
+                const labels = {
+                    'admin': 'Administrator',
+                    'wykladowca': 'Wykładowca',
+                    'redaktor': 'Redaktor',
+                    'pracodawca': 'Pracodawca',
+                    'kursant': 'Kursant'
+                };
+                return labels[role] || role;
+            }
+
+            getRoleBadgeColor(role) {
+                const colors = {
+                    'admin': 'bg-purple-100 text-purple-800',
+                    'wykladowca': 'bg-blue-100 text-blue-800',
+                    'redaktor': 'bg-green-100 text-green-800',
+                    'pracodawca': 'bg-orange-100 text-orange-800',
+                    'kursant': 'bg-gray-100 text-gray-800'
+                };
+                return colors[role] || 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        // Global functions for user management
+        function editUser(userId) {
+            const user = window.adminPanel.users.find(u => u._id === userId);
+            if (!user) return;
+            
+            window.adminPanel.currentUser = user;
+            
+            // Populate form
+            document.getElementById('user-role').value = user.role;
+            document.getElementById('user-active').checked = user.isActive;
+            document.getElementById('user-verified').checked = user.isVerified;
+            document.getElementById('user-modal-title').textContent = `Edytuj: ${user.firstName} ${user.lastName}`;
+            
+            // Show modal
+            document.getElementById('user-modal').classList.remove('hidden');
+        }
+
+        function hideUserModal() {
+            document.getElementById('user-modal').classList.add('hidden');
+            window.adminPanel.currentUser = null;
+        }
+
+        async function saveUser() {
+            if (!window.adminPanel.currentUser) return;
+            
+            const form = document.getElementById('user-form');
+            const formData = new FormData(form);
+            
+            const updates = {
+                role: formData.get('role'),
+                isActive: formData.get('isActive') === 'on',
+                isVerified: formData.get('isVerified') === 'on'
+            };
+            
+            try {
+                const response = await fetch(`/api/auth/users/${window.adminPanel.currentUser._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(updates)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    window.adminPanel.showNotification('Użytkownik został zaktualizowany', 'success');
+                    hideUserModal();
+                    window.adminPanel.loadUsers();
+                } else {
+                    throw new Error(result.message || 'Błąd aktualizacji użytkownika');
+                }
+            } catch (error) {
+                console.error('Error updating user:', error);
+                window.adminPanel.showNotification('Błąd aktualizacji: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteUser(userId, userName) {
+            if (!confirm(`Czy na pewno chcesz usunąć użytkownika ${userName}? Ta operacja jest nieodwracalna.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/auth/users/${userId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    window.adminPanel.showNotification('Użytkownik został usunięty', 'success');
+                    window.adminPanel.loadUsers();
+                } else {
+                    throw new Error(result.message || 'Błąd usuwania użytkownika');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                window.adminPanel.showNotification('Błąd usuwania: ' + error.message, 'error');
+            }
         }
 
         // Initialize admin panel
         const adminPanel = new AdminPanel();
+        window.adminPanel = adminPanel;
     </script>
 
     <!-- Application Detail Modal -->
