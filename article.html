@@ -163,7 +163,7 @@
         }
 
         .share-buttons {
-            position: sticky;
+            position: fixed;
             top: 50%;
             transform: translateY(-50%);
             left: 2rem;
@@ -173,13 +173,18 @@
             z-index: 10;
         }
 
-        @media (max-width: 1024px) {
+        /* Hide share buttons on smaller screens and tablets to prevent overlap */
+        @media (max-width: 1280px) {
             .share-buttons {
-                position: static;
-                transform: none;
-                flex-direction: row;
-                justify-content: center;
-                margin: 2rem 0;
+                display: none !important;
+            }
+        }
+
+        /* Ensure main content has enough left margin on large screens */
+        @media (min-width: 1280px) {
+            .article-main-content {
+                margin-left: 6rem; /* Add space for fixed share buttons */
+                max-width: calc(100% - 6rem);
             }
         }
 
@@ -232,13 +237,13 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
                     <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
-                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                        <img src="/imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
                     </a>
-                    <img src="./imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto">
-                    <img src="./imgs/zdzieszowice1.png" alt="Logo Gminy Zdzieszowice" class="h-6 w-auto">
-                    <img src="./imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-6 w-auto hidden md:block">
-                    <img src="./imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-6 w-auto hidden md:block">
-                    <img src="./imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-5 w-auto hidden md:block">
+                    <img src="/imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto">
+                    <img src="/imgs/zdzieszowice1.png" alt="Logo Gminy Zdzieszowice" class="h-6 w-auto">
+                    <img src="/imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-6 w-auto hidden md:block">
+                    <img src="/imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-6 w-auto hidden md:block">
+                    <img src="/imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-5 w-auto hidden md:block">
                 </div>
                 <div class="flex items-center space-x-2">
                     <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
@@ -346,9 +351,9 @@
 
             <!-- Article Body -->
             <section class="py-16 bg-white">
-                <div class="max-w-4xl mx-auto px-6 relative">
-                    <!-- Share Buttons -->
-                    <div class="share-buttons hidden lg:flex">
+                <div class="max-w-4xl mx-auto px-6 relative article-main-content">
+                    <!-- Share Buttons (Desktop only - fixed position) -->
+                    <div class="share-buttons hidden xl:flex">
                         <button onclick="shareArticle('facebook')" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors shadow-lg" title="Udostępnij na Facebook">
                             <i class="ri-facebook-fill text-lg"></i>
                         </button>
@@ -373,16 +378,8 @@
                         <!-- Treść artykułu będzie wstawiona tutaj -->
                     </div>
 
-                    <!-- Back to News Button -->
-                    <div class="mt-12 pt-8 border-t border-gray-200 text-center">
-                        <a href="/news" class="inline-flex items-center bg-secondary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                            <i class="ri-arrow-left-line mr-2"></i>
-                            Więcej aktualności
-                        </a>
-                    </div>
-
-                    <!-- Mobile Share Buttons -->
-                    <div class="share-buttons lg:hidden mt-8 pt-8 border-t border-gray-200">
+                    <!-- Mobile/Tablet Share Buttons -->
+                    <div class="xl:hidden mt-8 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-semibold text-center mb-4">Udostępnij artykuł</h3>
                         <div class="flex justify-center space-x-4">
                             <button onclick="shareArticle('facebook')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
@@ -396,6 +393,15 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- Back to News Button -->
+                    <div class="mt-12 pt-8 border-t border-gray-200 text-center">
+                        <a href="/news" class="inline-flex items-center bg-secondary hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Więcej aktualności
+                        </a>
+                    </div>
+
 
                     <!-- Back to News -->
                     <div class="mt-16 pt-8 border-t border-gray-200 text-center">
