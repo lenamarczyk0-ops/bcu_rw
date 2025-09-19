@@ -504,7 +504,13 @@ async function loadNews() {
                     </div>
                     <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">${article.title}</h3>
                     <p class="text-gray-600 text-sm mb-4 line-clamp-3">${article.excerpt || ''}</p>
-                    <button onclick="openArticle('${article._id || article.slug}')" class="text-primary hover:text-primary-dark font-medium text-sm">
+                    <button onclick="console.log('🔍 API button clicked:', '${article._id || article.slug}'); 
+                                     if(typeof openArticle === 'function') { 
+                                         openArticle('${article._id || article.slug}'); 
+                                     } else { 
+                                         console.warn('openArticle not available, using direct redirect'); 
+                                         window.location.href='/article/${encodeURIComponent(article._id || article.slug)}'; 
+                                     }" class="text-primary hover:text-primary-dark font-medium text-sm">
                         Czytaj więcej →
                     </button>
                 </div>

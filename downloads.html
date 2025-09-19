@@ -81,9 +81,12 @@
                     <button onclick="console.log('Functions available:', {downloadMaterial: typeof window.downloadMaterial, testMaterialUrl: typeof window.testMaterialUrl})" class="px-3 py-1 bg-purple-500 text-white text-sm rounded hover:bg-purple-600">
                         Check Functions
                     </button>
-                    <button onclick="fixCloudinaryUrls()" class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600">
-                        Fix PDF URLs
-                    </button>
+                                <button onclick="fixCloudinaryUrls()" class="px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600">
+                                    Fix PDF URLs
+                                </button>
+                                <button onclick="debugMaterialsStatus()" class="px-3 py-1 bg-purple-500 text-white text-sm rounded hover:bg-purple-600">
+                                    Debug Materials
+                                </button>
                 </div>
             </div>
             
@@ -201,6 +204,10 @@
                                     <i class="ri-bug-line mr-1"></i>
                                     Test URL
                                 </button>
+                                <button onclick="debugSingleMaterial('${material._id || material.id}')" class="w-full bg-yellow-500 text-white py-1 px-4 rounded text-sm hover:bg-yellow-600 transition-colors">
+                                    <i class="ri-information-line mr-1"></i>
+                                    Debug Info
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -211,12 +218,30 @@
         // Download material - make it globally accessible
         window.downloadMaterial = async function(materialId) {
             try {
-                console.log('Attempting to download material:', materialId);
+                console.log('🔍 Attempting to download material:', materialId);
+                showNotification('Rozpoczynam pobieranie...', 'info');
                 
-                // First try the regular download endpoint
+                // First check if material exists and is public
+                console.log('🌐 Checking material status...');
+                const checkResponse = await fetch(`/api/materials/public`);
+                if (checkResponse.ok) {
+                    const publicMaterials = await checkResponse.json();
+                    const material = publicMaterials.materials?.find(m => m._id === materialId);
+                    if (!material) {
+                        console.warn('⚠️ Material not found in public materials list');
+                        showNotification('Materiał może nie być publiczny', 'warning');
+                    } else {
+                        console.log('✅ Material found in public list:', material.title);
+                    }
+                }
+                
+                // Try the regular download endpoint
+                console.log('📥 Fetching download URL...');
                 const response = await fetch(`/api/materials/download/${materialId}`, {
                     credentials: 'include'
                 });
+                
+                console.log('📡 Download API response:', response.status, response.statusText);
                 
                 if (response.ok) {
                     const data = await response.json();
@@ -386,6 +411,71 @@
             }
         }
         
+        // Debug Materials Status function
+        window.debugMaterialsStatus = async function() {
+            try {
+                console.log('🔍 Debugging materials status...');
+                showNotification('Sprawdzam status materiałów...', 'info');
+                
+                // Check public materials
+                const publicResponse = await fetch('/api/materials/public');
+                const publicData = await publicResponse.json();
+                console.log('📋 Public materials:', publicData);
+                
+                // Try to get admin materials (if logged in)
+                try {
+                    const adminResponse = await fetch('/api/materials', { credentials: 'include' });
+                    if (adminResponse.ok) {
+                        const adminData = await adminResponse.json();
+                        console.log('🔐 Admin materials:', adminData);
+                        
+                        const publicCount = publicData.materials?.length || 0;
+                        const totalCount = adminData.materials?.length || 0;
+                        const privateCount = totalCount - publicCount;
+                        
+                        showNotification(`📊 Materiały: ${publicCount} publicznych, ${privateCount} prywatnych, ${totalCount} łącznie`, 'success');
+                        
+                        // Show materials that are not public
+                        if (adminData.materials) {
+                            const notPublic = adminData.materials.filter(m => !m.isPublic);
+                            if (notPublic.length > 0) {
+                                console.warn('⚠️ Materiały niepubliczne:', notPublic.map(m => ({
+                                    id: m._id,
+                                    title: m.title,
+                                    isPublic: m.isPublic
+                                })));
+                            }
+                        }
+                    } else {
+                        console.log('ℹ️ Admin materials not accessible (not logged in or no permissions)');
+                    }
+                } catch (adminError) {
+                    console.log('ℹ️ Could not fetch admin materials:', adminError.message);
+                }
+                
+                // Test download API for first public material
+                if (publicData.materials && publicData.materials.length > 0) {
+                    const firstMaterial = publicData.materials[0];
+                    console.log('🧪 Testing download for first material:', firstMaterial.title);
+                    
+                    const downloadTestResponse = await fetch(`/api/materials/download/${firstMaterial._id}`);
+                    console.log('📥 Download test response:', downloadTestResponse.status, downloadTestResponse.statusText);
+                    
+                    if (downloadTestResponse.ok) {
+                        const downloadData = await downloadTestResponse.json();
+                        console.log('✅ Download data:', downloadData);
+                    } else {
+                        const errorData = await downloadTestResponse.text();
+                        console.error('❌ Download test failed:', errorData);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('💥 Debug error:', error);
+                showNotification('Błąd debugowania: ' + error.message, 'error');
+            }
+        }
+
         // Fix Cloudinary URLs function
         window.fixCloudinaryUrls = async function() {
             try {
@@ -424,6 +514,73 @@
             } catch (error) {
                 console.error('Fix URLs error:', error);
                 showNotification('Błąd naprawy URL-i: ' + error.message, 'error');
+            }
+        }
+
+        // Debug Single Material function
+        window.debugSingleMaterial = async function(materialId) {
+            try {
+                console.log('🔍 Debugging material:', materialId);
+                showNotification('Sprawdzam pojedynczy materiał...', 'info');
+                
+                // Try to get material details from public API
+                const publicResponse = await fetch('/api/materials/public');
+                const publicData = await publicResponse.json();
+                const publicMaterial = publicData.materials?.find(m => m._id === materialId);
+                
+                console.log('📋 Public material data:', publicMaterial);
+                
+                // Try to get material details from admin API (if logged in)
+                let adminMaterial = null;
+                try {
+                    const adminResponse = await fetch(`/api/materials/${materialId}`, { credentials: 'include' });
+                    if (adminResponse.ok) {
+                        const adminData = await adminResponse.json();
+                        adminMaterial = adminData.material;
+                        console.log('🔐 Admin material data:', adminMaterial);
+                    }
+                } catch (adminError) {
+                    console.log('ℹ️ Could not fetch admin material data:', adminError.message);
+                }
+                
+                // Test download endpoint
+                const downloadResponse = await fetch(`/api/materials/download/${materialId}`);
+                console.log('📥 Download API response:', downloadResponse.status, downloadResponse.statusText);
+                
+                let downloadData = null;
+                if (downloadResponse.ok) {
+                    downloadData = await downloadResponse.json();
+                    console.log('✅ Download data:', downloadData);
+                } else {
+                    const errorData = await downloadResponse.text();
+                    console.error('❌ Download error:', errorData);
+                }
+                
+                // Show summary
+                const summary = {
+                    materialId: materialId,
+                    foundInPublic: !!publicMaterial,
+                    foundInAdmin: !!adminMaterial,
+                    isPublic: adminMaterial?.isPublic || publicMaterial?.isPublic,
+                    downloadStatus: downloadResponse.status,
+                    hasFileUrl: !!(adminMaterial?.fileUrl || publicMaterial?.fileUrl),
+                    fileUrl: adminMaterial?.fileUrl || publicMaterial?.fileUrl
+                };
+                
+                console.log('📊 Material Summary:', summary);
+                
+                let message = `Material ID: ${materialId}\n`;
+                message += `W publicznych: ${summary.foundInPublic ? '✅' : '❌'}\n`;
+                message += `W admin: ${summary.foundInAdmin ? '✅' : '❌'}\n`;
+                message += `Publiczny: ${summary.isPublic ? '✅' : '❌'}\n`;
+                message += `Download API: ${summary.downloadStatus}\n`;
+                message += `Posiada URL: ${summary.hasFileUrl ? '✅' : '❌'}`;
+                
+                alert(message);
+                
+            } catch (error) {
+                console.error('💥 Debug error:', error);
+                showNotification('Błąd debugowania: ' + error.message, 'error');
             }
         }
 

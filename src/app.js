@@ -43,6 +43,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.jsdelivr.net", "https://cdn.tailwindcss.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdn.jsdelivr.net"],
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-hashes'", "https://cdn.jsdelivr.net", "https://cdn.tailwindcss.com", "https://fonts.googleapis.com"],
+      scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
       connectSrc: ["'self'"],
       objectSrc: ["'none'"],
@@ -643,9 +644,15 @@ app.get('/api/auth/me', (req, res) => {
   }
 });
 
+// Helper function to set relaxed CSP for pages with inline event handlers
+function setRelaxedCSP(res) {
+  res.setHeader('Content-Security-Policy', "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-hashes' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://fonts.googleapis.com; script-src-attr 'unsafe-inline'; img-src 'self' data: https: http:; connect-src 'self'; object-src 'none'; media-src 'self'; frame-src 'none';");
+}
+
 // Serve main HTML files
 app.get('/', (req, res) => {
   try {
+    setRelaxedCSP(res);
     const filePath = path.join(__dirname, '../build.html');
     res.sendFile(filePath);
   } catch (error) {
@@ -656,6 +663,7 @@ app.get('/', (req, res) => {
 
 app.get('/courses', (req, res) => {
   try {
+    setRelaxedCSP(res);
     const filePath = path.join(__dirname, '../courses.html');
     res.sendFile(filePath);
   } catch (error) {
@@ -666,6 +674,7 @@ app.get('/courses', (req, res) => {
 
 app.get('/job-offers', (req, res) => {
   try {
+    setRelaxedCSP(res);
     const filePath = path.join(__dirname, '../job-offers.html');
     res.sendFile(filePath);
   } catch (error) {
@@ -676,6 +685,7 @@ app.get('/job-offers', (req, res) => {
 
 app.get('/news', (req, res) => {
   try {
+    setRelaxedCSP(res);
     const filePath = path.join(__dirname, '../news.html');
     res.sendFile(filePath);
   } catch (error) {
@@ -687,6 +697,7 @@ app.get('/news', (req, res) => {
 // Single article pages
 app.get('/article/:id', (req, res) => {
   try {
+    setRelaxedCSP(res);
     const filePath = path.join(__dirname, '../article.html');
     res.sendFile(filePath);
   } catch (error) {
@@ -698,6 +709,7 @@ app.get('/article/:id', (req, res) => {
 // Alternative article route with query parameter (for backward compatibility)
 app.get('/article.html', (req, res) => {
   try {
+    setRelaxedCSP(res);
     const filePath = path.join(__dirname, '../article.html');
     res.sendFile(filePath);
   } catch (error) {
@@ -714,6 +726,30 @@ app.get('/test-articles', (req, res) => {
   } catch (error) {
     console.error('Error serving test articles page:', error);
     res.status(500).send('Błąd serwera - strona testowa niedostępna');
+  }
+});
+
+// Downloads page with relaxed CSP
+app.get('/downloads', (req, res) => {
+  try {
+    setRelaxedCSP(res);
+    const filePath = path.join(__dirname, '../downloads.html');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error serving downloads page:', error);
+    res.status(500).send('Błąd serwera - strona pobierania niedostępna');
+  }
+});
+
+// Alternative downloads route
+app.get('/downloads.html', (req, res) => {
+  try {
+    setRelaxedCSP(res);
+    const filePath = path.join(__dirname, '../downloads.html');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error serving downloads page:', error);
+    res.status(500).send('Błąd serwera - strona pobierania niedostępna');
   }
 });
 

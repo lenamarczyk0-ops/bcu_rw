@@ -350,6 +350,27 @@
                             Powrót do aktualności
                         </button>
                     </div>
+                    
+                    <!-- Debug Panel for Testing -->
+                    <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <h3 class="font-semibold mb-2">🧪 Test Panel - Aktualności</h3>
+                        <div class="space-x-2">
+                            <button onclick="console.log('Test openArticle function:', typeof window.openArticle); 
+                                           if(typeof window.openArticle === 'function') { 
+                                               alert('✅ openArticle is available'); 
+                                           } else { 
+                                               alert('❌ openArticle is NOT available'); 
+                                           }" class="bg-blue-500 text-white px-3 py-1 rounded text-sm">
+                                Test openArticle
+                            </button>
+                            <button onclick="window.location.href='/article/test-redirect'" class="bg-green-500 text-white px-3 py-1 rounded text-sm">
+                                Test Direct Redirect
+                            </button>
+                            <button onclick="console.log('Available functions:', Object.keys(window).filter(k => k.includes('Article') || k.includes('open')))" class="bg-purple-500 text-white px-3 py-1 rounded text-sm">
+                                List Functions
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -474,9 +495,19 @@
             initSmoothScrolling();
             initAccessibilityMenu();
             
+            // Test if openArticle function is available after api.js loads
+            setTimeout(() => {
+                if (typeof window.openArticle === 'function') {
+                    console.log('✅ openArticle function is available');
+                } else {
+                    console.error('❌ openArticle function is NOT available');
+                    console.log('🔍 Available window functions:', Object.keys(window).filter(key => key.includes('Article') || key.includes('open')));
+                }
+            }, 1000);
+            
             // Load ONLY news from database (added via admin panel)
             console.log('🔄 Loading news from database...');
-                loadNewsFromAPI();
+            loadNewsFromAPI();
         });
 
         // Load news ONLY from database (admin panel)
@@ -670,7 +701,13 @@
                             </div>
                         </div>
                         
-                        <button onclick="openArticle('${article._id || article.slug}')" class="w-full bg-secondary hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
+                        <button onclick="console.log('🔍 News button clicked:', '${article._id || article.slug}'); 
+                                     if(typeof openArticle === 'function') { 
+                                         openArticle('${article._id || article.slug}'); 
+                                     } else { 
+                                         console.warn('openArticle not available, using direct redirect'); 
+                                         window.location.href='/article/${encodeURIComponent(article._id || article.slug)}'; 
+                                     }" class="w-full bg-secondary hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-semibold transition-colors">
                             <i class="ri-arrow-right-line mr-2"></i>
                             Czytaj więcej
                         </button>
@@ -834,5 +871,8 @@
             }, 1000);
         }
     </script>
+    
+    <!-- Load API functions for news functionality -->
+    <script src="./assets/js/api.js"></script>
 </body>
 </html>
