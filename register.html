@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rejestracja - BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        *:focus {
+            outline: none !important;
+        }
+        
+        button:focus, a:focus, input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background-color: #10B981;
+        }
+        
+        .notification.error {
+            background-color: #EF4444;
+        }
+        
+        .bg-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+            <!-- Header -->
+            <div class="text-center">
+                <div class="flex justify-center mb-6">
+                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-16 w-auto filter invert">
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900">Utwórz nowe konto</h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Już masz konto? 
+                    <a href="admin-login.html" class="font-medium text-primary hover:text-primary-dark">
+                        Zaloguj się
+                    </a>
+                </p>
+            </div>
+
+            <!-- Registration Form -->
+            <div class="bg-white py-8 px-6 shadow-xl rounded-xl">
+                <form id="register-form" class="space-y-6">
+                    <!-- Personal Information -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">
+                                Imię *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="Jan"
+                            >
+                        </div>
+                        <div>
+                            <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">
+                                Nazwisko *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                required 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="Kowalski"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                            Email *
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                            placeholder="jan.kowalski@example.com"
+                        >
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                            Hasło *
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                required 
+                                minlength="6"
+                                class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="••••••••"
+                            >
+                            <button 
+                                type="button" 
+                                onclick="togglePassword('password')"
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                            >
+                                <i class="ri-eye-line" id="password-eye"></i>
+                            </button>
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">Minimum 6 znaków</p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                            Potwierdź hasło *
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="confirmPassword" 
+                                name="confirmPassword" 
+                                required 
+                                class="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="••••••••"
+                            >
+                            <button 
+                                type="button" 
+                                onclick="togglePassword('confirmPassword')"
+                                class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                            >
+                                <i class="ri-eye-line" id="confirmPassword-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Optional Fields -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
+                                Telefon
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                name="phone" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="+48 123 456 789"
+                            >
+                        </div>
+                        <div>
+                            <label for="companyName" class="block text-sm font-medium text-gray-700 mb-2">
+                                Firma
+                            </label>
+                            <input 
+                                type="text" 
+                                id="companyName" 
+                                name="companyName" 
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                placeholder="Nazwa firmy"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Terms and Privacy -->
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <input 
+                                type="checkbox" 
+                                id="terms" 
+                                name="terms" 
+                                required 
+                                class="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                            >
+                            <label for="terms" class="ml-2 block text-sm text-gray-700">
+                                Akceptuję 
+                                <a href="#" class="text-primary hover:text-primary-dark underline">
+                                    regulamin
+                                </a> 
+                                oraz 
+                                <a href="#" class="text-primary hover:text-primary-dark underline">
+                                    politykę prywatności
+                                </a> *
+                            </label>
+                        </div>
+                        <div class="flex items-start">
+                            <input 
+                                type="checkbox" 
+                                id="newsletter" 
+                                name="newsletter" 
+                                class="mt-1 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                            >
+                            <label for="newsletter" class="ml-2 block text-sm text-gray-700">
+                                Chcę otrzymywać informacje o nowych kursach i ofertrach pracy
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div>
+                        <button 
+                            type="submit" 
+                            id="register-btn"
+                            class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-primary hover:bg-primary-dark focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors font-medium"
+                        >
+                            <span id="register-text">Utwórz konto</span>
+                            <i class="ri-arrow-right-line ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Additional Links -->
+            <div class="text-center">
+                <p class="text-sm text-gray-600">
+                    <a href="/" class="text-primary hover:text-primary-dark font-medium">
+                        ← Powrót do strony głównej
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        class RegistrationManager {
+            constructor() {
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('register-form').addEventListener('submit', (e) => this.handleRegister(e));
+            }
+
+            async handleRegister(e) {
+                e.preventDefault();
+                
+                const form = document.getElementById('register-form');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Validate passwords match
+                if (data.password !== data.confirmPassword) {
+                    this.showNotification('Hasła nie są identyczne', 'error');
+                    return;
+                }
+
+                // Check terms acceptance
+                if (!data.terms) {
+                    this.showNotification('Musisz zaakceptować regulamin', 'error');
+                    return;
+                }
+
+                const registerBtn = document.getElementById('register-btn');
+                const registerText = document.getElementById('register-text');
+                
+                // Show loading state
+                registerBtn.disabled = true;
+                registerText.textContent = 'Rejestracja...';
+                
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            firstName: data.firstName,
+                            lastName: data.lastName,
+                            email: data.email,
+                            password: data.password,
+                            phone: data.phone || undefined,
+                            companyName: data.companyName || undefined,
+                            newsletter: !!data.newsletter
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        this.showNotification('Konto zostało utworzone pomyślnie!', 'success');
+                        
+                        // Redirect to login after short delay
+                        setTimeout(() => {
+                            window.location.href = '/admin-login.html';
+                        }, 2000);
+                    } else {
+                        throw new Error(result.message || 'Błąd rejestracji');
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    this.showNotification('Błąd rejestracji: ' + error.message, 'error');
+                } finally {
+                    // Reset button state
+                    registerBtn.disabled = false;
+                    registerText.textContent = 'Utwórz konto';
+                }
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                
+                // Show notification
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 100);
+                
+                // Hide notification after 5 seconds
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const field = document.getElementById(fieldId);
+            const eye = document.getElementById(fieldId + '-eye');
+            
+            if (field.type === 'password') {
+                field.type = 'text';
+                eye.className = 'ri-eye-off-line';
+            } else {
+                field.type = 'password';
+                eye.className = 'ri-eye-line';
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new RegistrationManager();
+        });
+    </script>
+</body>
+</html>
+
