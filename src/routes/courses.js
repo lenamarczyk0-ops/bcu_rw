@@ -171,7 +171,7 @@ router.post('/', requireAuth, [
   body('excerpt').notEmpty().withMessage('Opis jest wymagany'),
   body('contentHTML').notEmpty().withMessage('Treść jest wymagana'),
   body('startDate').optional().isISO8601().withMessage('Data rozpoczęcia musi być prawidłową datą'),
-  body('weeks').isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
+  body('weeks').optional().isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
   body('isActive').optional().isBoolean().withMessage('isActive musi być boolean')

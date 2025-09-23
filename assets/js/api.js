@@ -188,7 +188,7 @@ async function showCourseModal(slug) {
                             <div class="grid grid-cols-3 gap-4 text-sm">
                                 <div>
                                     <strong>Czas trwania:</strong><br>
-                                    ${course.weeks || 0} tygodni
+                                    ${course.weeks ? `${course.weeks} tygodni` : '—'}
                                 </div>
                                 <div>
                                     <strong>Liczba godzin:</strong><br>
