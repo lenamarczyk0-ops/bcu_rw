@@ -284,6 +284,14 @@ window.submitCourseApplication = function(courseId, courseTitle) {
                                 <input type="checkbox" name="consentMarketing" class="mr-2">
                                 <span class="text-sm text-gray-700">Wyrażam zgodę na otrzymywanie informacji marketingowych</span>
                             </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="consentNoEUCourses" required class="mr-2">
+                                <span class="text-sm text-gray-700">Oświadczam, że nie korzystałem/am z innych kursów realizowanych w ramach funduszy unijnych. *</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" name="consentDataAccuracy" required class="mr-2">
+                                <span class="text-sm text-gray-700">Oświadczam, że dane podane w formularzu są zgodne ze stanem faktycznym. *</span>
+                            </label>
                         </div>
                         
                         <!-- Hidden fields for course reference -->
@@ -338,6 +346,8 @@ window.submitCourseApplication = function(courseId, courseTitle) {
             
             applicationData.consentRODO = consentRODOChecked;
             applicationData.consentMarketing = formData.has('consentMarketing');
+            applicationData.consentNoEUCourses = formData.has('consentNoEUCourses');
+            applicationData.consentDataAccuracy = formData.has('consentDataAccuracy');
             
             console.log('🚀 Wysyłam zgłoszenie...', applicationData);
             await api.submitApplication(applicationData);

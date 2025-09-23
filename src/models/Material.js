@@ -24,7 +24,7 @@ const materialSchema = new mongoose.Schema({
   },
   topic: {
     type: String,
-    required: true,
+    required: false,
     trim: true
   },
   level: {

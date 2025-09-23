@@ -1399,10 +1399,6 @@
                                     ` : type === 'course' ? `
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Liczba tygodni</label>
-                                            <input type="number" name="weeks" min="1" placeholder="np. 4" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                        </div>
-                                        <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Liczba godzin *</label>
                                             <input type="number" name="hours" required min="1" placeholder="np. 30" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                         </div>
@@ -1686,7 +1682,7 @@
                         data.isPaid = isPaidCheckbox ? isPaidCheckbox.checked : false;
                         
                         // Convert numeric fields to proper types
-                        if (data.weeks) data.weeks = parseInt(data.weeks);
+                        // weeks usunięte z formularza kursu
                         if (data.hours) data.hours = parseInt(data.hours);
                         if (data.maxParticipants) data.maxParticipants = parseInt(data.maxParticipants);
                         if (data.price) data.price = parseFloat(data.price);
