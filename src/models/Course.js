@@ -87,18 +87,30 @@ const courseSchema = new mongoose.Schema({
 });
 
 // Generate slug and duration before saving
-courseSchema.pre('save', function(next) {
-  if (this.isModified('title')) {
-    this.slug = slugify(this.title, { lower: true, strict: true });
+courseSchema.pre('save', async function(next) {
+  try {
+    if (this.isModified('title')) {
+      const baseSlug = slugify(this.title, { lower: true, strict: true });
+      let uniqueSlug = baseSlug;
+
+      // Ensure slug uniqueness by appending numeric suffix if needed
+      let counter = 2;
+      while (await this.constructor.exists({ slug: uniqueSlug, _id: { $ne: this._id } })) {
+        uniqueSlug = `${baseSlug}-${counter++}`;
+      }
+      this.slug = uniqueSlug;
+    }
+
+    // Auto-generate duration from weeks and hours if not provided
+    if (!this.duration && this.weeks && this.hours) {
+      const weeksText = this.weeks === 1 ? '1 tydzień' : `${this.weeks} tygodni`;
+      this.duration = `${weeksText} (${this.hours}h)`;
+    }
+
+    next();
+  } catch (err) {
+    next(err);
   }
-  
-  // Auto-generate duration from weeks and hours if not provided
-  if (!this.duration && this.weeks && this.hours) {
-    const weeksText = this.weeks === 1 ? '1 tydzień' : `${this.weeks} tygodni`;
-    this.duration = `${weeksText} (${this.hours}h)`;
-  }
-  
-  next();
 });
 
 // Index for better performance

@@ -169,7 +169,7 @@ router.get('/admin/list', requireAuth, async (req, res) => {
 router.post('/', requireAuth, [
   body('title').notEmpty().withMessage('Tytuł jest wymagany'),
   body('excerpt').notEmpty().withMessage('Opis jest wymagany'),
-  body('contentHTML').notEmpty().withMessage('Treść jest wymagana'),
+  body('contentHTML').optional(),
   body('startDate').optional().isISO8601().withMessage('Data rozpoczęcia musi być prawidłową datą'),
   body('weeks').optional().isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
@@ -190,6 +190,10 @@ router.post('/', requireAuth, [
       ...req.body,
       author: req.user._id
     };
+    // Jeżeli contentHTML nie podano, użyj excerpt jako treść minimalną
+    if (!courseData.contentHTML && courseData.excerpt) {
+      courseData.contentHTML = `<p>${courseData.excerpt}</p>`;
+    }
 
     // Sanitizacja typów liczbowych i boolean z formularza
     if (courseData.weeks !== undefined) courseData.weeks = Number(courseData.weeks);
@@ -206,6 +210,12 @@ router.post('/', requireAuth, [
     });
   } catch (error) {
     console.error('Create course error:', error);
+    if (error && (error.code === 11000 || (error.name === 'MongoServerError' && error.code === 11000))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Kurs o takim tytule już istnieje (duplikat slug)'
+      });
+    }
     res.status(500).json({ 
       success: false,
       message: 'Błąd serwera',
