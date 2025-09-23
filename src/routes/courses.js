@@ -174,9 +174,7 @@ router.post('/', requireAuth, [
   body('weeks').isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
-  body('isPaid').optional().isBoolean().withMessage('isPaid musi być boolean'),
-  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean'),
-  body('price').optional().isFloat({ min: 0 }).withMessage('Cena musi być liczbą nieujemną')
+  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -196,8 +194,6 @@ router.post('/', requireAuth, [
     // Sanitizacja typów liczbowych i boolean z formularza
     if (courseData.weeks !== undefined) courseData.weeks = Number(courseData.weeks);
     if (courseData.hours !== undefined) courseData.hours = Number(courseData.hours);
-    if (courseData.price !== undefined) courseData.price = Number(courseData.price);
-    if (courseData.isPaid !== undefined) courseData.isPaid = courseData.isPaid === true || courseData.isPaid === 'true';
     if (courseData.isActive !== undefined) courseData.isActive = courseData.isActive === true || courseData.isActive === 'true';
 
     const course = new Course(courseData);
@@ -227,8 +223,7 @@ router.put('/:id', requireAuth, [
   body('weeks').optional().isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').optional().isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').optional().isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
-  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean'),
-  body('isPaid').optional().isBoolean().withMessage('isPaid musi być boolean')
+  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);

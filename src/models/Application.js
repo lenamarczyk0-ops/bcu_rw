@@ -86,6 +86,28 @@ const applicationSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  // Zgoda: brak uczestnictwa w innych kursach UE (wymagana)
+  consentNoEUCourses: {
+    type: Boolean,
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value === true;
+      },
+      message: 'Oświadcz, że nie korzystałeś/aś z innych kursów UE'
+    }
+  },
+  // Oświadczenie zgodności danych ze stanem faktycznym (wymagane)
+  consentDataAccuracy: {
+    type: Boolean,
+    required: true,
+    validate: {
+      validator: function(value) {
+        return value === true;
+      },
+      message: 'Oświadczenie o zgodności danych jest wymagane'
+    }
+  },
   status: {
     type: String,
     enum: ['new', 'accepted', 'rejected', 'waiting'],

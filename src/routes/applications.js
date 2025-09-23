@@ -22,6 +22,8 @@ router.post('/', [
   body('motivation').optional().trim(),
   body('consentRODO').isBoolean().custom(value => value === true),
   body('consentMarketing').optional().isBoolean(),
+  body('consentNoEUCourses').isBoolean().custom(value => value === true).withMessage('Musisz oświadczyć, że nie korzystałeś/aś z innych kursów UE'),
+  body('consentDataAccuracy').isBoolean().custom(value => value === true).withMessage('Musisz potwierdzić zgodność danych ze stanem faktycznym'),
   // Wymagaj odpowiednich pól w zależności od typu aplikacji
   body().custom(body => {
     if (body.applicationType === 'job') {
@@ -45,7 +47,7 @@ router.post('/', [
       });
     }
 
-    const { applicationType, course, courseTitle, courseFileId, jobOffer, jobOfferTitle, firstName, lastName, email, phone, company, position, experience, motivation, consentRODO, consentMarketing } = req.body;
+    const { applicationType, course, courseTitle, courseFileId, jobOffer, jobOfferTitle, firstName, lastName, email, phone, company, position, experience, motivation, consentRODO, consentMarketing, consentNoEUCourses, consentDataAccuracy } = req.body;
 
     let applicationPayload = {
       applicationType: applicationType || 'course',
@@ -59,6 +61,8 @@ router.post('/', [
       motivation,
       consentRODO,
       consentMarketing: consentMarketing || false,
+      consentNoEUCourses,
+      consentDataAccuracy,
       status: 'new'
     };
 

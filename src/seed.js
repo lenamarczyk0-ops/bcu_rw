@@ -123,8 +123,7 @@ const seedCourses = async () => {
         hours: 32,
         targetGroup: 'dorośli',
         maxParticipants: 20,
-        price: 1200,
-        isPaid: true,
+        
         status: 'published',
         tags: ['kody kreskowe', 'magazyn', 'WMS', 'skanowanie', 'śledzenie'],
         author: admin._id
@@ -138,8 +137,7 @@ const seedCourses = async () => {
         hours: 48,
         targetGroup: 'dorośli',
         maxParticipants: 25,
-        price: 1800,
-        isPaid: true,
+        
         status: 'published',
         tags: ['kosztorysowanie', 'finanse', 'optymalizacja', 'zyski'],
         author: admin._id
@@ -153,8 +151,7 @@ const seedCourses = async () => {
         hours: 56,
         targetGroup: 'dorośli',
         maxParticipants: 20,
-        price: 2200,
-        isPaid: true,
+        
         status: 'published',
         tags: ['eksport', 'import', 'cło', 'handel zagraniczny'],
         author: admin._id
@@ -168,8 +165,7 @@ const seedCourses = async () => {
         hours: 40,
         targetGroup: 'dorośli',
         maxParticipants: 18,
-        price: 2000,
-        isPaid: true,
+        
         status: 'published',
         tags: ['automatyzacja', 'WMS', 'roboty', 'IoT'],
         author: admin._id
@@ -183,8 +179,7 @@ const seedCourses = async () => {
         hours: 32,
         targetGroup: 'dorośli',
         maxParticipants: 15,
-        price: 1600,
-        isPaid: true,
+        
         status: 'published',
         tags: ['drony', 'BSP', 'innowacje', 'ostatnia mila'],
         author: admin._id
@@ -198,8 +193,7 @@ const seedCourses = async () => {
         hours: 64,
         targetGroup: 'dorośli',
         maxParticipants: 20,
-        price: 2400,
-        isPaid: true,
+        
         status: 'published',
         tags: ['zarządzanie', 'strategia', 'rozwój', 'cyfryzacja'],
         author: admin._id
@@ -213,8 +207,7 @@ const seedCourses = async () => {
         hours: 48,
         targetGroup: 'dorośli',
         maxParticipants: 22,
-        price: 1900,
-        isPaid: true,
+        
         status: 'published',
         tags: ['prawo', 'export', 'import', 'dokumentacja'],
         author: admin._id
@@ -228,8 +221,7 @@ const seedCourses = async () => {
         hours: 40,
         targetGroup: 'dorośli',
         maxParticipants: 20,
-        price: 1700,
-        isPaid: true,
+        
         status: 'published',
         tags: ['mechanizacja', 'sprzęt', 'wózki widłowe', 'bezpieczeństwo'],
         author: admin._id
@@ -243,8 +235,7 @@ const seedCourses = async () => {
         hours: 32,
         targetGroup: 'dorośli',
         maxParticipants: 25,
-        price: 1400,
-        isPaid: true,
+        
         status: 'published',
         tags: ['harmonogramowanie', 'planowanie', 'optymalizacja', 'KPI'],
         author: admin._id
@@ -258,8 +249,7 @@ const seedCourses = async () => {
         hours: 40,
         targetGroup: 'dorośli',
         maxParticipants: 18,
-        price: 1800,
-        isPaid: true,
+        
         status: 'published',
         tags: ['RFID', 'identyfikacja', 'komisjonowanie', 'automatyzacja'],
         author: admin._id
@@ -273,8 +263,7 @@ const seedCourses = async () => {
         hours: 32,
         targetGroup: 'dorośli',
         maxParticipants: 22,
-        price: 1500,
-        isPaid: true,
+        
         status: 'published',
         tags: ['przeładunek', 'planowanie', 'koordynacja', 'terminale'],
         author: admin._id
@@ -288,8 +277,7 @@ const seedCourses = async () => {
         hours: 40,
         targetGroup: 'dorośli',
         maxParticipants: 16,
-        price: 1900,
-        isPaid: true,
+        
         status: 'published',
         tags: ['drony', 'dostawy', 'planowanie misji', 'flota'],
         author: admin._id
@@ -303,8 +291,7 @@ const seedCourses = async () => {
         hours: 64,
         targetGroup: 'dorośli',
         maxParticipants: 15,
-        price: 1600,
-        isPaid: true,
+        
         status: 'published',
         tags: ['język angielski', 'terminologia', 'komunikacja', 'spedycja'],
         author: admin._id
@@ -318,8 +305,7 @@ const seedCourses = async () => {
         hours: 64,
         targetGroup: 'dorośli',
         maxParticipants: 15,
-        price: 1600,
-        isPaid: true,
+        
         status: 'published',
         tags: ['język niemiecki', 'komunikacja', 'partnerzy', 'kultura biznesowa'],
         author: admin._id
@@ -333,8 +319,7 @@ const seedCourses = async () => {
         hours: 80,
         targetGroup: 'dorośli',
         maxParticipants: 12,
-        price: 1800,
-        isPaid: true,
+        
         status: 'published',
         tags: ['język polski', 'cudzoziemcy', 'integracja', 'kultura pracy'],
         author: admin._id

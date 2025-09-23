@@ -341,8 +341,7 @@ app.post('/api/seed-courses', async (req, res) => {
         targetGroup: 'uczniowie i studenci',
         hours: 15,
         maxParticipants: 25,
-        price: 1500,
-        isPaid: true,
+        
         status: 'published',
         tags: ['marketing', 'transport', 'logistyka', 'promocja'],
         author: admin._id
@@ -355,8 +354,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-02-20'),
         duration: '32 godziny',
         maxParticipants: 20,
-        price: 1200,
-        isPaid: true,
+        
         status: 'published',
         tags: ['kody kreskowe', 'magazyn', 'WMS', 'skanowanie'],
         author: admin._id
@@ -369,8 +367,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-03-01'),
         duration: '48 godzin',
         maxParticipants: 30,
-        price: 1800,
-        isPaid: true,
+        
         status: 'published',
         tags: ['kosztorysowanie', 'finanse', 'optymalizacja', 'zyski'],
         author: admin._id
@@ -383,8 +380,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-03-10'),
         duration: '56 godzin',
         maxParticipants: 25,
-        price: 2200,
-        isPaid: true,
+        
         status: 'published',
         tags: ['eksport', 'import', 'cło', 'handel zagraniczny'],
         author: admin._id
@@ -397,8 +393,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-03-15'),
         duration: '44 godzin',
         maxParticipants: 20,
-        price: 2000,
-        isPaid: true,
+        
         status: 'published',
         tags: ['automatyzacja', 'WMS', 'roboty', 'IoT'],
         author: admin._id
@@ -411,8 +406,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-03-25'),
         duration: '36 godzin',
         maxParticipants: 15,
-        price: 1600,
-        isPaid: true,
+        
         status: 'published',
         tags: ['drony', 'BSP', 'innowacje', 'ostatnia mila'],
         author: admin._id
@@ -425,8 +419,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-04-01'),
         duration: '52 godzin',
         maxParticipants: 30,
-        price: 2400,
-        isPaid: true,
+        
         status: 'published',
         tags: ['zarządzanie', 'strategia', 'rozwój', 'cyfryzacja'],
         author: admin._id
@@ -439,8 +432,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-04-10'),
         duration: '48 godzin',
         maxParticipants: 25,
-        price: 1900,
-        isPaid: true,
+        
         status: 'published',
         tags: ['prawo', 'export', 'import', 'dokumentacja'],
         author: admin._id
@@ -453,8 +445,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-04-20'),
         duration: '40 godzin',
         maxParticipants: 20,
-        price: 1700,
-        isPaid: true,
+        
         status: 'published',
         tags: ['mechanizacja', 'sprzęt', 'wózki widłowe', 'bezpieczeństwo'],
         author: admin._id
@@ -467,8 +458,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-05-01'),
         duration: '36 godzin',
         maxParticipants: 25,
-        price: 1400,
-        isPaid: true,
+        
         status: 'published',
         tags: ['harmonogramowanie', 'planowanie', 'optymalizacja', 'KPI'],
         author: admin._id
@@ -481,8 +471,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-05-10'),
         duration: '42 godzin',
         maxParticipants: 20,
-        price: 1800,
-        isPaid: true,
+        
         status: 'published',
         tags: ['RFID', 'identyfikacja', 'komisjonowanie', 'automatyzacja'],
         author: admin._id
@@ -495,8 +484,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-05-20'),
         duration: '38 godzin',
         maxParticipants: 22,
-        price: 1500,
-        isPaid: true,
+        
         status: 'published',
         tags: ['przeładunek', 'planowanie', 'koordynacja', 'terminale'],
         author: admin._id
@@ -509,8 +497,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-06-01'),
         duration: '44 godzin',
         maxParticipants: 18,
-        price: 1900,
-        isPaid: true,
+        
         status: 'published',
         tags: ['drony', 'dostawy', 'planowanie misji', 'flota'],
         author: admin._id
@@ -523,8 +510,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-06-10'),
         duration: '60 godzin',
         maxParticipants: 15,
-        price: 1600,
-        isPaid: true,
+        
         status: 'published',
         tags: ['język angielski', 'terminologia', 'komunikacja', 'spedycja'],
         author: admin._id
@@ -537,8 +523,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-06-20'),
         duration: '60 godzin',
         maxParticipants: 15,
-        price: 1600,
-        isPaid: true,
+        
         status: 'published',
         tags: ['język niemiecki', 'komunikacja', 'partnerzy', 'kultura biznesowa'],
         author: admin._id
@@ -551,8 +536,7 @@ app.post('/api/seed-courses', async (req, res) => {
         startDate: new Date('2025-07-01'),
         duration: '80 godzin',
         maxParticipants: 12,
-        price: 1800,
-        isPaid: true,
+        
         status: 'published',
         tags: ['język polski', 'cudzoziemcy', 'integracja', 'kultura pracy'],
         author: admin._id

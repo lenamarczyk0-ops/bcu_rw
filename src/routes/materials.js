@@ -442,14 +442,14 @@ router.get('/:id', requireAuth, requireInstructor, async (req, res) => {
 
 // Create new material
 router.post('/', requireAuth, requireInstructor, [
-  body('title').trim().isLength({ min: 3 }),
-  body('type').isIn(['document', 'video', 'presentation', 'exercise', 'test', 'link']),
-  body('fileUrl').trim().isURL(),
-  body('topic').trim().isLength({ min: 2 }),
-  body('level').optional().isIn(['beginner', 'intermediate', 'advanced']),
+  body('title').trim().isLength({ min: 3 }).withMessage('Tytuł musi mieć co najmniej 3 znaki'),
+  body('type').isIn(['document', 'video', 'presentation', 'exercise', 'test', 'link']).withMessage('Nieprawidłowy typ materiału'),
+  body('fileUrl').trim().notEmpty().withMessage('URL pliku lub lokalna ścieżka jest wymagana'),
+  body('topic').trim().isLength({ min: 2 }).withMessage('Temat musi mieć co najmniej 2 znaki'),
+  body('level').optional().isIn(['beginner', 'intermediate', 'advanced']).withMessage('Nieprawidłowy poziom'),
   body('description').optional().trim(),
-  body('courses').optional().isArray(),
-  body('isPublic').optional().isBoolean()
+  body('courses').optional(),
+  body('isPublic').optional().isBoolean().withMessage('isPublic musi być boolean')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -462,15 +462,26 @@ router.post('/', requireAuth, requireInstructor, [
 
     const { courses, ...materialData } = req.body;
 
+    // Normalizacja pól z formularza
+    if (typeof materialData.isPublic === 'string') {
+      materialData.isPublic = materialData.isPublic === 'true';
+    }
+    let normalizedCourses = [];
+    if (Array.isArray(courses)) {
+      normalizedCourses = courses;
+    } else if (typeof courses === 'string' && courses.trim().length > 0) {
+      normalizedCourses = [courses.trim()];
+    }
+
     // Verify courses exist and user has access
-    if (courses && courses.length > 0) {
-      const courseFilter = { _id: { $in: courses } };
+    if (normalizedCourses && normalizedCourses.length > 0) {
+      const courseFilter = { _id: { $in: normalizedCourses } };
       if (req.user.role !== 'admin' && req.user.role !== 'redaktor') {
         courseFilter.author = req.user._id;
       }
       
       const existingCourses = await Course.find(courseFilter);
-      if (existingCourses.length !== courses.length) {
+      if (existingCourses.length !== normalizedCourses.length) {
         return res.status(400).json({ message: 'Niektóre kursy nie zostały znalezione lub brak uprawnień' });
       }
     }
@@ -478,7 +489,7 @@ router.post('/', requireAuth, requireInstructor, [
     const material = new Material({
       ...materialData,
       author: req.user._id,
-      courses: courses || []
+      courses: normalizedCourses || []
     });
 
     await material.save();
@@ -494,14 +505,14 @@ router.post('/', requireAuth, requireInstructor, [
 
 // Update material
 router.put('/:id', requireAuth, requireInstructor, [
-  body('title').optional().trim().isLength({ min: 3 }),
-  body('type').optional().isIn(['document', 'video', 'presentation', 'exercise', 'test', 'link']),
-  body('fileUrl').optional().trim().isURL(),
-  body('topic').optional().trim().isLength({ min: 2 }),
-  body('level').optional().isIn(['beginner', 'intermediate', 'advanced']),
+  body('title').optional().trim().isLength({ min: 3 }).withMessage('Tytuł musi mieć co najmniej 3 znaki'),
+  body('type').optional().isIn(['document', 'video', 'presentation', 'exercise', 'test', 'link']).withMessage('Nieprawidłowy typ materiału'),
+  body('fileUrl').optional().trim().notEmpty().withMessage('URL pliku lub lokalna ścieżka jest wymagana'),
+  body('topic').optional().trim().isLength({ min: 2 }).withMessage('Temat musi mieć co najmniej 2 znaki'),
+  body('level').optional().isIn(['beginner', 'intermediate', 'advanced']).withMessage('Nieprawidłowy poziom'),
   body('description').optional().trim(),
-  body('courses').optional().isArray(),
-  body('isPublic').optional().isBoolean()
+  body('courses').optional(),
+  body('isPublic').optional().isBoolean().withMessage('isPublic musi być boolean')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -524,20 +535,36 @@ router.put('/:id', requireAuth, requireInstructor, [
       }
     }
 
-    // Verify courses if provided
-    if (req.body.courses) {
-      const courseFilter = { _id: { $in: req.body.courses } };
+    // Normalizacja i weryfikacja kursów, jeśli podane
+    let normalizedCourses = [];
+    if (Array.isArray(req.body.courses)) {
+      normalizedCourses = req.body.courses;
+    } else if (typeof req.body.courses === 'string' && req.body.courses.trim().length > 0) {
+      normalizedCourses = [req.body.courses.trim()];
+    }
+
+    if (normalizedCourses.length > 0) {
+      const courseFilter = { _id: { $in: normalizedCourses } };
       if (req.user.role !== 'admin' && req.user.role !== 'redaktor') {
         courseFilter.author = req.user._id;
       }
       
       const existingCourses = await Course.find(courseFilter);
-      if (existingCourses.length !== req.body.courses.length) {
+      if (existingCourses.length !== normalizedCourses.length) {
         return res.status(400).json({ message: 'Niektóre kursy nie zostały znalezione lub brak uprawnień' });
       }
     }
 
-    Object.assign(material, req.body);
+    // Zastosuj normalizacje boolean i courses
+    const updateData = { ...req.body };
+    if (typeof updateData.isPublic === 'string') {
+      updateData.isPublic = updateData.isPublic === 'true';
+    }
+    if (normalizedCourses.length > 0) {
+      updateData.courses = normalizedCourses;
+    }
+
+    Object.assign(material, updateData);
     await material.save();
     await material.populate('author', 'firstName lastName');
     await material.populate('courses', 'title');
