@@ -55,7 +55,8 @@ const jobOfferSchema = new mongoose.Schema({
   },
   expireAt: {
     type: Date,
-    required: true
+    required: false,
+    default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // +30 dni
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

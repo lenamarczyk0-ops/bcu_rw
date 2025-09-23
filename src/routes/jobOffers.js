@@ -153,20 +153,20 @@ router.get('/admin/list', requireAuth, requireJobManager, async (req, res) => {
 
 // Create new job offer
 router.post('/', requireAuth, requireJobManager, [
-  body('title').trim().isLength({ min: 3 }),
-  body('companyName').trim().isLength({ min: 2 }),
-  body('location').trim().isLength({ min: 2 }),
-  body('descriptionHTML').trim().isLength({ min: 50 }),
+  body('title').trim().isLength({ min: 3 }).withMessage('Tytuł musi mieć co najmniej 3 znaki'),
+  body('companyName').trim().isLength({ min: 2 }).withMessage('Nazwa firmy musi mieć co najmniej 2 znaki'),
+  body('location').trim().isLength({ min: 2 }).withMessage('Lokalizacja musi mieć co najmniej 2 znaki'),
+  body('descriptionHTML').trim().isLength({ min: 50 }).withMessage('Opis musi mieć co najmniej 50 znaków'),
   body('requirements').optional().trim(),
   body('benefits').optional().trim(),
-  body('salaryFrom').optional().isFloat({ min: 0 }),
-  body('salaryTo').optional().isFloat({ min: 0 }),
-  body('employmentType').optional().isIn(['full-time', 'part-time', 'contract', 'internship']),
-  body('experienceLevel').optional().isIn(['junior', 'mid', 'senior', 'any']),
-  body('applyUrl').optional().isURL(),
-  body('contactEmail').optional().isEmail(),
-  body('expireAt').isISO8601(),
-  body('tags').optional().isArray()
+  body('salaryFrom').optional().isFloat({ min: 0 }).withMessage('Wynagrodzenie od musi być liczbą nieujemną'),
+  body('salaryTo').optional().isFloat({ min: 0 }).withMessage('Wynagrodzenie do musi być liczbą nieujemną'),
+  body('employmentType').optional().isIn(['full-time', 'part-time', 'contract', 'internship']).withMessage('Nieprawidłowy typ zatrudnienia'),
+  body('experienceLevel').optional().isIn(['junior', 'mid', 'senior', 'any']).withMessage('Nieprawidłowy poziom doświadczenia'),
+  body('applyUrl').optional().isURL().withMessage('Link do aplikacji musi być poprawnym adresem URL'),
+  body('contactEmail').optional().isEmail().withMessage('E-mail kontaktowy musi być poprawny'),
+  body('expireAt').optional().isISO8601().withMessage('Data wygaśnięcia musi być prawidłową datą'),
+  body('tags').optional().isArray().withMessage('Tagi muszą być tablicą')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -200,22 +200,22 @@ router.post('/', requireAuth, requireJobManager, [
 
 // Update job offer
 router.put('/:id', requireAuth, requireJobManager, [
-  body('title').optional().trim().isLength({ min: 3 }),
-  body('companyName').optional().trim().isLength({ min: 2 }),
-  body('location').optional().trim().isLength({ min: 2 }),
-  body('descriptionHTML').optional().trim().isLength({ min: 50 }),
+  body('title').optional().trim().isLength({ min: 3 }).withMessage('Tytuł musi mieć co najmniej 3 znaki'),
+  body('companyName').optional().trim().isLength({ min: 2 }).withMessage('Nazwa firmy musi mieć co najmniej 2 znaki'),
+  body('location').optional().trim().isLength({ min: 2 }).withMessage('Lokalizacja musi mieć co najmniej 2 znaki'),
+  body('descriptionHTML').optional().trim().isLength({ min: 50 }).withMessage('Opis musi mieć co najmniej 50 znaków'),
   body('requirements').optional().trim(),
   body('benefits').optional().trim(),
-  body('salaryFrom').optional().isFloat({ min: 0 }),
-  body('salaryTo').optional().isFloat({ min: 0 }),
-  body('employmentType').optional().isIn(['full-time', 'part-time', 'contract', 'internship']),
-  body('experienceLevel').optional().isIn(['junior', 'mid', 'senior', 'any']),
-  body('applyUrl').optional().isURL(),
-  body('contactEmail').optional().isEmail(),
-  body('expireAt').optional().isISO8601(),
-  body('status').optional().isIn(['draft', 'published', 'archived', 'expired']),
-  body('isActive').optional().isBoolean(),
-  body('tags').optional().isArray()
+  body('salaryFrom').optional().isFloat({ min: 0 }).withMessage('Wynagrodzenie od musi być liczbą nieujemną'),
+  body('salaryTo').optional().isFloat({ min: 0 }).withMessage('Wynagrodzenie do musi być liczbą nieujemną'),
+  body('employmentType').optional().isIn(['full-time', 'part-time', 'contract', 'internship']).withMessage('Nieprawidłowy typ zatrudnienia'),
+  body('experienceLevel').optional().isIn(['junior', 'mid', 'senior', 'any']).withMessage('Nieprawidłowy poziom doświadczenia'),
+  body('applyUrl').optional().isURL().withMessage('Link do aplikacji musi być poprawnym adresem URL'),
+  body('contactEmail').optional().isEmail().withMessage('E-mail kontaktowy musi być poprawny'),
+  body('expireAt').optional().isISO8601().withMessage('Data wygaśnięcia musi być prawidłową datą'),
+  body('status').optional().isIn(['draft', 'published', 'archived', 'expired']).withMessage('Nieprawidłowy status'),
+  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean'),
+  body('tags').optional().isArray().withMessage('Tagi muszą być tablicą')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
