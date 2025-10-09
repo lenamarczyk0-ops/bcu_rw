@@ -178,7 +178,7 @@ Ta wiadomość została wysłana z formularza na bcu-spedycja.pl
         name: 'BCU SPEDYCJA - Formularz kontaktowy',
         address: process.env.SMTP_USER || 'noreply@bcu-spedycja.pl'
       },
-      to: 'kontakt@bcu-spedycja.pl',
+      to: 'sekretariat@bcu-spedycja.pl',
       replyTo: email, // Allow direct replies to sender
       subject: emailSubject,
       text: emailText,
@@ -216,7 +216,7 @@ Ta wiadomość została wysłana z formularza na bcu-spedycja.pl
     // Don't expose internal errors to client
     res.status(500).json({
       success: false,
-      message: 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie lub skontaktuj się bezpośrednio: kontakt@bcu-spedycja.pl'
+      message: 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie lub skontaktuj się bezpośrednio: sekretariat@bcu-spedycja.pl'
     });
   }
 });

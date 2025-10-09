@@ -31,7 +31,7 @@ Jeśli masz serwer SMTP (np. od dostawcy hostingu):
 SMTP_HOST=mail.twoja-domena.pl
 SMTP_PORT=587
 SMTP_SECURE=false
-SMTP_USER=kontakt@bcu-spedycja.pl
+SMTP_USER=sekretariat@bcu-spedycja.pl
 SMTP_PASS=haslo-do-skrzynki
 ```
 
@@ -72,7 +72,7 @@ W trybie development (bez konfiguracji SMTP), system automatycznie użyje Ethere
 - **Statusy** - informacje o sukcesie/błędzie
 
 ### 📧 Format emaila:
-- **Do:** kontakt@bcu-spedycja.pl
+- **Do:** sekretariat@bcu-spedycja.pl
 - **Od:** dane z formularza
 - **Temat:** [BCU SPEDYCJA] + temat z formularza
 - **Reply-To:** email nadawcy (łatwa odpowiedź)
