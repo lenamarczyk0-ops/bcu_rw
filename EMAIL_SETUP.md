@@ -23,17 +23,30 @@ GMAIL_PASS=twoje-haslo-aplikacji
    - Skopiuj wygenerowane hasło (16 znaków)
    - Użyj tego hasła jako `GMAIL_PASS`
 
-### 🔧 Opcja 2: SMTP (Profesjonalne)
+### 🔧 Opcja 2: SMTP OVH (UŻYWANE - PRODUKCJA)
 
-Jeśli masz serwer SMTP (np. od dostawcy hostingu):
+**✅ Aktualna konfiguracja dla bcu-spedycja.pl:**
 
+**Wariant A - SSL (Port 465):**
 ```
-SMTP_HOST=mail.twoja-domena.pl
+SMTP_HOST=smtp.mail.ovh.net
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=sekretariat@bcu-spedycja.pl
+SMTP_PASS=#SPEdyCjA_25!
+```
+
+**Wariant B - STARTTLS (Port 587) - ZALECANE jeśli 465 nie działa:**
+```
+SMTP_HOST=smtp.mail.ovh.net
 SMTP_PORT=587
 SMTP_SECURE=false
 SMTP_USER=sekretariat@bcu-spedycja.pl
-SMTP_PASS=haslo-do-skrzynki
+SMTP_PASS=#SPEdyCjA_25!
 ```
+
+> **Uwaga:** Te dane są skonfigurowane na Railway. Formularz wysyła maile na sekretariat@bcu-spedycja.pl
+> Jeśli port 465 nie działa, zmień na port 587 i SMTP_SECURE=false
 
 ### 🔧 Opcja 3: SendGrid (Zalecane dla produkcji)
 

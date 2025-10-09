@@ -7,14 +7,24 @@ const router = express.Router();
 const createTransporter = () => {
   // For Railway deployment, use SMTP service
   if (process.env.SMTP_HOST) {
+    const port = parseInt(process.env.SMTP_PORT) || 587;
+    const secure = process.env.SMTP_SECURE === 'true';
+    
     return nodemailer.createTransporter({
       host: process.env.SMTP_HOST,
-      port: process.env.SMTP_PORT || 587,
-      secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+      port: port,
+      secure: secure, // true for 465, false for other ports
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        // OVH requires these settings
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2'
+      },
+      debug: true, // Enable debug logs
+      logger: true // Enable logger
     });
   }
   
@@ -190,9 +200,17 @@ Ta wiadomość została wysłana z formularza na bcu-spedycja.pl
       }
     };
 
+    console.log('Attempting to send email with config:', {
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE,
+      user: process.env.SMTP_USER,
+      to: 'sekretariat@bcu-spedycja.pl'
+    });
+
     const info = await transporter.sendMail(mailOptions);
     
-    console.log('Contact email sent successfully:', {
+    console.log('✅ Contact email sent successfully:', {
       messageId: info.messageId,
       from: email,
       subject: subject,
@@ -211,7 +229,14 @@ Ta wiadomość została wysłana z formularza na bcu-spedycja.pl
     });
 
   } catch (error) {
-    console.error('Contact form error:', error);
+    console.error('❌ Contact form error:', error);
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode
+    });
     
     // Don't expose internal errors to client
     res.status(500).json({
