@@ -353,7 +353,7 @@ window.submitCourseApplication = function(courseId, courseTitle) {
             await api.submitApplication(applicationData);
             
             console.log('✅ Zgłoszenie wysłane pomyślnie!');
-            showNotification('Zgłoszenie zostało zapisane pomyślnie!', 'success');
+            showNotification('Twoje zgłoszenie zostało wysłane.', 'success');
             closeApplicationModal();
             closeCourseModal();
         } catch (error) {
