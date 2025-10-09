@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wszystkie Kursy - BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        /* Remove red focus outline globally */
+        *:focus {
+            outline: none !important;
+        }
+        
+        /* Subtle blue focus for interactive elements only */
+        button:focus,
+        a:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+        
+        /* Custom border widths for course containers */
+        .border-3 { border-width: 3px; }
+        .border-l-3 { border-left-width: 3px; }
+        .border-r-3 { border-right-width: 3px; }
+        .border-t-3 { border-top-width: 3px; }
+        .border-b-3 { border-bottom-width: 3px; }
+        
+        /* Enhanced shadows for course cards */
+        .shadow-3xl { 
+            box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25), 
+                       0 0 0 1px rgba(255, 255, 255, 0.1); 
+        }
+        
+        /* Text truncation utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-black">
+    <!-- HEADER -->
+    <header class="bg-secondary shadow-lg sticky top-0 z-50">
+        <div class="w-full px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
+                    <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
+                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                    </a>
+                    <img src="./imgs/logoo_powiat.png" alt="Powiat Krapkowicki" class="h-8 w-auto">
+                    <img src="./imgs/zdzieszowice1.png" alt="Zdzieszowice" class="h-6 w-auto">
+                    <img src="./imgs/salogo_PUT-18.png" alt="Politechnika Opolska" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/opolska1.png" alt="Województwo Opolskie" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/frse-bialy-poziom.svg" alt="FRSE" class="h-5 w-auto hidden md:block">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
+                        <a href="/courses" class="text-white hover:text-neutral transition-colors font-bold" aria-label="Przejdź do strony z kursami">Kursy</a>
+                        <a href="/job-offers" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do ofert pracy">Oferty Pracy</a>
+                        <a href="/news" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do aktualności">Aktualności</a>
+                        <a href="/#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
+                        <a href="/#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
+                    </nav>
+                    <!-- Ikona materiałów -->
+                    <div class="hidden md:flex items-center">
+                        <a href="#" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <i class="ri-folder-download-line text-lg"></i>
+                        </a>
+                    </div>
+                    <!-- Ikona dostępności z dropdown -->
+                    <div class="relative">
+                        <button id="accessibility-toggle" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <i class="ri-wheelchair-line text-lg"></i>
+                        </button>
+                        <div id="accessibility-menu" class="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg p-4 min-w-[280px] hidden z-50 border border-gray-200">
+                            <div class="text-sm text-gray-800 mb-3 font-semibold">Ustawienia dostępności</div>
+                            
+                            <!-- Rozmiar czcionki -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Rozmiar czcionki:</div>
+                                <div class="flex items-center space-x-1">
+                                    <button id="font-small" class="bg-gray-100 hover:bg-gray-200 transition-all text-sm px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Mała czcionka">A-</button>
+                                    <button id="font-normal" class="bg-red-600 hover:bg-red-700 transition-all text-base px-3 py-2 rounded text-white focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Normalna czcionka">A</button>
+                                    <button id="font-large" class="bg-gray-100 hover:bg-gray-200 transition-all text-lg px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Duża czcionka">A+</button>
+                                </div>
+                            </div>
+
+                            <!-- Kontrast -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Kontrast:</div>
+                                <div class="flex items-center space-x-2">
+                                    <button id="contrast-normal" class="bg-gray-100 hover:bg-gray-200 transition-all text-xs px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Normalny kontrast">Normalny</button>
+                                    <button id="contrast-high" class="bg-gray-100 hover:bg-gray-200 transition-all text-xs px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Wysoki kontrast">Wysoki</button>
+                                </div>
+                            </div>
+
+                            <!-- Animacje -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Animacje:</div>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="reduce-motion" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                    <span class="text-xs text-gray-700">Zmniejsz animacje</span>
+                                </label>
+                            </div>
+
+                            <!-- Skupienie -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Nawigacja klawiaturą:</div>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="focus-visible" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500" checked>
+                                    <span class="text-xs text-gray-700">Podświetl aktywny element</span>
+                                </label>
+                            </div>
+
+                            <!-- Reset -->
+                            <div class="pt-2 border-t border-gray-200">
+                                <button id="reset-accessibility" class="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 px-3 rounded transition-all focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    Przywróć domyślne ustawienia
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex flex-col space-y-1">
+                        <a href="/admin-simple.html" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap text-center">
+                            Zaloguj
+                        </a>
+                        <a href="/register.html" class="text-white hover:text-neutral transition-colors text-center text-sm">
+                            Rejestracja
+                        </a>
+                    </div>
+                    <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne" aria-controls="mobile-drawer" aria-expanded="false">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-menu-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE DRAWER MENU -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50" id="mobile-backdrop"></div>
+        <aside class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-secondary font-bold">Menu</span>
+                <button id="mobile-close" aria-label="Zamknij menu" class="text-gray-500 hover:text-gray-800">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-4" aria-label="Menu mobilne">
+                <a href="/courses" class="text-gray-800 hover:text-secondary">Kursy</a>
+                <a href="/job-offers" class="text-gray-800 hover:text-secondary">Oferty Pracy</a>
+                <a href="/news" class="text-gray-800 hover:text-secondary">Aktualności</a>
+                <a href="/#o-nas" class="text-gray-800 hover:text-secondary">O nas</a>
+                <a href="/#kontakt" class="text-gray-800 hover:text-secondary">Kontakt</a>
+            </nav>
+            <div class="mt-auto pt-6 space-y-3">
+                <a href="/admin-simple.html" class="block w-full text-center bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-3 !rounded-button hover:from-red-700 hover:to-red-600 transition-all">
+                    Zaloguj
+                </a>
+                <a href="/register.html" class="block w-full text-center text-gray-800 hover:text-secondary border border-gray-300 px-4 py-3 rounded-lg transition-all">
+                    Rejestracja
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <main>
+        <!-- BREADCRUMB -->
+        <section class="bg-gray-50 py-4">
+            <div class="max-w-7xl mx-auto px-6">
+                <nav class="text-sm" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="/" class="text-secondary hover:text-primary transition-colors">Strona główna</a></li>
+                        <li><i class="ri-arrow-right-s-line text-gray-400"></i></li>
+                        <li><span class="text-gray-600">Kursy BCU Spedycja</span></li>
+                    </ol>
+                </nav>
+            </div>
+        </section>
+
+
+        <!-- HERO SECTION (gradient) -->
+        <section class="bg-gradient-to-r from-secondary to-blue-800 text-white py-20">
+            <div class="max-w-7xl mx-auto px-6 text-center">
+                <div class="max-w-4xl mx-auto">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6">Kursy BCU Spedycja</h1>
+                    <p class="text-xl text-white/90 max-w-3xl mx-auto">Odkryj pełną gamę naszych profesjonalnych szkoleń w dziedzinie spedycji, logistyki i transportu. Każdy kurs został przygotowany przez ekspertów branży.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- COURSES SECTION -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <!-- Loading State -->
+                <div id="courses-loading" class="text-center py-8">
+                    <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-gray-500 bg-white">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Ładowanie kursów...
+                    </div>
+                        </div>
+                        
+                <!-- Error State -->
+                <div id="courses-error" class="text-center py-8 hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+                        <i class="ri-error-warning-line text-red-500 text-3xl mb-4"></i>
+                        <h3 class="text-lg font-semibold text-red-800 mb-2">Błąd ładowania kursów</h3>
+                        <p class="text-red-600 mb-4">Nie udało się pobrać listy kursów z serwera.</p>
+                        <button onclick="loadCourses()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            Spróbuj ponownie
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- Courses Grid - dynamically loaded -->
+                <div id="courses-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch hidden">
+                    <!-- Kursy będą załadowane dynamicznie z API -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
+                    <p class="text-gray-300 mb-4">Branżowe Centrum Umiejętności w dziedzinie spedycji, logistyki i transportu.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61580378476009" target="_blank" rel="noopener noreferrer" aria-label="Facebook BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
+                            <i class="ri-facebook-line"></i>
+                        </a>
+                        <a href="https://www.instagram.com/bcu_spedycja" target="_blank" rel="noopener noreferrer" aria-label="Instagram BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
+                            <i class="ri-instagram-line"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h3 class="text-lg font-bold mb-4">O projekcie</h3>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowych (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
+                    </p>
+                    <div class="flex justify-start">
+                        <img src="./imgs/logo_KPOWHite.png" alt="Krajowy Plan Odbudowy - NextGenerationEU" class="h-12 w-auto">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Kontakt</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-phone-line text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">77 474 90 50</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-mail-line text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">kontakt@bcu.spedycja.pl</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-map-pin-line text-sm"></i>
+                            </div>
+                            <a href="https://maps.app.goo.gl/cipcDAf9RgVEceCr6" target="_blank" rel="noopener noreferrer" class="text-gray-300 underline decoration-dotted hover:text-white">
+                                ul. Góra św. Anny 21A, 47-330 Zdzieszowice
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/20 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">© 2025 BCU Spedycja. Wszystkie prawa zastrzeżone.</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Polityka prywatności</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Regulamin</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 shadow-2xl z-50 transform translate-y-full transition-transform duration-300">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="ri-information-line text-black text-sm"></i>
+                </div>
+                <div class="text-sm leading-relaxed">
+                    <p>Ta strona używa plików cookies w celu zapewnienia najlepszej jakości usług. Kontynuując przeglądanie strony, wyrażasz zgodę na ich użycie.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 flex-shrink-0">
+                <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm underline transition-colors">Polityka prywatności</a>
+                <button id="accept-cookies" class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Akceptuję
+                </button>
+                <button id="decline-cookies" class="border border-gray-600 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Odrzuć
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function initNavigationMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-button');
+            const drawer = document.getElementById('mobile-drawer');
+            const backdrop = document.getElementById('mobile-backdrop');
+            const closeBtn = document.getElementById('mobile-close');
+            const focusable = () => drawer ? drawer.querySelectorAll('a, button') : [];
+
+            function openDrawer() {
+                if (!drawer) return;
+                drawer.classList.remove('hidden');
+                mobileBtn?.setAttribute('aria-expanded', 'true');
+                const first = focusable()[0];
+                if (first) first.focus();
+                document.addEventListener('keydown', onKey);
+            }
+
+            function closeDrawer() {
+                if (!drawer) return;
+                drawer.classList.add('hidden');
+                mobileBtn?.setAttribute('aria-expanded', 'false');
+                mobileBtn?.focus();
+                document.removeEventListener('keydown', onKey);
+            }
+
+            function onKey(e) { if (e.key === 'Escape') closeDrawer(); }
+
+            mobileBtn?.addEventListener('click', openDrawer);
+            backdrop?.addEventListener('click', closeDrawer);
+            closeBtn?.addEventListener('click', closeDrawer);
+            if (drawer) drawer.addEventListener('click', (e) => { if (e.target.tagName === 'A') closeDrawer(); });
+        }
+
+        function initAccessibilityControls() {
+            const fontSmall = document.getElementById('font-small');
+            const fontNormal = document.getElementById('font-normal');
+            const fontLarge = document.getElementById('font-large');
+            
+            if (!fontSmall || !fontNormal || !fontLarge) return;
+
+            function setActiveButton(activeBtn) {
+                [fontSmall, fontNormal, fontLarge].forEach(btn => {
+                    btn.classList.remove('bg-red-600', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-700');
+                activeBtn.classList.add('bg-red-600', 'text-white');
+            }
+
+            fontSmall.addEventListener('click', function () {
+                document.documentElement.style.fontSize = '14px';
+                setActiveButton(this);
+                localStorage.setItem('fontSize', 'small');
+            });
+
+            fontNormal.addEventListener('click', function () {
+                document.documentElement.style.fontSize = '16px';
+                setActiveButton(this);
+                localStorage.setItem('fontSize', 'normal');
+            });
+
+            fontLarge.addEventListener('click', function () {
+                document.documentElement.style.fontSize = '18px';
+                setActiveButton(this);
+                localStorage.setItem('fontSize', 'large');
+            });
+
+            // Przywróć zapisane ustawienie
+            const savedSize = localStorage.getItem('fontSize');
+            if (savedSize === 'small') {
+                fontSmall.click();
+            } else if (savedSize === 'large') {
+                fontLarge.click();
+            }
+        }
+
+        function initSmoothScrolling() {
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach((link) => {
+                link.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (!href || href === '#') return;
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+
+        function initAccessibilityMenu() {
+            const toggle = document.getElementById('accessibility-toggle');
+            const menu = document.getElementById('accessibility-menu');
+            
+            if (toggle && menu) {
+                toggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menu.classList.toggle('hidden');
+                });
+                
+                // Zamknij menu po kliknięciu poza nim
+                document.addEventListener('click', function() {
+                    menu.classList.add('hidden');
+                });
+                
+                // Zatrzymaj propagację kliknięć w menu
+                menu.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        }
+
+        // Cookie Consent Management
+        function initCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            const acceptBtn = document.getElementById('accept-cookies');
+            const declineBtn = document.getElementById('decline-cookies');
+            
+            if (!banner) return;
+            
+            const cookieConsent = localStorage.getItem('cookieConsent');
+            
+            if (!cookieConsent) {
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-full');
+                }, 500);
+            }
+            
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'accepted');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    console.log('Cookies accepted');
+                });
+            }
+            
+            if (declineBtn) {
+                declineBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'declined');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    console.log('Cookies declined');
+                });
+            }
+            
+            function hideCookieBanner() {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Page loaded, initializing...');
+            initNavigationMenu();
+            initAccessibilityControls();
+            initSmoothScrolling();
+            initAccessibilityMenu();
+            initCookieBanner();
+            
+            // Load ONLY courses from database (added via admin panel)
+            console.log('🔄 Loading courses from database...');
+                loadCoursesFromAPI();
+        });
+
+        // Load courses ONLY from database (admin panel)
+        async function loadCoursesFromAPI() {
+            const loadingEl = document.getElementById('courses-loading');
+            const errorEl = document.getElementById('courses-error');
+            const gridEl = document.getElementById('courses-grid');
+            
+            // Show loading state
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            
+            try {
+                console.log('📡 Loading courses from database...');
+                
+                const response = await fetch('/api/courses?limit=50', {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API Success! Got', data.courses ? data.courses.length : 0, 'courses from database');
+
+                if (data.courses && Array.isArray(data.courses)) {
+                    if (data.courses.length > 0) {
+                        console.log('📚 Displaying courses from admin panel');
+                    renderCourses(data.courses);
+                    } else {
+                        console.log('📋 No courses in database - showing empty state');
+                        showEmptyState();
+                    }
+                } else {
+                    throw new Error('Invalid API response format');
+                }
+
+            } catch (error) {
+                console.log('❌ Failed to load courses:', error.message);
+                showErrorState();
+            }
+        }
+
+        // Show empty state when no courses in database
+        function showEmptyState() {
+            const loadingEl = document.getElementById('courses-loading');
+            const errorEl = document.getElementById('courses-error');
+            const gridEl = document.getElementById('courses-grid');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) {
+                gridEl.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="max-w-md mx-auto">
+                            <i class="ri-book-open-line text-6xl text-gray-300 mb-6"></i>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Brak kursów w bazie danych</h3>
+                            <p class="text-gray-500 mb-6">Kursy będą wyświetlane tutaj po dodaniu ich przez panel administratora.</p>
+                            <a href="/admin" class="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors">
+                                <i class="ri-settings-line mr-2"></i>
+                                Przejdź do panelu admina
+                            </a>
+                        </div>
+                    </div>
+                `;
+                gridEl.classList.remove('hidden');
+            }
+        }
+
+        // Show error state when API fails
+        function showErrorState() {
+            const loadingEl = document.getElementById('courses-loading');
+            const errorEl = document.getElementById('courses-error');
+            const gridEl = document.getElementById('courses-grid');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (errorEl) {
+                errorEl.innerHTML = `
+                    <div class="text-center py-16">
+                        <div class="max-w-md mx-auto">
+                            <i class="ri-error-warning-line text-6xl text-red-300 mb-6"></i>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-4">Błąd ładowania kursów</h3>
+                            <p class="text-gray-500 mb-6">Nie udało się załadować kursów z bazy danych.</p>
+                            <button onclick="location.reload()" class="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors">
+                                <i class="ri-refresh-line mr-2"></i>
+                                Spróbuj ponownie
+                            </button>
+                        </div>
+                    </div>
+                `;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        // Render courses in the grid
+        function renderCourses(courses) {
+            const gridEl = document.getElementById('courses-grid');
+            const loadingEl = document.getElementById('courses-loading');
+            const errorEl = document.getElementById('courses-error');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            
+            if (courses.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            gridEl.innerHTML = courses.map(course => createCourseCard(course)).join('');
+            gridEl.classList.remove('hidden');
+            
+            // Add event listeners for course application buttons
+            document.querySelectorAll('[data-action="apply"]').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const courseId = e.currentTarget.dataset.courseId;
+                    const courseTitle = e.currentTarget.dataset.courseTitle;
+                    try {
+                        submitCourseApplication(courseId, courseTitle);
+                    } catch (error) {
+                        console.error('Error calling submitCourseApplication:', error);
+                        alert('Funkcja zgłoszeniowa nie jest dostępna. Odśwież stronę i spróbuj ponownie.');
+                    }
+                });
+            });
+        }
+
+        // Create course card HTML
+        function createCourseCard(course) {
+            // Enhanced gradient colors with better contrast and modern look (identical to build.html)
+            const gradients = [
+                { from: 'from-indigo-600', to: 'to-indigo-800', accent: 'text-indigo-200', highlight: 'text-indigo-100' },
+                { from: 'from-red-600', to: 'to-red-800', accent: 'text-red-200', highlight: 'text-red-100' },
+                { from: 'from-emerald-600', to: 'to-emerald-800', accent: 'text-emerald-200', highlight: 'text-emerald-100' },
+                { from: 'from-purple-600', to: 'to-purple-800', accent: 'text-purple-200', highlight: 'text-purple-100' },
+                { from: 'from-orange-600', to: 'to-orange-800', accent: 'text-orange-200', highlight: 'text-orange-100' },
+                { from: 'from-slate-700', to: 'to-slate-900', accent: 'text-slate-200', highlight: 'text-slate-100' },
+                { from: 'from-teal-600', to: 'to-teal-800', accent: 'text-teal-200', highlight: 'text-teal-100' },
+                { from: 'from-cyan-600', to: 'to-cyan-800', accent: 'text-cyan-200', highlight: 'text-cyan-100' }
+            ];
+            
+            const gradientIndex = course.title ? course.title.length % gradients.length : 0;
+            const gradient = gradients[gradientIndex];
+            const gradientClass = `bg-gradient-to-br ${gradient.from} ${gradient.to}`;
+            
+            // Enhanced image selection based on course content
+            let imageUrl = course.imageUrl;
+            if (!imageUrl || imageUrl === './imgs/halazdjecie.jpg') {
+                // Enhanced smart image assignment based on course title keywords
+                const title = (course.title || '').toLowerCase();
+                
+                if (title.includes('firma') || title.includes('zarządzanie') || title.includes('prowadzenie')) {
+                    imageUrl = '/imgs/medium-shot-woman-with-tablet.jpg';
+                } else if (title.includes('magazyn') || title.includes('ładunk') || title.includes('manipulacyj') || title.includes('harmonogram')) {
+                    const magazynImages = [
+                        '/imgs/warehouse-operative-checking-purchase-order.jpg',
+                        '/imgs/warehouse-worker-checking-inventory-arrived-goods-packages-storage-department.jpg',
+                        '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg',
+                        '/imgs/medium-shot-smiley-man-warehouse.jpg'
+                    ];
+                    imageUrl = magazynImages[Math.abs(title.length) % magazynImages.length];
+                } else if (title.includes('transport') || title.includes('drogowy') || title.includes('pojazd') || title.includes('logist') || title.includes('zarabia')) {
+                    const transportImages = [
+                        '/imgs/white-truck-delivery-shipping-service-3d-rendering.jpg',
+                        '/imgs/truck-logistics-operation-dusk.jpg',
+                        '/imgs/truck-inside-warehouse.jpg',
+                        '/imgs/abstract-design-background-trucks-transport-trackinghighway-delivering.jpg',
+                        '/imgs/transportation-logistics-container-cargo-ship-cargo-plane.jpg'
+                    ];
+                    imageUrl = transportImages[Math.abs(title.length) % transportImages.length];
+                } else if (title.includes('technolog') || title.includes('automatyc') || title.includes('cyfrowy') || title.includes('dron') || title.includes('identyfikacja')) {
+                    imageUrl = '/imgs/drone-flying-modern-warehouse.jpg';
+                } else if (title.includes('język') || title.includes('komunikacja') || title.includes('marketing') || title.includes('branżowy')) {
+                    imageUrl = '/imgs/16617.jpg';
+                } else if (title.includes('mechanizacja') || title.includes('prac') || title.includes('ładunk')) {
+                    imageUrl = '/imgs/happy-employee-holding-scanner-distribution-warehouse.jpg';
+                } else if (title.includes('eksport') || title.includes('import') || title.includes('celny') || title.includes('międzynarodow')) {
+                    imageUrl = '/imgs/transport-logistics-concept.jpg';
+                } else if (title.includes('bezpieczeńst') || title.includes('pracowni') || title.includes('bhp')) {
+                    imageUrl = '/imgs/woman-safety-equipment-working.jpg';
+                } else if (title.includes('kontrola') || title.includes('planowanie') || title.includes('kosztorys') || title.includes('zlecenia')) {
+                    imageUrl = '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+                } else if (title.includes('dostaw') || title.includes('kurier') || title.includes('przesył')) {
+                    imageUrl = '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+                } else {
+                    // Fallback: random selection from warehouse/transport images
+                    const fallbackImages = [
+                        '/imgs/medium-shot-woman-storage.jpg',
+                        '/imgs/truck-logistics-operation-dusk (1).jpg',
+                        '/imgs/16617.jpg'
+                    ];
+                    imageUrl = fallbackImages[Math.abs(title.length) % fallbackImages.length];
+                }
+            } else if (imageUrl.startsWith('./imgs/')) {
+                imageUrl = imageUrl.replace('./imgs/', '/imgs/');
+            }
+            
+            // Generate course code from title or use existing
+            const courseCode = course.slug ? course.slug.toUpperCase().substring(0, 8) : 'BCUS-' + (course._id ? course._id.toString().slice(-3) : '001');
+            
+            // Status formatting (no price display)
+            const statusText = course.isActive !== false ? 'DOSTĘPNY' : 'NIEDOSTĘPNY';
+            const statusClass = course.isActive !== false ? 'text-green-300' : 'text-red-300';
+            
+            return `
+                <div class="group relative ${gradientClass} rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-white/10 min-h-[420px] flex flex-col">
+                    <!-- Modern corner accents -->
+                    <div class="absolute top-3 left-3 w-6 h-6 border-l-3 border-t-3 border-yellow-400/80 rounded-tl-lg"></div>
+                    <div class="absolute top-3 right-3 w-6 h-6 border-r-3 border-t-3 border-yellow-400/80 rounded-tr-lg"></div>
+                    <div class="absolute bottom-3 left-3 w-6 h-6 border-l-3 border-b-3 border-yellow-400/80 rounded-bl-lg"></div>
+                    <div class="absolute bottom-3 right-3 w-6 h-6 border-r-3 border-b-3 border-yellow-400/80 rounded-br-lg"></div>
+                    
+                    <!-- Course metadata -->
+                    <div class="absolute top-4 right-6 space-y-1">
+                        <div class="text-yellow-400 text-xs font-bold bg-black/30 px-2 py-1 rounded backdrop-blur-sm">${courseCode}</div>
+                        <div class="text-yellow-400 text-xs font-mono bg-black/30 px-2 py-1 rounded backdrop-blur-sm">BCU</div>
+                    </div>
+                    
+                    <!-- Premium texture overlay -->
+                    <div class="absolute inset-0 opacity-5" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.1) 4px, rgba(255,255,255,0.1) 8px);"></div>
+                    
+                    <!-- Hero image section -->
+                    <div class="h-32 bg-cover bg-center relative overflow-hidden" style="background-image: url('${imageUrl}');">
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
+                        <div class="absolute bottom-2 left-3">
+                            <div class="bg-black/40 backdrop-blur-sm rounded-md px-2 py-1 inline-block">
+                                <span class="${statusClass} text-xs font-bold">${statusText}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content section -->
+                    <div class="p-4 text-white relative z-10 flex flex-col flex-1">
+                        <h3 class="text-lg font-bold mb-2 leading-tight group-hover:text-yellow-100 transition-colors line-clamp-2">${course.title || 'Kurs'}</h3>
+                        <p class="${gradient.accent} mb-3 text-xs leading-relaxed flex-grow line-clamp-3">${course.excerpt || course.description || 'Brak opisu...'}</p>
+                        
+                        <!-- Course details -->
+                        <div class="mb-3 text-xs bg-black/20 rounded-lg p-2.5 backdrop-blur-sm">
+                            <div class="grid grid-cols-3 gap-2.5">
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-user-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Grupa docelowa</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.targetGroup || 'dorośli'}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-timer-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Liczba godzin</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.hours || 0}h</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-group-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Max</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.maxParticipants || 20}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="mt-auto">
+                            <button data-action="apply" data-course-id="${course._id || course.id || courseCode}" data-course-title="${course.title || 'Kurs'}" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm">
+                                <span class="flex items-center justify-center">
+                                    <i class="ri-user-add-line mr-2"></i>
+                                    ZAPISZ SIĘ
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Show no courses state
+        function showNoCourses() {
+            const loadingEl = document.getElementById('courses-loading');
+            const errorEl = document.getElementById('courses-error');
+            const gridEl = document.getElementById('courses-grid');
+
+            loadingEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
+            
+            gridEl.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <div class="max-w-md mx-auto">
+                        <i class="ri-book-line text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Brak dostępnych kursów</h3>
+                        <p class="text-gray-500 mb-6">Obecnie nie ma aktywnych kursów. Sprawdź ponownie później lub skontaktuj się z administratorem.</p>
+                        <button onclick="loadCourses()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Odśwież
+                        </button>
+                    </div>
+                </div>
+            `;
+            gridEl.classList.remove('hidden');
+        }
+
+
+        // Show error state
+        function showError(message) {
+            const loadingEl = document.getElementById('courses-loading');
+            const errorEl = document.getElementById('courses-error');
+            const gridEl = document.getElementById('courses-grid');
+
+            loadingEl.classList.add('hidden');
+            gridEl.classList.add('hidden');
+            errorEl.classList.remove('hidden');
+            
+            // Update error message if needed
+            const errorMsg = errorEl.querySelector('p');
+            if (errorMsg) {
+                errorMsg.textContent = `Błąd: ${message}`;
+            }
+        }
+    </script>
+    
+    <!-- API Integration -->
+    <script src="./assets/js/api.js"></script>
+</body>
+</html>

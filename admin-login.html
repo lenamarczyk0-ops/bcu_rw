@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie - Panel Administratora BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        *:focus {
+            outline: none !important;
+        }
+        
+        button:focus, a:focus, input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1001;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: #10B981;
+        }
+        
+        .notification.error {
+            background: #EF4444;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full space-y-8 p-8">
+        <div class="text-center">
+            <img src="/imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="mx-auto h-16 w-auto filter brightness-0">
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">Panel Administratora</h2>
+            <p class="mt-2 text-sm text-gray-600">
+                Nie masz konta? 
+                <a href="register.html" class="font-medium text-primary hover:text-primary-dark">
+                    Zarejestruj się
+                </a>
+            </p>
+        </div>
+        
+        <form id="login-form" class="mt-8 space-y-6">
+            <div class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input id="email" name="email" type="email" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:ring-primary focus:border-primary"
+                           placeholder="admin@bcu-spedycja.pl">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Hasło</label>
+                    <input id="password" name="password" type="password" required 
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:ring-primary focus:border-primary"
+                           placeholder="••••••••">
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" id="login-btn" 
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="ri-login-box-line text-primary-light group-hover:text-primary-light" aria-hidden="true"></i>
+                    </span>
+                    <span id="login-text">Zaloguj się</span>
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <a href="/" class="text-sm text-gray-600 hover:text-gray-900">
+                    <i class="ri-arrow-left-line mr-1"></i>Powrót do strony głównej
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        class AdminLogin {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.checkAuth();
+            }
+
+            bindEvents() {
+                document.getElementById('login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+            }
+
+            async checkAuth() {
+                try {
+                    const response = await fetch('/api/auth/me', { 
+                        credentials: 'include' 
+                    });
+                    
+                    if (response.ok) {
+                        // User is already logged in, redirect to admin panel
+                        window.location.href = '/admin-panel.html';
+                    }
+                } catch (error) {
+                    // User is not logged in, stay on login page
+                    console.log('User not authenticated');
+                }
+            }
+
+            async handleLogin() {
+                const form = document.getElementById('login-form');
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                const loginBtn = document.getElementById('login-btn');
+                const loginText = document.getElementById('login-text');
+                
+                // Show loading state
+                loginBtn.disabled = true;
+                loginText.textContent = 'Logowanie...';
+                
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        this.showNotification('Zalogowano pomyślnie!', 'success');
+                        
+                        // Redirect to admin panel after short delay
+                        setTimeout(() => {
+                            window.location.href = '/admin-panel.html';
+                        }, 1000);
+                    } else {
+                        throw new Error(result.message || 'Błąd logowania');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    this.showNotification('Błąd logowania: ' + error.message, 'error');
+                } finally {
+                    // Reset button state
+                    loginBtn.disabled = false;
+                    loginText.textContent = 'Zaloguj się';
+                }
+            }
+
+            showNotification(message, type = 'success') {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.className = `notification ${type}`;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        // Initialize login page
+        const adminLogin = new AdminLogin();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Artykułów - BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-4xl mx-auto p-6">
+        <h1 class="text-3xl font-bold mb-6">🧪 Test Systemu Artykułów</h1>
+        
+        <!-- Test Results -->
+        <div id="test-results" class="space-y-4">
+            <!-- Results will be displayed here -->
+        </div>
+        
+        <!-- Manual Tests -->
+        <div class="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 class="text-xl font-semibold mb-4">Testy Manualne</h2>
+            <div class="space-y-3">
+                <button onclick="testNewsAPI()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Test API Aktualności
+                </button>
+                <button onclick="testOpenArticle()" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                    Test openArticle Function
+                </button>
+                <button onclick="testArticlePage()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">
+                    Test Article Page
+                </button>
+                <button onclick="window.location.href='/article/test-id'" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
+                    Go to Test Article
+                </button>
+            </div>
+        </div>
+        
+        <!-- Article List -->
+        <div id="articles-list" class="bg-white rounded-lg shadow p-6 mt-6">
+            <h2 class="text-xl font-semibold mb-4">Lista Artykułów</h2>
+            <div id="articles-content">
+                <p class="text-gray-500">Ładowanie...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add results to test results section
+        function addTestResult(title, status, details) {
+            const resultsDiv = document.getElementById('test-results');
+            const statusColor = status === 'success' ? 'bg-green-100 border-green-500 text-green-700' : 
+                               status === 'error' ? 'bg-red-100 border-red-500 text-red-700' : 
+                               'bg-yellow-100 border-yellow-500 text-yellow-700';
+            
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `border-l-4 p-4 ${statusColor}`;
+            resultDiv.innerHTML = `
+                <h3 class="font-semibold">${title}</h3>
+                <p class="text-sm mt-1">${details}</p>
+                <small class="text-xs opacity-75">${new Date().toLocaleTimeString()}</small>
+            `;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        // Test News API
+        async function testNewsAPI() {
+            console.log('🧪 Testing News API...');
+            addTestResult('News API Test', 'info', 'Testowanie API aktualności...');
+            
+            try {
+                const response = await fetch('/api/news');
+                console.log('📡 News API Response:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📄 News data:', data);
+                    addTestResult('News API Test', 'success', `✅ API działa! Znaleziono ${data.news?.length || 0} artykułów`);
+                    
+                    // Display articles
+                    displayArticles(data.news || []);
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ News API Error:', error);
+                addTestResult('News API Test', 'error', `❌ Błąd: ${error.message}`);
+            }
+        }
+
+        // Test openArticle function
+        function testOpenArticle() {
+            console.log('🧪 Testing openArticle function...');
+            
+            if (typeof window.openArticle === 'function') {
+                addTestResult('openArticle Function', 'success', '✅ Funkcja openArticle jest dostępna');
+                
+                // Test with dummy ID
+                console.log('🔄 Testing with dummy ID...');
+                addTestResult('openArticle Test', 'info', 'Testowanie z przykładowym ID (sprawdź console)');
+                
+                // Don't actually redirect, just log
+                const originalLocation = window.location.href;
+                console.log('🔍 Would redirect to: /article/test-123');
+                
+            } else {
+                addTestResult('openArticle Function', 'error', '❌ Funkcja openArticle nie jest dostępna');
+            }
+        }
+
+        // Test Article Page routing
+        async function testArticlePage() {
+            console.log('🧪 Testing Article Page...');
+            addTestResult('Article Page Test', 'info', 'Testowanie routingu strony artykułu...');
+            
+            try {
+                const response = await fetch('/article/test-id');
+                console.log('📡 Article page response:', response.status);
+                
+                if (response.ok) {
+                    addTestResult('Article Page Test', 'success', '✅ Routing /article/:id działa!');
+                } else {
+                    addTestResult('Article Page Test', 'error', `❌ Błąd routingu: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ Article page error:', error);
+                addTestResult('Article Page Test', 'error', `❌ Błąd: ${error.message}`);
+            }
+        }
+
+        // Display articles list
+        function displayArticles(articles) {
+            const contentDiv = document.getElementById('articles-content');
+            
+            if (articles.length === 0) {
+                contentDiv.innerHTML = '<p class="text-gray-500">Brak artykułów w bazie danych</p>';
+                return;
+            }
+            
+            contentDiv.innerHTML = articles.map(article => `
+                <div class="border rounded p-4 mb-3 hover:bg-gray-50">
+                    <h3 class="font-semibold">${article.title}</h3>
+                    <p class="text-sm text-gray-600 mt-1">${article.excerpt || 'Brak opisu'}</p>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="text-xs text-gray-500">ID: ${article._id}</span>
+                        <div class="space-x-2">
+                            <button onclick="console.log('🔍 Testing article:', '${article._id}'); window.location.href='/article/${article._id}'" 
+                                    class="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+                                Otwórz
+                            </button>
+                            <button onclick="testSpecificArticle('${article._id}')" 
+                                    class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                                Test API
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Test specific article
+        async function testSpecificArticle(articleId) {
+            console.log('🧪 Testing specific article:', articleId);
+            addTestResult(`Article ${articleId}`, 'info', 'Testowanie konkretnego artykułu...');
+            
+            try {
+                const response = await fetch(`/api/news/id/${articleId}`);
+                console.log('📡 Article API Response:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📄 Article data:', data);
+                    addTestResult(`Article ${articleId}`, 'success', `✅ Artykuł załadowany: ${data.news?.title || 'Brak tytułu'}`);
+                } else {
+                    const errorText = await response.text();
+                    addTestResult(`Article ${articleId}`, 'error', `❌ Błąd API: ${response.status} - ${errorText}`);
+                }
+            } catch (error) {
+                console.error('❌ Article API Error:', error);
+                addTestResult(`Article ${articleId}`, 'error', `❌ Błąd: ${error.message}`);
+            }
+        }
+
+        // Auto-start tests on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Starting automatic tests...');
+            addTestResult('Page Load', 'success', '✅ Strona testowa załadowana');
+            
+            // Run initial tests
+            setTimeout(() => {
+                testNewsAPI();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

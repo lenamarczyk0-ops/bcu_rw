@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="article-title">Artykuł - BCU SPEDYCJA</title>
+    <meta id="article-description" name="description" content="">
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        /* Remove red focus outline globally */
+        *:focus {
+            outline: none !important;
+        }
+        
+        /* Subtle blue focus for interactive elements only */
+        button:focus,
+        a:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+
+        /* Blog Article Styles */
+        .article-content {
+            font-family: Georgia, 'Times New Roman', serif;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-weight: 700;
+            color: #111827;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .article-content h1 {
+            font-size: 2.25rem;
+            margin-top: 0;
+        }
+
+        .article-content h2 {
+            font-size: 1.875rem;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 0.5rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.5rem;
+        }
+
+        .article-content h4 {
+            font-size: 1.25rem;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+            font-size: 1.125rem;
+        }
+
+        .article-content img {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            margin: 2rem 0;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #E30613;
+            background: #F9FAFB;
+            padding: 1.5rem 2rem;
+            margin: 2rem 0;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-content a {
+            color: #E30613;
+            text-decoration: underline;
+            text-decoration-color: rgba(227, 6, 19, 0.3);
+            text-underline-offset: 3px;
+            transition: all 0.2s;
+        }
+
+        .article-content a:hover {
+            text-decoration-color: #E30613;
+            color: #B8050F;
+        }
+
+        .article-content code {
+            background: #F3F4F6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .article-content pre {
+            background: #1F2937;
+            color: #F9FAFB;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-content pre code {
+            background: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-hero {
+            background: linear-gradient(135deg, rgba(0, 64, 128, 0.9), rgba(227, 6, 19, 0.8));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .article-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/imgs/transport-logistics-concept.jpg') center/cover;
+            z-index: -1;
+        }
+
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #E30613, #FF1A2B);
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+
+        .share-buttons {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        /* Hide share buttons on smaller screens and tablets to prevent overlap */
+        @media (max-width: 1280px) {
+            .share-buttons {
+                display: none !important;
+            }
+        }
+
+        /* Ensure main content has enough left margin on large screens */
+        @media (min-width: 1280px) {
+            .article-main-content {
+                margin-left: 6rem; /* Add space for fixed share buttons */
+                max-width: calc(100% - 6rem);
+            }
+        }
+
+        .article-tag {
+            background: linear-gradient(135deg, #E30613, #FF1A2B);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress" id="reading-progress"></div>
+
+    <!-- HEADER -->
+    <header class="bg-secondary shadow-lg sticky top-0 z-50">
+        <div class="w-full px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
+                    <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
+                        <img src="/imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                    </a>
+                    <img src="/imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto">
+                    <img src="/imgs/zdzieszowice1.png" alt="Logo Gminy Zdzieszowice" class="h-6 w-auto">
+                    <img src="/imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-6 w-auto hidden md:block">
+                    <img src="/imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-6 w-auto hidden md:block">
+                    <img src="/imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-5 w-auto hidden md:block">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
+                        <a href="/courses" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do strony z kursami">Kursy</a>
+                        <a href="/job-offers" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do ofert pracy">Oferty Pracy</a>
+                        <a href="/news" class="text-white hover:text-neutral transition-colors font-bold" aria-label="Przejdź do aktualności">Aktualności</a>
+                        <a href="/#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
+                        <a href="/#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
+                    </nav>
+                    <!-- Przyciski logowania i rejestracji -->
+                    <div class="hidden md:flex flex-col space-y-1">
+                        <a href="/admin" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap text-center">
+                            Zaloguj
+                        </a>
+                        <a href="/register.html" class="text-white hover:text-neutral transition-colors text-center text-sm">
+                            Rejestracja
+                        </a>
+                    </div>
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-menu-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Loading State -->
+        <div id="article-loading" class="min-h-screen flex items-center justify-center">
+            <div class="text-center">
+                <div class="inline-flex items-center px-6 py-3 bg-white rounded-lg shadow-lg">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-gray-700 font-medium">Ładowanie artykułu...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="article-error" class="min-h-screen flex items-center justify-center hidden">
+            <div class="text-center max-w-md mx-auto px-6">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <i class="ri-error-warning-line text-6xl text-red-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4">Nie znaleziono artykułu</h2>
+                    <p class="text-gray-600 mb-6">Przepraszamy, ale nie mogliśmy znaleźć tego artykułu.</p>
+                    <div class="space-y-3">
+                        <a href="/news" class="block bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Powrót do aktualności
+                        </a>
+                        <a href="/" class="block bg-gray-100 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors">
+                            <i class="ri-home-line mr-2"></i>
+                            Strona główna
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article Content -->
+        <div id="article-content" class="hidden">
+            <!-- Breadcrumb -->
+            <section class="bg-gray-50 py-4">
+                <div class="max-w-4xl mx-auto px-6">
+                    <nav class="text-sm" aria-label="Breadcrumb">
+                        <ol class="flex items-center space-x-2">
+                            <li><a href="/" class="text-secondary hover:text-primary transition-colors">Strona główna</a></li>
+                            <li><i class="ri-arrow-right-s-line text-gray-400"></i></li>
+                            <li><a href="/news" class="text-secondary hover:text-primary transition-colors">Aktualności</a></li>
+                            <li><i class="ri-arrow-right-s-line text-gray-400"></i></li>
+                            <li><span class="text-gray-600" id="breadcrumb-title">Artykuł</span></li>
+                        </ol>
+                    </nav>
+                </div>
+            </section>
+
+            <!-- Article Hero -->
+            <section class="article-hero py-20">
+                <div class="max-w-4xl mx-auto px-6 text-white text-center">
+                    <div class="mb-6">
+                        <span id="article-category" class="article-tag">AKTUALNOŚCI</span>
+                    </div>
+                    <h1 id="main-title" class="text-4xl md:text-5xl font-bold mb-6 leading-tight">Tytuł artykułu</h1>
+                    <div class="flex items-center justify-center space-x-6 text-gray-200">
+                        <div class="flex items-center">
+                            <i class="ri-calendar-line mr-2"></i>
+                            <span id="article-date">Data publikacji</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-user-line mr-2"></i>
+                            <span id="article-author">Autor</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="ri-time-line mr-2"></i>
+                            <span id="reading-time">5 min czytania</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Article Body -->
+            <section class="py-16 bg-white">
+                <div class="max-w-4xl mx-auto px-6 relative article-main-content">
+                    <!-- Share Buttons (Desktop only - fixed position) -->
+                    <div class="share-buttons hidden xl:flex">
+                        <button onclick="shareArticle('facebook')" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition-colors shadow-lg" title="Udostępnij na Facebook">
+                            <i class="ri-facebook-fill text-lg"></i>
+                        </button>
+                        <button onclick="shareArticle('twitter')" class="bg-sky-500 text-white p-3 rounded-full hover:bg-sky-600 transition-colors shadow-lg" title="Udostępnij na Twitter">
+                            <i class="ri-twitter-fill text-lg"></i>
+                        </button>
+                        <button onclick="shareArticle('linkedin')" class="bg-blue-700 text-white p-3 rounded-full hover:bg-blue-800 transition-colors shadow-lg" title="Udostępnij na LinkedIn">
+                            <i class="ri-linkedin-fill text-lg"></i>
+                        </button>
+                        <button onclick="copyArticleLink()" class="bg-gray-600 text-white p-3 rounded-full hover:bg-gray-700 transition-colors shadow-lg" title="Kopiuj link">
+                            <i class="ri-link text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Featured Image -->
+                    <div class="mb-12">
+                        <img id="featured-image" src="" alt="" class="w-full h-96 object-cover rounded-xl shadow-2xl">
+                    </div>
+
+                    <!-- Article Text -->
+                    <div id="article-body" class="article-content">
+                        <!-- Treść artykułu będzie wstawiona tutaj -->
+                    </div>
+
+                    <!-- Mobile/Tablet Share Buttons -->
+                    <div class="xl:hidden mt-8 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold text-center mb-4">Udostępnij artykuł</h3>
+                        <div class="flex justify-center space-x-4">
+                            <button onclick="shareArticle('facebook')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="ri-facebook-fill mr-2"></i>Facebook
+                            </button>
+                            <button onclick="shareArticle('twitter')" class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition-colors">
+                                <i class="ri-twitter-fill mr-2"></i>Twitter
+                            </button>
+                            <button onclick="copyArticleLink()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+                                <i class="ri-link mr-2"></i>Kopiuj link
+                            </button>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Back to News -->
+                    <div class="mt-16 pt-8 border-t border-gray-200 text-center">
+                        <a href="/news" class="inline-flex items-center bg-secondary text-white px-8 py-4 rounded-lg hover:bg-blue-700 transition-colors font-semibold text-lg">
+                            <i class="ri-arrow-left-line mr-3"></i>
+                            Powrót do aktualności
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
+                    <p class="text-gray-300 mb-4">Branżowe Centrum Umiejętności w dziedzinie spedycji, logistyki i transportu.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61580378476009" target="_blank" rel="noopener noreferrer" aria-label="Facebook BCU Spedycja" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <i class="ri-facebook-line text-lg" aria-hidden="true"></i>
+                        </a>
+                        <a href="https://www.instagram.com/bcu_spedycja" target="_blank" rel="noopener noreferrer" aria-label="Instagram BCU Spedycja" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10">
+                            <i class="ri-instagram-line text-lg" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">O projekcie</h4>
+                    <p class="text-gray-300 text-sm">
+                        Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowych (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Kontakt</h4>
+                    <div class="space-y-2">
+                        <p class="text-gray-300 flex items-center">
+                            <i class="ri-phone-line mr-2"></i>
+                            77 474 90 50
+                        </p>
+                        <p class="text-gray-300 flex items-center">
+                            <i class="ri-mail-line mr-2"></i>
+                            kontakt@bcu.spedycja.pl
+                        </p>
+                        <p class="text-gray-300 flex items-center">
+                            <i class="ri-map-pin-line mr-2"></i>
+                            <a href="https://maps.app.goo.gl/cipcDAf9RgVEceCr6" target="_blank" rel="noopener noreferrer" class="underline decoration-dotted hover:text-white">
+                                ul. Góra św. Anny 21A, 47-330 Zdzieszowice
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-600 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2025 BCU Spedycja. Wszystkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 shadow-2xl z-50 transform translate-y-full transition-transform duration-300">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="ri-information-line text-black text-sm"></i>
+                </div>
+                <div class="text-sm leading-relaxed">
+                    <p>Ta strona używa plików cookies w celu zapewnienia najlepszej jakości usług. Kontynuując przeglądanie strony, wyrażasz zgodę na ich użycie.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 flex-shrink-0">
+                <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm underline transition-colors">Polityka prywatności</a>
+                <button id="accept-cookies" class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Akceptuję
+                </button>
+                <button id="decline-cookies" class="border border-gray-600 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Odrzuć
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get article ID from URL
+        function getArticleId() {
+            console.log('🔍 Getting article ID from URL:', window.location.href);
+            
+            // Try to get ID from path parameter first (e.g. /article/123)
+            const pathParts = window.location.pathname.split('/');
+            console.log('📍 Path parts:', pathParts);
+            
+            if (pathParts[1] === 'article' && pathParts[2]) {
+                console.log('✅ Found ID in path:', pathParts[2]);
+                return pathParts[2];
+            }
+            
+            // Fallback to query parameter (e.g. /article.html?id=123)
+            const urlParams = new URLSearchParams(window.location.search);
+            const queryId = urlParams.get('id') || urlParams.get('slug');
+            console.log('🔄 Fallback to query parameter:', queryId);
+            
+            return queryId;
+        }
+
+        // Load article content
+        async function loadArticle() {
+            const articleId = getArticleId();
+            console.log('📰 Loading article with ID:', articleId);
+            
+            if (!articleId) {
+                console.error('❌ No article ID found');
+                showError();
+                return;
+            }
+
+            try {
+                console.log('🌐 Fetching article from API...');
+                const response = await fetch(`/api/news/id/${articleId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('📡 API Response:', response.status, response.statusText);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('❌ API Error Response:', errorText);
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                const data = await response.json();
+                console.log('📄 Article data received:', data);
+                
+                if (data.success && data.news) {
+                    console.log('✅ Displaying article:', data.news.title);
+                    displayArticle(data.news);
+                } else {
+                    console.error('❌ Invalid response format:', data);
+                    throw new Error('Article not found');
+                }
+            } catch (error) {
+                console.error('💥 Error loading article:', error);
+                showError();
+            }
+        }
+
+        // Display article content
+        function displayArticle(article) {
+            // Update page title and meta
+            document.title = `${article.title} - BCU SPEDYCJA`;
+            document.getElementById('article-title').textContent = `${article.title} - BCU SPEDYCJA`;
+            document.getElementById('article-description').setAttribute('content', article.excerpt || '');
+
+            // Update breadcrumb
+            document.getElementById('breadcrumb-title').textContent = article.title;
+
+            // Update hero section
+            document.getElementById('main-title').textContent = article.title;
+            document.getElementById('article-date').textContent = new Date(article.publishedAt || article.createdAt).toLocaleDateString('pl-PL', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            document.getElementById('article-author').textContent = article.author ? 
+                `${article.author.firstName} ${article.author.lastName}` : 'BCU Spedycja';
+            
+            // Calculate reading time (rough estimate: 200 words per minute)
+            const wordCount = (article.contentHTML || article.content || '').replace(/<[^>]*>/g, '').split(/\s+/).length;
+            const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+            document.getElementById('reading-time').textContent = `${readingTime} min czytania`;
+
+            // Set category
+            const category = article.tags && article.tags.length > 0 ? 
+                article.tags[0].toUpperCase() : 'AKTUALNOŚCI';
+            document.getElementById('article-category').textContent = category;
+
+            // Set featured image
+            const featuredImage = document.getElementById('featured-image');
+            let imageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
+            if (imageUrl.startsWith('./')) {
+                imageUrl = imageUrl.replace('./', '/');
+            }
+            featuredImage.src = imageUrl;
+            featuredImage.alt = article.title;
+
+            // Set article body
+            const articleBody = document.getElementById('article-body');
+            articleBody.innerHTML = article.contentHTML || formatPlainText(article.content || article.excerpt || '');
+
+            // Show article content
+            document.getElementById('article-loading').classList.add('hidden');
+            document.getElementById('article-content').classList.remove('hidden');
+
+            // Initialize reading progress
+            initReadingProgress();
+        }
+
+        // Smart image selection based on content
+        function getSmartImage(title, content) {
+            const text = (title + ' ' + content).toLowerCase();
+            
+            if (text.includes('transport') || text.includes('pojazd') || text.includes('ciężar')) {
+                return '/imgs/truck-logistics-operation-dusk.jpg';
+            } else if (text.includes('magazyn') || text.includes('składow') || text.includes('warehouse')) {
+                return '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg';
+            } else if (text.includes('dostaw') || text.includes('kurier') || text.includes('przesył')) {
+                return '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+            } else if (text.includes('logist') || text.includes('spedyc') || text.includes('zarządzanie')) {
+                return '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+            } else if (text.includes('bezpieczeńst') || text.includes('bhp') || text.includes('pracowni')) {
+                return '/imgs/woman-safety-equipment-working.jpg';
+            } else if (text.includes('technolog') || text.includes('innowac') || text.includes('cyfrowy')) {
+                return '/imgs/drone-flying-modern-warehouse.jpg';
+            } else {
+                return '/imgs/transport-logistics-concept.jpg';
+            }
+        }
+
+        // Format plain text to HTML
+        function formatPlainText(text) {
+            return text
+                .split('\n\n')
+                .map(paragraph => `<p>${paragraph.trim()}</p>`)
+                .join('');
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('article-loading').classList.add('hidden');
+            document.getElementById('article-error').classList.remove('hidden');
+        }
+
+        // Reading progress bar
+        function initReadingProgress() {
+            const progressBar = document.getElementById('reading-progress');
+            const articleContent = document.getElementById('article-content');
+            
+            if (!progressBar || !articleContent) return;
+
+            function updateProgress() {
+                const scrollTop = window.pageYOffset;
+                const docHeight = articleContent.offsetHeight;
+                const winHeight = window.innerHeight;
+                const scrollPercent = scrollTop / (docHeight - winHeight);
+                const scrollPercentRounded = Math.round(scrollPercent * 100);
+                
+                progressBar.style.width = Math.min(100, Math.max(0, scrollPercentRounded)) + '%';
+            }
+
+            window.addEventListener('scroll', updateProgress);
+            updateProgress();
+        }
+
+        // Share functions
+        function shareArticle(platform) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.getElementById('main-title').textContent);
+            
+            let shareUrl;
+            switch (platform) {
+                case 'facebook':
+                    shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                    break;
+                case 'twitter':
+                    shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
+                    break;
+                case 'linkedin':
+                    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                    break;
+                default:
+                    return;
+            }
+            
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+
+        function copyArticleLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                // Show notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                notification.innerHTML = '<i class="ri-check-line mr-2"></i>Link skopiowany!';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            });
+        }
+
+        // Cookie Consent Management
+        function initCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            const acceptBtn = document.getElementById('accept-cookies');
+            const declineBtn = document.getElementById('decline-cookies');
+            
+            if (!banner) return;
+            
+            // Check if user already made a choice
+            const cookieConsent = localStorage.getItem('cookieConsent');
+            
+            if (!cookieConsent) {
+                // Show banner after a short delay
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-full');
+                }, 500);
+            }
+            
+            // Handle accept button
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'accepted');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    console.log('Cookies accepted');
+                });
+            }
+            
+            // Handle decline button
+            if (declineBtn) {
+                declineBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'declined');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    console.log('Cookies declined');
+                });
+            }
+            
+            function hideCookieBanner() {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadArticle();
+            initCookieBanner();
+        });
+    </script>
+</body>
+</html>
+

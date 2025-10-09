@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materiały do pobrania - BCU SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        *:focus {
+            outline: none !important;
+        }
+        
+        button:focus, a:focus, input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- HEADER/NAVBAR (spójny z innymi podstronami) -->
+    <header class="bg-secondary shadow-lg sticky top-0 z-50">
+        <div class="w-full px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
+                    <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
+                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                    </a>
+                    <img src="./imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto">
+                    <img src="./imgs/zdzieszowice1.png" alt="Logo Gminy Zdzieszowice" class="h-6 w-auto">
+                    <img src="./imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-5 w-auto hidden md:block">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
+                        <a href="/courses" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do strony z kursami">Kursy</a>
+                        <a href="/job-offers" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do ofert pracy">Oferty Pracy</a>
+                        <a href="/news" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do aktualności">Aktualności</a>
+                        <a href="/#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
+                        <a href="/#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
+                    </nav>
+                    <!-- Ikona materiałów (podświetlona jako aktywna) -->
+                    <div class="hidden md:flex items-center">
+                        <a href="#" class="text-white transition-colors p-2 rounded-lg bg-white/20" aria-label="Materiały edukacyjne - aktualnie tutaj" role="button">
+                            <i class="ri-folder-download-line text-lg" aria-hidden="true"></i>
+                            <span class="sr-only">Materiały do pobrania</span>
+                        </a>
+                    </div>
+                    <!-- Przycisk do panelu admin -->
+                    <a href="/admin" class="hidden md:inline-block bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap">
+                        Panel Admin
+                    </a>
+                    <!-- Mobile menu button -->
+                    <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne" aria-controls="mobile-drawer" aria-expanded="false">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-menu-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- MOBILE DRAWER MENU -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50" id="mobile-backdrop"></div>
+        <aside class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-secondary font-bold">Menu</span>
+                <button id="mobile-close" aria-label="Zamknij menu" class="text-gray-500 hover:text-gray-800">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-4" aria-label="Menu mobilne">
+                <a href="/courses" class="text-gray-800 hover:text-secondary">Kursy</a>
+                <a href="/job-offers" class="text-gray-800 hover:text-secondary">Oferty Pracy</a>
+                <a href="/news" class="text-gray-800 hover:text-secondary">Aktualności</a>
+                <a href="/#o-nas" class="text-gray-800 hover:text-secondary">O nas</a>
+                <a href="/#kontakt" class="text-gray-800 hover:text-secondary">Kontakt</a>
+            </nav>
+            <div class="mt-auto pt-6">
+                <a href="/admin" class="block w-full text-center bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-3 !rounded-button hover:from-red-700 hover:to-red-600 transition-all">
+                    Panel Admin
+                </a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <!-- Page Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Materiały do pobrania</h1>
+                <p class="text-xl text-gray-600">Pobierz dokumenty, prezentacje i materiały edukacyjne</p>
+            </div>
+
+            
+            <!-- Loading State -->
+            <div id="materials-loading" class="text-center py-8">
+                <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-gray-500 bg-white">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Ładowanie materiałów...
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div id="materials-error" class="text-center py-8 hidden">
+                <div class="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+                    <i class="ri-error-warning-line text-red-500 text-3xl mb-4"></i>
+                    <h3 class="text-lg font-semibold text-red-800 mb-2">Błąd ładowania materiałów</h3>
+                    <p class="text-red-600 mb-4">Nie udało się pobrać listy materiałów z serwera.</p>
+                    <button onclick="loadMaterials()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        Spróbuj ponownie
+                    </button>
+                </div>
+            </div>
+
+            <!-- Materials Grid -->
+            <div id="materials-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+                <!-- Materiały będą załadowane dynamicznie -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="materials-empty" class="text-center py-12 hidden">
+                <i class="ri-folder-open-line text-gray-300 text-6xl mb-4"></i>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">Brak materiałów</h3>
+                <p class="text-gray-500">Obecnie nie ma dostępnych materiałów do pobrania.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-secondary text-white py-8">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="flex items-center justify-center space-x-6 mb-4">
+                <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-8 w-auto">
+                <img src="./imgs/logo_KPOWHite.png" alt="KPO Logo" class="h-8 w-auto">
+            </div>
+            <p class="text-gray-300">© 2025 BCU SPEDYCJA - Branżowe Centrum Umiejętności</p>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 shadow-2xl z-50 transform translate-y-full transition-transform duration-300">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="ri-information-line text-black text-sm"></i>
+                </div>
+                <div class="text-sm leading-relaxed">
+                    <p>Ta strona używa plików cookies w celu zapewnienia najlepszej jakości usług. Kontynuując przeglądanie strony, wyrażasz zgodę na ich użycie.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 flex-shrink-0">
+                <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm underline transition-colors">Polityka prywatności</a>
+                <button id="accept-cookies" class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Akceptuję
+                </button>
+                <button id="decline-cookies" class="border border-gray-600 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Odrzuć
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get file type icon
+        function getFileIcon(fileName) {
+            const extension = fileName.split('.').pop().toLowerCase();
+            const iconMap = {
+                'pdf': 'ri-file-pdf-line text-red-500',
+                'doc': 'ri-file-word-line text-blue-500',
+                'docx': 'ri-file-word-line text-blue-500',
+                'xls': 'ri-file-excel-line text-green-500',
+                'xlsx': 'ri-file-excel-line text-green-500',
+                'ppt': 'ri-slideshow-line text-orange-500',
+                'pptx': 'ri-slideshow-line text-orange-500',
+                'jpg': 'ri-image-line text-purple-500',
+                'jpeg': 'ri-image-line text-purple-500',
+                'png': 'ri-image-line text-purple-500',
+                'gif': 'ri-image-line text-purple-500',
+                'zip': 'ri-file-zip-line text-gray-500',
+                'rar': 'ri-file-zip-line text-gray-500'
+            };
+            return iconMap[extension] || 'ri-file-line text-gray-400';
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Create material card
+        function createMaterialCard(material) {
+            const iconClass = getFileIcon(material.fileName || material.title);
+            const fileSize = material.fileSize ? formatFileSize(material.fileSize) : '';
+            
+            return `
+                <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <i class="${iconClass} text-3xl"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">${material.title}</h3>
+                            ${material.description ? `<p class="text-gray-600 text-sm mb-3">${material.description}</p>` : ''}
+                            
+                            <div class="flex items-center text-xs text-gray-500 space-x-4 mb-4">
+                                ${material.fileName ? `<span><i class="ri-file-line mr-1"></i>${material.fileName}</span>` : ''}
+                                ${fileSize ? `<span><i class="ri-database-line mr-1"></i>${fileSize}</span>` : ''}
+                                ${material.downloadCount ? `<span><i class="ri-download-line mr-1"></i>${material.downloadCount} pobrań</span>` : ''}
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                ${material.type ? `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${material.type}</span>` : ''}
+                                ${material.level ? `<span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">${material.level}</span>` : ''}
+                            </div>
+                            
+                            <div class="space-y-2">
+                                <button onclick="console.log('Download button clicked for:', '${material._id || material.id}'); downloadMaterial('${material._id || material.id}')" class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition-colors font-medium">
+                                <i class="ri-download-line mr-2"></i>
+                                Pobierz
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Download material - make it globally accessible
+        window.downloadMaterial = async function(materialId) {
+            try {
+                console.log('🔍 Attempting to download material:', materialId);
+                showNotification('Rozpoczynam pobieranie...', 'info');
+                
+                // First check if material exists and is public
+                console.log('🌐 Checking material status...');
+                const checkResponse = await fetch(`/api/materials/public`);
+                if (checkResponse.ok) {
+                    const publicMaterials = await checkResponse.json();
+                    const material = publicMaterials.materials?.find(m => m._id === materialId);
+                    if (!material) {
+                        console.warn('⚠️ Material not found in public materials list');
+                        showNotification('Materiał może nie być publiczny', 'warning');
+                    } else {
+                        console.log('✅ Material found in public list:', material.title);
+                    }
+                }
+                
+                // Try the regular download endpoint
+                console.log('📥 Fetching download URL...');
+                const response = await fetch(`/api/materials/download/${materialId}`, {
+                    credentials: 'include'
+                });
+                
+                console.log('📡 Download API response:', response.status, response.statusText);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Download response:', data);
+                    
+                    // Check if we have a valid URL
+                    if (!data.downloadUrl) {
+                        throw new Error('Brak URL do pobrania');
+                    }
+                    
+                    // Try to download using the provided URL
+                    try {
+                    const a = document.createElement('a');
+                    a.href = data.downloadUrl;
+                        a.download = data.fileName || 'material';
+                    a.target = '_blank';
+                        a.rel = 'noopener noreferrer';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                        
+                        console.log('Download initiated successfully');
+                        showNotification('Pobieranie rozpoczęte...', 'success');
+                        
+                    } catch (linkError) {
+                        console.warn('Direct download failed, trying proxy method:', linkError);
+                        
+                        // Fallback to proxy method
+                        window.open(`/api/materials/proxy/${materialId}`, '_blank');
+                        showNotification('Próba pobierania przez serwer proxy...', 'info');
+                    }
+                    
+                } else {
+                    const errorData = await response.json();
+                    console.error('Download API error:', errorData);
+                    
+                    // Try the proxy method as fallback
+                    console.log('Trying proxy method as fallback...');
+                    window.open(`/api/materials/proxy/${materialId}`, '_blank');
+                    showNotification('Próba pobierania przez alternatywną metodę...', 'info');
+                }
+                
+            } catch (error) {
+                console.error('Download error:', error);
+                showNotification('Błąd pobierania pliku: ' + error.message, 'error');
+            }
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white max-w-sm transition-all duration-300 ${
+                type === 'success' ? 'bg-green-500' :
+                type === 'error' ? 'bg-red-500' :
+                type === 'warning' ? 'bg-yellow-500' :
+                'bg-blue-500'
+            }`;
+            
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <i class="ri-${type === 'success' ? 'check' : type === 'error' ? 'error-warning' : 'information'}-line mr-2"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+        
+        
+
+
+
+        // Load materials
+        async function loadMaterials() {
+            const loadingEl = document.getElementById('materials-loading');
+            const errorEl = document.getElementById('materials-error');
+            const gridEl = document.getElementById('materials-grid');
+            const emptyEl = document.getElementById('materials-empty');
+            
+            // Show loading
+            loadingEl.classList.remove('hidden');
+            errorEl.classList.add('hidden');
+            gridEl.classList.add('hidden');
+            emptyEl.classList.add('hidden');
+            
+            try {
+                const response = await fetch('/api/materials/public');
+                const data = await response.json();
+                
+                if (response.ok && data.materials) {
+                    const materials = data.materials;
+                    
+                    if (materials.length === 0) {
+                        // Show empty state
+                        loadingEl.classList.add('hidden');
+                        emptyEl.classList.remove('hidden');
+                    } else {
+                        // Show materials
+                        console.log('Loading materials:', materials.length, 'items');
+                        console.log('First material:', materials[0]);
+                        gridEl.innerHTML = materials.map(createMaterialCard).join('');
+                        loadingEl.classList.add('hidden');
+                        gridEl.classList.remove('hidden');
+                        
+                        // Debug: Check if buttons are working
+                        setTimeout(() => {
+                            const buttons = gridEl.querySelectorAll('button');
+                            console.log('Found buttons:', buttons.length);
+                        }, 100);
+                    }
+                } else {
+                    throw new Error(data.message || 'Błąd ładowania materiałów');
+                }
+            } catch (error) {
+                console.error('Load materials error:', error);
+                loadingEl.classList.add('hidden');
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        // Cookie Consent Management
+        function initCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            const acceptBtn = document.getElementById('accept-cookies');
+            const declineBtn = document.getElementById('decline-cookies');
+            
+            if (!banner) return;
+            
+            const cookieConsent = localStorage.getItem('cookieConsent');
+            
+            if (!cookieConsent) {
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-full');
+                }, 500);
+            }
+            
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'accepted');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    console.log('Cookies accepted');
+                });
+            }
+            
+            if (declineBtn) {
+                declineBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'declined');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    console.log('Cookies declined');
+                });
+            }
+            
+            function hideCookieBanner() {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMaterials();
+            initCookieBanner();
+        });
+    </script>
+</body>
+</html>

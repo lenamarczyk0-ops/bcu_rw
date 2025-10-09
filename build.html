@@ -1,0 +1,2743 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Branżowe Centrum Umiejętności - SPEDYCJA</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16" onerror="console.warn('Tailwind CSS CDN failed to load')"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        /* Animated Road Lights */
+        @keyframes light-trail {
+            0% { 
+                transform: translateX(0px);
+                opacity: 0;
+                width: 8px;
+            }
+            10% { 
+                opacity: 0.8;
+                width: 32px;
+            }
+            90% { 
+                opacity: 0.6;
+                width: 64px;
+            }
+            100% { 
+                transform: translateX(-100vw);
+                opacity: 0;
+                width: 8px;
+            }
+        }
+        
+        .animate-light-trail-1 {
+            animation: light-trail 4s ease-in-out infinite;
+            animation-delay: 0s;
+        }
+        
+        .animate-light-trail-2 {
+            animation: light-trail 5s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+        
+        .animate-light-trail-3 {
+            animation: light-trail 3.5s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+        
+        .animate-light-trail-4 {
+            animation: light-trail 4.5s ease-in-out infinite;
+            animation-delay: 0.5s;
+        }
+        
+        .animate-light-trail-5 {
+            animation: light-trail 6s ease-in-out infinite;
+            animation-delay: 3s;
+        }
+        
+        /* Animacja przesuwania obrazu (ruch tła w hero) */
+        @keyframes move-background {
+            0% { background-position: center center; }
+            50% { background-position: right center; }
+            100% { background-position: center center; }
+        }
+        
+        .animate-background-move {
+            animation: move-background 40s ease-in-out infinite;
+            background-position: center center;
+            background-size: cover;
+        }
+        @media (max-width: 768px) {
+            /* Odwrócony kierunek ruchu na mobile i nieco wolniej */
+            .animate-background-move { 
+                animation: move-background 70s ease-in-out infinite reverse;
+                background-position: center center; 
+            }
+        }
+        
+        /* Container Styling */
+        .shipping-container {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            border: 3px solid #1a252f;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 8px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.1),
+                inset 0 -1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .container-corrugated {
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.1) 2px,
+                    rgba(0,0,0,0.1) 4px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 8px,
+                    rgba(0,0,0,0.05) 8px,
+                    rgba(0,0,0,0.05) 16px
+                );
+        }
+        
+        .container-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #1a252f;
+            border: 2px solid #34495e;
+        }
+        
+        .corner-tl { top: -2px; left: -2px; border-radius: 0 0 8px 0; }
+        .corner-tr { top: -2px; right: -2px; border-radius: 0 0 0 8px; }
+        .corner-bl { bottom: -2px; left: -2px; border-radius: 0 8px 0 0; }
+        .corner-br { bottom: -2px; right: -2px; border-radius: 8px 0 0 0; }
+        
+        .container-lock {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 60px;
+            background: #e74c3c;
+            border: 2px solid #c0392b;
+            border-radius: 4px;
+        }
+        
+        .container-lock::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+        }
+        
+        .container-iso {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+        
+        .container-content {
+            position: relative;
+            z-index: 10;
+            background: rgba(255,255,255,0.95);
+            margin: 12px;
+            border-radius: 4px;
+            padding: 24px;
+            height: calc(100% - 24px);
+        }
+        
+        .container-door-line {
+            position: absolute;
+            right: 50px;
+            top: 12px;
+            bottom: 12px;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #1a252f 20%, #1a252f 80%, transparent);
+        }
+    </style>
+    <script>
+        // Check if Tailwind CSS loaded
+        if (typeof tailwind === 'undefined') {
+            console.error('Tailwind CSS failed to load!');
+            // Add fallback styles
+            document.head.insertAdjacentHTML('beforeend', `
+                <style>
+                    .bg-red-600 { background-color: #dc2626; }
+                    .bg-blue-600 { background-color: #2563eb; }
+                    .text-white { color: white; }
+                    .text-black { color: black; }
+                    .font-bold { font-weight: bold; }
+                    .text-center { text-align: center; }
+                    .py-20 { padding-top: 5rem; padding-bottom: 5rem; }
+                    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+                    .max-w-7xl { max-width: 80rem; }
+                    .mx-auto { margin-left: auto; margin-right: auto; }
+                    .grid { display: grid; }
+                    .gap-8 { gap: 2rem; }
+                    .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+                    .lg\\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+                    .hidden { display: none; }
+                    .inline-flex { display: inline-flex; }
+                    .items-center { align-items: center; }
+                    .px-4 { padding-left: 1rem; padding-right: 1rem; }
+                    .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
+                    .bg-blue-50 { background-color: #eff6ff; }
+                    .text-blue-700 { color: #1d4ed8; }
+                    .rounded-lg { border-radius: 0.5rem; }
+                    .mr-3 { margin-right: 0.75rem; }
+                    .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
+                    .animate-spin { animation: spin 1s linear infinite; }
+                    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+                </style>
+            `);
+        }
+        
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* WCAG Accessibility Styles */
+        
+        /* High Contrast Mode */
+        .high-contrast {
+            filter: contrast(150%) brightness(110%);
+        }
+        
+        .high-contrast img {
+            filter: contrast(120%);
+        }
+        
+        .high-contrast .bg-gradient-to-r,
+        .high-contrast .bg-gradient-to-b,
+        .high-contrast .bg-gradient-to-l,
+        .high-contrast .bg-gradient-to-t {
+            background: #000 !important;
+            color: #fff !important;
+        }
+        
+        .high-contrast .text-gray-300,
+        .high-contrast .text-gray-400,
+        .high-contrast .text-gray-500,
+        .high-contrast .text-gray-600,
+        .high-contrast .text-gray-700 {
+            color: #fff !important;
+        }
+        
+        .high-contrast .border-gray-200,
+        .high-contrast .border-gray-300 {
+            border-color: #fff !important;
+        }
+        
+        /* Reduced Motion */
+        .reduce-motion *,
+        .reduce-motion *::before,
+        .reduce-motion *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+        
+        .reduce-motion .animate-pulse,
+        .reduce-motion .animate-spin,
+        .reduce-motion .animate-ping,
+        .reduce-motion .animate-bounce {
+            animation: none !important;
+        }
+        
+        .reduce-motion .hover\:scale-105:hover,
+        .reduce-motion .hover\:scale-110:hover {
+            transform: none !important;
+        }
+        
+        /* Remove default focus outline */
+        *:focus {
+            outline: none !important;
+        }
+        
+        /* Subtle focus indicators only for interactive elements */
+        button:focus,
+        a:focus,
+        input:focus,
+        select:focus,
+        textarea:focus,
+        [role="button"]:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+        
+        /* Remove focus ring completely for non-interactive elements */
+        div:focus,
+        span:focus,
+        p:focus,
+        img:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* Keyboard Navigation Enhancement */
+        .focus-visible [tabindex="-1"]:focus {
+            outline: none !important;
+        }
+        
+        /* Skip Links for Screen Readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #E30613;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 9999;
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+        
+        /* Hide skip links on mobile to prevent visual issues */
+        @media (max-width: 768px) {
+            .skip-link {
+                display: none;
+            }
+        }
+        
+        /* Screen Reader Only Content */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* High Contrast Button States */
+        .high-contrast button:hover,
+        .high-contrast a:hover {
+            background-color: #fff !important;
+            color: #000 !important;
+            border: 2px solid #000 !important;
+        }
+        
+        .high-contrast .bg-white {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+        
+        .high-contrast .bg-red-600,
+        .high-contrast .bg-blue-800 {
+            background-color: #000 !important;
+            color: #fff !important;
+        }
+        
+        /* Image Animations */
+        .image-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .image-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Reduced motion for accessibility */
+        .reduce-motion .image-hover:hover {
+            transform: none;
+        }
+        
+        /* Standard image sizes */
+        .image-standard {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        /* News image consistency */
+        .news-image {
+            height: 192px; /* h-48 equivalent */
+            width: 100%;
+            object-fit: cover;
+            object-position: center center;
+            border-radius: 0.5rem 0.5rem 0 0; /* rounded-t-lg */
+        }
+        
+        .news-image-bg {
+            height: 192px; /* h-48 equivalent */
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Improve image quality for news containers */
+        .news-image-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: inherit;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            filter: contrast(1.1) saturate(1.05) brightness(1.02);
+            z-index: 1;
+        }
+        
+        .news-image-bg > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Subtelna animacja poświaty dla badge ikonek (lista atutów) */
+        .badge-animate {
+            position: relative;
+            box-shadow: 0 0 0 0 rgba(59,130,246,0.35);
+            animation: pulseGlow 2.6s ease-out infinite;
+        }
+        @keyframes pulseGlow {
+            0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.35); }
+            70%  { box-shadow: 0 0 0 14px rgba(59,130,246,0); }
+            100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+        }
+        @media (prefers-reduced-motion: reduce) { .badge-animate { animation: none; } }
+        
+        .image-large {
+            height: 250px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        /* Prevent horizontal scrolling on mobile */
+        html, body {
+            overflow-x: hidden;
+        }
+        
+        /* Custom border widths for course containers */
+        .border-3 { border-width: 3px; }
+        .border-l-3 { border-left-width: 3px; }
+        .border-r-3 { border-right-width: 3px; }
+        .border-t-3 { border-top-width: 3px; }
+        .border-b-3 { border-bottom-width: 3px; }
+        
+        /* Enhanced shadows for course cards */
+        .shadow-3xl { 
+            box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25), 
+                       0 0 0 1px rgba(255, 255, 255, 0.1); 
+        }
+        
+        /* Text truncation utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="bg-white text-black focus-visible">
+    <!-- Skip Links for Screen Readers -->
+    <a href="#main-content" class="skip-link" aria-hidden="true" tabindex="-1">Przejdź do głównej treści</a>
+    <a href="#navigation" class="skip-link" aria-hidden="true" tabindex="-1">Przejdź do nawigacji</a>
+    
+    <!-- HEADER -->
+    <header class="bg-secondary shadow-lg sticky top-0 z-50" role="banner">
+        <div class="w-full px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
+                    <a href="./build.html" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
+                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                    </a>
+                    <img src="./imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto">
+                    <img src="./imgs/zdzieszowice1.png" alt="Logo Gminy Zdzieszowice" class="h-6 w-auto">
+                    <img src="./imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-5 w-auto hidden md:block">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <nav id="navigation" class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
+                        <a href="/courses" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do strony z kursami">Kursy</a>
+                        <a href="/job-offers" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do ofert pracy">Oferty Pracy</a>
+                        <a href="/news" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do aktualności">Aktualności</a>
+                        <a href="#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
+                        <a href="#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
+                    </nav>
+                    <!-- Ikona materiałów -->
+                    <div class="hidden md:flex items-center">
+                        <a href="/downloads.html" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10" aria-label="Pobierz materiały edukacyjne" role="button">
+                            <i class="ri-folder-download-line text-lg" aria-hidden="true"></i>
+                            <span class="sr-only">Materiały do pobrania</span>
+                        </a>
+                    </div>
+                    <!-- Ikona dostępności z dropdown -->
+                    <div class="relative">
+                        <button id="accessibility-toggle" class="text-white/70 hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10" aria-label="Otwórz menu ustawień dostępności" aria-expanded="false" aria-haspopup="true">
+                            <i class="ri-wheelchair-line text-lg" aria-hidden="true"></i>
+                            <span class="sr-only">Ustawienia dostępności</span>
+                        </button>
+                        <div id="accessibility-menu" class="absolute right-0 top-full mt-2 bg-white rounded-lg shadow-lg p-4 min-w-[280px] hidden z-50 border border-gray-200" role="menu" aria-labelledby="accessibility-toggle">
+                            <div class="text-sm text-gray-800 mb-3 font-semibold">Ustawienia dostępności</div>
+                            
+                            <!-- Rozmiar czcionki -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Rozmiar czcionki:</div>
+                                <div class="flex items-center space-x-1">
+                                    <button id="font-small" class="bg-gray-100 hover:bg-gray-200 transition-all text-sm px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Mała czcionka">A-</button>
+                                    <button id="font-normal" class="bg-red-600 hover:bg-red-700 transition-all text-base px-3 py-2 rounded text-white focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Normalna czcionka">A</button>
+                                    <button id="font-large" class="bg-gray-100 hover:bg-gray-200 transition-all text-lg px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Duża czcionka">A+</button>
+                                </div>
+                            </div>
+
+                            <!-- Kontrast -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Kontrast:</div>
+                                <div class="flex items-center space-x-2">
+                                    <button id="contrast-normal" class="bg-gray-100 hover:bg-gray-200 transition-all text-xs px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Normalny kontrast">Normalny</button>
+                                    <button id="contrast-high" class="bg-gray-100 hover:bg-gray-200 transition-all text-xs px-3 py-2 rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Wysoki kontrast">Wysoki</button>
+                                </div>
+                            </div>
+
+                            <!-- Animacje -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Animacje:</div>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="reduce-motion" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                                    <span class="text-xs text-gray-700">Zmniejsz animacje</span>
+                                </label>
+                            </div>
+
+                            <!-- Skupienie -->
+                            <div class="mb-4">
+                                <div class="text-xs text-gray-600 mb-2 font-medium">Nawigacja klawiaturą:</div>
+                                <label class="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" id="focus-visible" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500" checked>
+                                    <span class="text-xs text-gray-700">Podświetl aktywny element</span>
+                                </label>
+                            </div>
+
+                            <!-- Reset -->
+                            <div class="pt-2 border-t border-gray-200">
+                                <button id="reset-accessibility" class="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs py-2 px-3 rounded transition-all focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    Przywróć domyślne ustawienia
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex flex-col space-y-1">
+                        <a href="/admin" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-2 !rounded-button hover:from-red-700 hover:to-red-600 transition-all whitespace-nowrap text-center">
+                            Zaloguj
+                        </a>
+                        <a href="/register.html" class="text-white hover:text-neutral transition-colors text-center text-sm">
+                            Rejestracja
+                        </a>
+                    </div>
+                    <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne" aria-controls="mobile-drawer" aria-expanded="false">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-menu-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE DRAWER MENU -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50" id="mobile-backdrop"></div>
+        <aside class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-secondary font-bold">Menu</span>
+                <button id="mobile-close" aria-label="Zamknij menu" class="text-gray-500 hover:text-gray-800">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-4" aria-label="Menu mobilne">
+                <a href="/courses" class="text-gray-800 hover:text-secondary">Kursy</a>
+                <a href="/job-offers" class="text-gray-800 hover:text-secondary">Oferty Pracy</a>
+                <a href="/news" class="text-gray-800 hover:text-secondary">Aktualności</a>
+                <a href="#o-nas" class="text-gray-800 hover:text-secondary">O nas</a>
+                <a href="#kontakt" class="text-gray-800 hover:text-secondary">Kontakt</a>
+            </nav>
+            <div class="mt-auto pt-6 space-y-3">
+                <a href="/admin" class="block w-full text-center bg-gradient-to-r from-primary-dark to-primary-light text-white px-4 py-3 !rounded-button hover:from-red-700 hover:to-red-600 transition-all">
+                    Zaloguj
+                </a>
+                <a href="/register.html" class="block w-full text-center text-gray-800 hover:text-secondary border border-gray-300 px-4 py-3 rounded-lg transition-all">
+                    Rejestracja
+                </a>
+            </div>
+        </aside>
+    </div>
+    <main id="main-content" role="main">
+        <!-- HERO SECTION -->
+        <section class="relative min-h-[70vh] flex items-center justify-center animate-background-move" style="background-image: url('./imgs/bcccuu.jpg'); background-size: cover;">
+            <div class="absolute inset-0 bg-gradient-to-r from-white via-white/95 to-transparent"></div>
+            
+            <!-- Mapa Polski z miastami (ukryta na mobile, widoczna od md) -->
+            <div class="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2" style="margin-left: -80px; margin-top: -220px;">
+                <div class="relative w-[40rem] h-[36rem] opacity-80">
+                    <svg viewBox="0 0 800 600" class="w-full h-full" style="pointer-events: auto;">
+                        
+                        <!-- Warszawa (północ-wschód) - 52.229N, 21.012E -->
+                        <circle cx="450" cy="400" r="6" fill="#E30613" opacity="0.9"/>
+                        <text x="470" y="404" text-anchor="start" class="text-sm font-semibold" fill="#2c3e50">Warszawa</text>
+                        
+                        <!-- Gdańsk (północ) - 54.3520N, 18.6466E -->
+                        <circle cx="380" cy="320" r="6" fill="#E30613" opacity="0.9"/>
+                        <text x="380" y="307" text-anchor="middle" class="text-sm font-semibold" fill="#2c3e50">Gdańsk</text>
+                        
+                        <!-- Wrocław (zachód) - 51.107N, 17.038E -->
+                        <circle cx="330" cy="480" r="6" fill="#E30613" opacity="0.9"/>
+                        <text x="306" y="484" text-anchor="end" class="text-sm font-semibold" fill="#2c3e50">Wrocław</text>
+                        
+                        <!-- Poznań (północny zachód) - 52.4064N, 16.9252E -->
+                        <circle cx="290" cy="380" r="6" fill="#E30613" opacity="0.9"/>
+                        <text x="270" y="384" text-anchor="end" class="text-sm font-semibold" fill="#2c3e50">Poznań</text>
+                        
+                        <!-- Katowice (wschód) - 50.264N, 19.023E -->
+                        <circle cx="502" cy="553" r="6" fill="#E30613" opacity="0.9"/>
+                        <text x="502" y="540" text-anchor="middle" class="text-sm font-semibold" fill="#2c3e50">Katowice</text>
+                        
+                        <!-- Kraków (południowy wschód) - 50.0647N, 19.9450E -->
+                        <circle cx="520" cy="570" r="6" fill="#E30613" opacity="0.9"/>
+                        <text x="520" y="595" text-anchor="middle" class="text-sm font-semibold" fill="#2c3e50">Kraków</text>
+                        
+                        <!-- Linie połączeń -->
+                        <line x1="412" y1="533" x2="502" y2="553" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        <line x1="412" y1="533" x2="330" y2="480" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        <line x1="412" y1="533" x2="450" y2="400" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        <line x1="502" y1="553" x2="520" y2="570" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        <line x1="330" y1="480" x2="290" y2="380" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        <line x1="380" y1="320" x2="290" y2="380" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        <line x1="380" y1="320" x2="450" y2="400" stroke="#E30613" stroke-width="3" opacity="0.6" stroke-dasharray="6,6"/>
+                        
+                        <!-- Zdzieszowice (środek) - 50.43N, 18.12E - NAD LINIAMI -->
+                        <g id="zdzieszowice-point" style="cursor: pointer; pointer-events: auto;">
+                            <circle cx="412" cy="533" r="18" fill="rgba(0,0,0,0)" stroke="none" style="pointer-events: auto;"/>
+                            <circle cx="412" cy="533" r="10" fill="#1e40af" stroke="#E30613" stroke-width="4" style="pointer-events: none;"/>
+                            <text x="412" y="565" text-anchor="middle" class="text-lg font-bold" fill="#E30613" style="pointer-events: none;">Zdzieszowice</text>
+                            
+                            <!-- Pulsujący efekt dla Zdzieszowic - NAD WSZYSTKIM -->
+                            <circle cx="412" cy="533" r="10" fill="none" stroke="#1e40af" stroke-width="4" opacity="0.8" style="pointer-events: none;">
+                                <animate attributeName="r" values="10;20;10" dur="2s" repeatCount="indefinite"/>
+                                <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Animated Road Lights -->
+            <div class="absolute inset-0 overflow-hidden opacity-20">
+                <!-- Light Trail 1 -->
+                <div class="light-trail absolute top-1/3 right-0 w-2 h-0.5 bg-gradient-to-l from-white via-blue-200 to-transparent rounded-full animate-light-trail-1"></div>
+                <!-- Light Trail 2 -->
+                <div class="light-trail absolute top-2/5 right-0 w-3 h-0.5 bg-gradient-to-l from-yellow-200 via-orange-200 to-transparent rounded-full animate-light-trail-2"></div>
+                <!-- Light Trail 3 -->
+                <div class="light-trail absolute top-1/2 right-0 w-4 h-1 bg-gradient-to-l from-red-300 via-red-200 to-transparent rounded-full animate-light-trail-3"></div>
+                <!-- Light Trail 4 -->
+                <div class="light-trail absolute top-3/5 right-0 w-2 h-0.5 bg-gradient-to-l from-white via-gray-200 to-transparent rounded-full animate-light-trail-4"></div>
+                <!-- Light Trail 5 -->
+                <div class="light-trail absolute top-2/3 right-0 w-3 h-0.5 bg-gradient-to-l from-blue-300 via-blue-200 to-transparent rounded-full animate-light-trail-5"></div>
+            </div>
+            <div class="relative z-10 w-full px-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+                        <div class="md:space-y-8">
+                            <div>
+                                <img src="./imgs/bccc.png" alt="BCU - Branżowe Centrum Umiejętności" class="h-32 md:h-40 lg:h-52 w-auto">
+                            </div>
+                            <!-- Mapa Polski pod logo (mobile) - responsywna -->
+                            <div class="block md:hidden -mt-4 mb-6 px-2 sm:px-4">
+                                <div class="relative w-full max-w-sm mx-auto" style="opacity: 0.95;">
+                                    <svg viewBox="200 280 400 320" class="w-full h-auto" style="pointer-events: auto; min-height: 200px; max-height: 280px;">
+                                        <!-- Warszawa -->
+                                        <circle cx="450" cy="400" r="6" fill="#E30613" opacity="0.9"/>
+                                        <text x="460" y="398" text-anchor="start" class="text-xs font-bold" fill="#2c3e50" style="font-size: 11px;">Warszawa</text>
+                                        
+                                        <!-- Gdańsk -->
+                                        <circle cx="380" cy="320" r="6" fill="#E30613" opacity="0.9"/>
+                                        <text x="380" y="310" text-anchor="middle" class="text-xs font-bold" fill="#2c3e50" style="font-size: 11px;">Gdańsk</text>
+                                        
+                                        <!-- Wrocław -->
+                                        <circle cx="330" cy="480" r="6" fill="#E30613" opacity="0.9"/>
+                                        <text x="315" y="478" text-anchor="end" class="text-xs font-bold" fill="#2c3e50" style="font-size: 11px;">Wrocław</text>
+                                        
+                                        <!-- Poznań -->
+                                        <circle cx="290" cy="380" r="6" fill="#E30613" opacity="0.9"/>
+                                        <text x="275" y="378" text-anchor="end" class="text-xs font-bold" fill="#2c3e50" style="font-size: 11px;">Poznań</text>
+                                        
+                                        <!-- Katowice -->
+                                        <circle cx="502" cy="553" r="6" fill="#E30613" opacity="0.9"/>
+                                        <text x="502" y="545" text-anchor="middle" class="text-xs font-bold" fill="#2c3e50" style="font-size: 11px;">Katowice</text>
+                                        
+                                        <!-- Kraków -->
+                                        <circle cx="520" cy="570" r="6" fill="#E30613" opacity="0.9"/>
+                                        <text x="520" y="585" text-anchor="middle" class="text-xs font-bold" fill="#2c3e50" style="font-size: 11px;">Kraków</text>
+                                        
+                                        <!-- Linie połączeń -->
+                                        <line x1="412" y1="533" x2="502" y2="553" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        <line x1="412" y1="533" x2="330" y2="480" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        <line x1="412" y1="533" x2="450" y2="400" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        <line x1="502" y1="553" x2="520" y2="570" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        <line x1="330" y1="480" x2="290" y2="380" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        <line x1="380" y1="320" x2="290" y2="380" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        <line x1="380" y1="320" x2="450" y2="400" stroke="#E30613" stroke-width="2" opacity="0.6" stroke-dasharray="4,4"/>
+                                        
+                                        <!-- Zdzieszowice - centralny punkt z animacją -->
+                                        <g id="zdzieszowice-point-mobile" style="cursor: pointer; pointer-events: auto;">
+                                            <circle cx="412" cy="533" r="12" fill="#1e40af" stroke="#E30613" stroke-width="3"/>
+                                            <text x="412" y="565" text-anchor="middle" class="text-xs font-bold" fill="#E30613" style="font-size: 12px;">Zdzieszowice</text>
+                                            <circle cx="412" cy="533" r="12" fill="none" stroke="#1e40af" stroke-width="3" opacity="0.8">
+                                                <animate attributeName="r" values="12;20;12" dur="2s" repeatCount="indefinite"/>
+                                                <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+                                            </circle>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                            
+                            <div class="text-left mt-4 md:mt-8 mb-6 md:mb-8 px-6 md:px-0">
+                                <p class="text-lg md:text-xl text-gray-700 leading-relaxed max-w-2xl">
+                                    <span class="block font-semibold text-gray-800 mb-2">Branżowe Centrum Umiejętności</span>
+                                    <span class="block mb-2">Profesjonalne szkolenia w dziedzinie spedycji i transportu.</span>
+                                    <span class="block">Rozwijaj swoje kompetencje z najlepszymi ekspertami branży.</span>
+                                </p>
+                            </div>
+                            <div class="hidden md:flex gap-4">
+                                <a href="/courses" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-8 py-4 !rounded-button hover:from-red-700 hover:to-red-600 hover:scale-105 hover:shadow-lg transition-all duration-300 text-lg font-semibold whitespace-nowrap transform inline-flex items-center justify-center">
+                                    Zapisz się na kurs
+                                </a>
+                                <a href="#dlaczego-bcu" class="border-2 border-secondary text-secondary px-8 py-4 !rounded-button hover:bg-secondary hover:text-white hover:scale-105 hover:shadow-lg transition-all duration-300 text-lg font-semibold whitespace-nowrap transform inline-flex items-center justify-center">
+                                    Dowiedz się więcej
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- KPO PROJECT INFO SECTION -->
+        <section class="py-8 bg-white border-t border-gray-200">
+            <div class="max-w-7xl mx-auto px-6 text-center">
+                <p class="text-sm text-gray-700 mb-4 leading-relaxed max-w-5xl mx-auto">
+                    Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowych (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
+                </p>
+                <div class="flex justify-center">
+                    <img src="./imgs/21KPO.jpeg" alt="Krajowy Plan Odbudowy i Zwiększania Odporności" class="h-16 w-auto">
+                </div>
+            </div>
+        </section>
+        
+        <!-- COURSES SECTION -->
+        <section class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-black mb-4">Nasze Kursy</h2>
+                    <p class="text-xl text-gray-600">Profesjonalne szkolenia dostosowane do potrzeb rynku</p>
+                </div>
+                <!-- Dynamiczne kursy z bazy danych -->
+                <div id="home-courses-loading" class="text-center py-12">
+                    <div class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
+                        <i class="ri-loader-4-line animate-spin mr-3 text-xl"></i>
+                        Ładowanie kursów...
+                        </div>
+                    </div>
+
+                <div id="home-courses-error" class="text-center py-12 hidden">
+                    <div class="inline-flex items-center px-4 py-2 bg-red-50 text-red-700 rounded-lg">
+                        <i class="ri-error-warning-line mr-3 text-xl"></i>
+                        Błąd ładowania kursów
+                        </div>
+                    </div>
+
+                <div id="home-courses-empty" class="text-center py-12 hidden">
+                    <div class="inline-flex items-center px-4 py-2 bg-gray-50 text-gray-700 rounded-lg">
+                        <i class="ri-book-open-line mr-3 text-xl"></i>
+                        Brak dostępnych kursów
+                        </div>
+                    </div>
+
+                <div id="home-courses-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+                    <!-- Tutaj będą ładowane dynamiczne kursy z bazy danych -->
+                </div>
+                <div class="text-center mt-12">
+                    <a href="/courses" class="inline-block border-2 border-secondary text-secondary px-8 py-3 !rounded-button hover:bg-secondary hover:text-white transition-colors font-semibold whitespace-nowrap">
+                        Zobacz wszystkie kursy
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEWS SECTION -->
+        <section class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-black mb-4">Aktualności Branżowe</h2>
+                    <p class="text-xl text-gray-600">Najważniejsze informacje ze świata logistyki i transportu</p>
+                </div>
+                <!-- Dynamiczne aktualności z bazy danych -->
+                <div id="home-news-loading" class="text-center py-12">
+                    <div class="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg">
+                        <i class="ri-loader-4-line animate-spin mr-3 text-xl"></i>
+                        Ładowanie aktualności...
+                    </div>
+                </div>
+                
+                <div id="home-news-error" class="text-center py-12 hidden">
+                    <div class="inline-flex items-center px-4 py-2 bg-red-50 text-red-700 rounded-lg">
+                        <i class="ri-error-warning-line mr-3 text-xl"></i>
+                        Błąd ładowania aktualności
+                    </div>
+                </div>
+                
+                <div id="home-news-empty" class="text-center py-12 hidden">
+                    <div class="inline-flex items-center px-4 py-2 bg-gray-50 text-gray-700 rounded-lg">
+                        <i class="ri-newspaper-line mr-3 text-xl"></i>
+                        Brak dostępnych aktualności
+                    </div>
+                </div>
+                
+                <div id="home-news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+                    <!-- Tutaj będą ładowane dynamiczne aktualności z bazy danych -->
+                </div>
+                <div class="text-center mt-12">
+                    <a href="/news" aria-label="Przejdź do wszystkich aktualności" class="inline-flex items-center border-2 border-secondary text-secondary px-8 py-3 !rounded-button hover:bg-secondary hover:text-white transition-colors font-semibold whitespace-nowrap">
+                        Zobacz więcej aktualności
+                        <i class="ri-arrow-right-line ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- JOBS SECTION -->
+        <section class="py-20 bg-gradient-to-br from-secondary to-blue-800">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-white mb-4">Oferty Pracy i Praktyk</h2>
+                    <p class="text-xl text-white/90">Dołącz do najlepszych firm w branży logistycznej</p>
+                    <div class="flex justify-center mt-6">
+                        <div class="bg-white/10 backdrop-blur-sm rounded-full px-6 py-2">
+                            <span class="text-white/80 text-sm">✨ Aktualne oferty od naszych partnerów</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dynamiczne oferty pracy z bazy danych -->
+                <div id="home-jobs-loading" class="text-center py-12">
+                    <div class="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-lg">
+                        <i class="ri-loader-4-line animate-spin mr-3 text-xl"></i>
+                        Ładowanie ofert pracy...
+                    </div>
+                </div>
+                
+                <div id="home-jobs-error" class="text-center py-12 hidden">
+                    <div class="inline-flex items-center px-4 py-2 bg-red-500/20 backdrop-blur-sm text-red-200 rounded-lg">
+                        <i class="ri-error-warning-line mr-3 text-xl"></i>
+                        Błąd ładowania ofert pracy
+                    </div>
+                </div>
+                
+                <div id="home-jobs-empty" class="text-center py-12 hidden">
+                    <div class="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-lg">
+                        <i class="ri-briefcase-line mr-3 text-xl"></i>
+                        Brak dostępnych ofert pracy
+                    </div>
+                </div>
+                
+                <div id="home-jobs-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+                    <!-- Tutaj będą ładowane dynamiczne oferty pracy z bazy danych -->
+                </div>
+
+
+                <div class="text-center mt-12">
+                    <a href="/job-offers" aria-label="Przejdź do wszystkich ofert pracy" class="inline-flex items-center border-2 border-white text-white px-8 py-4 !rounded-button hover:bg-white hover:text-secondary transition-all duration-300 font-semibold shadow-lg hover:shadow-xl">
+                        <i class="ri-briefcase-line mr-2"></i>
+                        Zobacz wszystkie oferty
+                        <i class="ri-arrow-right-line ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- WHY SECTION -->
+        <section id="dlaczego-bcu" class="pt-20 pb-10 md:py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-black mb-4">Dlaczego BCU?</h2>
+                    <p class="text-xl text-gray-600">Poznaj nasze atuty i przekonaj się, dlaczego warto z nami współpracować</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-red-600 text-white rounded-full mx-auto mb-4">
+                            <i class="ri-user-star-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-2">Eksperci Branży</h3>
+                        <p class="text-gray-600">Wykładowcy z wieloletnim doświadczeniem w logistyce i transporcie</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-blue-800 text-white rounded-full mx-auto mb-4">
+                            <i class="ri-award-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-2">Certyfikowane Kursy</h3>
+                        <p class="text-gray-600">Programy szkoleniowe zgodne z najwyższymi standardami branżowymi</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-red-600 text-white rounded-full mx-auto mb-4">
+                            <i class="ri-building-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-2">Współpraca z Firmami</h3>
+                        <p class="text-gray-600">Bezpośrednie kontakty z pracodawcami i możliwości praktyk</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 flex items-center justify-center bg-blue-800 text-white rounded-full mx-auto mb-4">
+                            <i class="ri-computer-line text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-2">Nowoczesne Narzędzia</h3>
+                        <p class="text-gray-600">Platforma e-learningowa i najnowsze technologie edukacyjne</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- O NAS SECTION -->
+        <section id="o-nas" class="pt-8 md:pt-20 pb-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-black mb-6">O NAS</h2>
+                    <div class="max-w-4xl mx-auto">
+                        <p class="text-xl text-gray-700 leading-relaxed">
+                            Dysponujemy nowoczesną strefą technologii i praktyki spedycyjnej z halą dydaktyczną oraz internatem dla uczestników szkoleń kilkudniowych. Nauka odbywa się w warunkach zbliżonych do rzeczywistej pracy.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center mb-16">
+                    <div class="space-y-6">
+                        <h3 class="text-2xl font-bold text-black">Nowoczesna Infrastruktura</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 badge-animate">
+                                    <i class="ri-check-line text-white text-sm"></i>
+                                </div>
+                                <p class="text-gray-700">Hala dydaktyczna z nowoczesnym wyposażeniem</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-blue-800 rounded-full flex items-center justify-center flex-shrink-0 badge-animate">
+                                    <i class="ri-check-line text-white text-sm"></i>
+                                </div>
+                                <p class="text-gray-700">Internat dla uczestników szkoleń kilkudniowych</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 badge-animate">
+                                    <i class="ri-check-line text-white text-sm"></i>
+                                </div>
+                                <p class="text-gray-700">Strefa technologii i praktyki spedycyjnej</p>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <div class="w-8 h-8 bg-blue-800 rounded-full flex items-center justify-center flex-shrink-0 badge-animate">
+                                    <i class="ri-check-line text-white text-sm"></i>
+                                </div>
+                                <p class="text-gray-700">Warunki zbliżone do rzeczywistej pracy</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="relative w-full image-large rounded-lg shadow-lg overflow-hidden">
+                            <img id="hall-slider" src="./imgs/halazdjecie.jpg" alt="Hala dydaktyczna BCU" class="w-full h-full object-cover image-hover transition-opacity duration-500" style="object-position: center 30%;">
+                            <!-- Navigation dots -->
+                            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/70 hover:bg-white transition-colors" data-slide="0"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="1"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="2"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="3"></button>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-500 text-center">Nowoczesna hala dydaktyczna</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <img src="./imgs/drone-flying-modern-warehouse.jpg" alt="Dron w nowoczesnym magazynie" class="w-full image-standard object-cover rounded-lg shadow-lg mb-4 image-hover">
+                        <h4 class="text-lg font-bold text-black mb-2">Strefa Technologii</h4>
+                        <p class="text-gray-600">Nowoczesne systemy i oprogramowanie branżowe</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="./imgs/bcu2.jpg" alt="Internat BCU" class="w-full image-standard object-cover rounded-lg shadow-lg mb-4 image-hover">
+                        <h4 class="text-lg font-bold text-black mb-2">Internat</h4>
+                        <p class="text-gray-600">Komfortowe zakwaterowanie dla uczestników</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="./imgs/praktykaspedycyjan.jpg" alt="Praktyka spedycyjna" class="w-full image-standard object-cover rounded-lg shadow-lg mb-4 image-hover">
+                        <h4 class="text-lg font-bold text-black mb-2">Praktyka Spedycyjna</h4>
+                        <p class="text-gray-600">Symulacja rzeczywistych procesów logistycznych</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAKIET KOMPETENCJI SECTION -->
+        <section class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-black mb-6">PAKIET KOMPETENCJI</h2>
+                    <div class="max-w-4xl mx-auto">
+                        <p class="text-xl text-gray-700 leading-relaxed">
+                            Programy szkoleniowe BCU łączą teorię z intensywną praktyką – uczestnicy pracują na rzeczywistych systemach transportowych (TMS), rozwiązują konkretne przypadki spedycyjne i uczą się podejmowania decyzji pod presją czasu.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                        <div class="w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center mb-6">
+                            <i class="ri-truck-line text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-4">Systemy TMS</h3>
+                        <p class="text-gray-600">Praktyczna praca z rzeczywistymi systemami zarządzania transportem używanymi w branży</p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                        <div class="w-16 h-16 bg-blue-800 rounded-lg flex items-center justify-center mb-6">
+                            <i class="ri-file-list-3-line text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-4">Przypadki Spedycyjne</h3>
+                        <p class="text-gray-600">Rozwiązywanie konkretnych problemów logistycznych z prawdziwego rynku</p>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                        <div class="w-16 h-16 bg-red-600 rounded-lg flex items-center justify-center mb-6">
+                            <i class="ri-time-line text-white text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-black mb-4">Praca pod Presją</h3>
+                        <p class="text-gray-600">Nauka podejmowania szybkich i trafnych decyzji w sytuacjach czasowych</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SEKCJA KONTAKT -->
+    <section id="kontakt" class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Skontaktuj się z nami</h2>
+                <p class="text-gray-600 max-w-3xl mx-auto">
+                    Masz pytania dotyczące naszych kursów, ofert pracy lub współpracy? Napisz do nas - odpowiemy tak szybko, jak to możliwe.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Informacje kontaktowe -->
+                <div class="space-y-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Dane kontaktowe</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="ri-phone-line text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">Telefon</h4>
+                                    <p class="text-gray-600">77 474 90 50</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="ri-mail-line text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">Email</h4>
+                                    <p class="text-gray-600">kontakt@bcu-spedycja.pl</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <i class="ri-map-pin-line text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900">Adres</h4>
+                                    <p class="text-gray-600">ul. Góra św. Anny 21A<br>47-330 Zdzieszowice</p>
+                                    <a href="https://maps.app.goo.gl/cipcDAf9RgVEceCr6" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary-dark underline decoration-dotted text-sm mt-1 inline-block">
+                                        Pokaż na mapie <i class="ri-external-link-line ml-1"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-4">Godziny pracy</h3>
+                        <div class="space-y-2 text-gray-600">
+                            <div class="flex justify-between">
+                                <span>Poniedziałek - Piątek:</span>
+                                <span class="font-medium">8:00 - 16:00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Sobota - Niedziela:</span>
+                                <span class="font-medium text-gray-400">Zamknięte</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formularz kontaktowy -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Wyślij wiadomość</h3>
+                    
+                    <form id="contact-form" class="space-y-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="contact-name" class="block text-sm font-medium text-gray-700 mb-2">Imię i nazwisko *</label>
+                                <input type="text" id="contact-name" name="name" required 
+                                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                       placeholder="Jan Kowalski">
+                            </div>
+                            <div>
+                                <label for="contact-email" class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                                <input type="email" id="contact-email" name="email" required 
+                                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                       placeholder="jan@example.com">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="contact-phone" class="block text-sm font-medium text-gray-700 mb-2">Telefon</label>
+                            <input type="tel" id="contact-phone" name="phone" 
+                                   class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                                   placeholder="+48 123 456 789">
+                        </div>
+
+                        <div>
+                            <label for="contact-subject" class="block text-sm font-medium text-gray-700 mb-2">Temat *</label>
+                            <select id="contact-subject" name="subject" required 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                                <option value="">Wybierz temat</option>
+                                <option value="Pytanie o kursy">Pytanie o kursy</option>
+                                <option value="Oferty pracy">Oferty pracy</option>
+                                <option value="Współpraca">Współpraca</option>
+                                <option value="Problemy techniczne">Problemy techniczne</option>
+                                <option value="Inne">Inne</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="contact-message" class="block text-sm font-medium text-gray-700 mb-2">Wiadomość *</label>
+                            <textarea id="contact-message" name="message" required rows="4" 
+                                      class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-primary focus:border-primary transition-colors resize-none"
+                                      placeholder="Opisz swoje pytanie lub prośbę..."></textarea>
+                        </div>
+
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" id="contact-privacy" name="privacy" required 
+                                   class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary mt-1">
+                            <label for="contact-privacy" class="text-sm text-gray-600">
+                                Wyrażam zgodę na przetwarzanie moich danych osobowych zgodnie z 
+                                <a href="#" class="text-primary hover:text-primary-dark underline">polityką prywatności</a> *
+                            </label>
+                        </div>
+
+                        <button type="submit" 
+                                class="w-full bg-primary text-white py-3 px-6 rounded-lg hover:bg-primary-dark transition-colors font-semibold flex items-center justify-center space-x-2">
+                            <i class="ri-send-plane-line"></i>
+                            <span>Wyślij wiadomość</span>
+                        </button>
+                    </form>
+
+                    <!-- Status wiadomości -->
+                    <div id="contact-status" class="hidden mt-4 p-4 rounded-lg">
+                        <div id="contact-status-content" class="flex items-center space-x-2">
+                            <i class="text-lg"></i>
+                            <span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
+                    <p class="text-gray-300 mb-4">Branżowe Centrum Umiejętności w dziedzinie spedycji, logistyki i transportu.</p>
+                    <!-- Loga partnerów (widoczne na mobile) -->
+                    <div class="md:hidden mb-4">
+                        <div class="text-sm text-gray-400 mb-2">Partnerzy projektu:</div>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <img src="./imgs/logoo_powiat.png" alt="Logo Powiatu Krapkowickiego" class="h-8 w-auto opacity-90">
+                            <img src="./imgs/salogo_PUT-18.png" alt="Logo Politechniki Opolskiej" class="h-7 w-auto opacity-90">
+                            <img src="./imgs/opolska1.png" alt="Logo Województwa Opolskiego" class="h-7 w-auto opacity-90">
+                            <img src="./imgs/frse-bialy-poziom.svg" alt="Logo FRSE - Fundacja Rozwoju Systemu Edukacji" class="h-6 w-auto opacity-90">
+                        </div>
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61580378476009" target="_blank" rel="noopener noreferrer" aria-label="Facebook BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
+                            <i class="ri-facebook-line"></i>
+                        </a>
+                        <a href="https://www.instagram.com/bcu_spedycja" target="_blank" rel="noopener noreferrer" aria-label="Instagram BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
+                            <i class="ri-instagram-line"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h3 class="text-lg font-bold mb-4">O projekcie</h3>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowych (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
+                    </p>
+                    <div class="flex justify-start">
+                        <img src="./imgs/logo_KPOWHite.png" alt="Krajowy Plan Odbudowy - NextGenerationEU" class="h-12 w-auto">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Kontakt</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-phone-line text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">77 474 90 50</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-mail-line text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">kontakt@bcu.spedycja.pl</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-map-pin-line text-sm"></i>
+                            </div>
+                            <a href="https://maps.app.goo.gl/cipcDAf9RgVEceCr6" target="_blank" rel="noopener noreferrer" class="text-gray-300 underline decoration-dotted hover:text-white">
+                                ul. Góra św. Anny 21A, 47-330 Zdzieszowice
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/20 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">© 2025 BCU Spedycja. Wszystkie prawa zastrzeżone.</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Polityka prywatności</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Regulamin</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 shadow-2xl z-50 transform translate-y-full transition-transform duration-300">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="ri-information-line text-black text-sm"></i>
+                </div>
+                <div class="text-sm leading-relaxed">
+                    <p>Ta strona używa plików cookies w celu zapewnienia najlepszej jakości usług. Kontynuując przeglądanie strony, wyrażasz zgodę na ich użycie.</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 flex-shrink-0">
+                <a href="#" class="text-yellow-400 hover:text-yellow-300 text-sm underline transition-colors">Polityka prywatności</a>
+                <button id="accept-cookies" class="bg-yellow-500 hover:bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Akceptuję
+                </button>
+                <button id="decline-cookies" class="border border-gray-600 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-colors">
+                    Odrzuć
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function initNavigationMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-button');
+            const drawer = document.getElementById('mobile-drawer');
+            const backdrop = document.getElementById('mobile-backdrop');
+            const closeBtn = document.getElementById('mobile-close');
+            const focusable = () => drawer ? drawer.querySelectorAll('a, button') : [];
+
+            function openDrawer() {
+                if (!drawer) return;
+                drawer.classList.remove('hidden');
+                mobileBtn?.setAttribute('aria-expanded', 'true');
+                // focus first link
+                const first = focusable()[0];
+                if (first) first.focus();
+                document.addEventListener('keydown', onKey);
+            }
+
+            function closeDrawer() {
+                if (!drawer) return;
+                drawer.classList.add('hidden');
+                mobileBtn?.setAttribute('aria-expanded', 'false');
+                mobileBtn?.focus();
+                document.removeEventListener('keydown', onKey);
+            }
+
+            function onKey(e) {
+                if (e.key === 'Escape') closeDrawer();
+            }
+
+            mobileBtn?.addEventListener('click', openDrawer);
+            backdrop?.addEventListener('click', closeDrawer);
+            closeBtn?.addEventListener('click', closeDrawer);
+
+            // Zamykaj po kliknięciu linku
+            if (drawer) {
+                drawer.addEventListener('click', (e) => {
+                    const t = e.target;
+                    if (t.tagName === 'A') closeDrawer();
+                });
+            }
+        }
+
+        function initAccessibilityControls() {
+            const fontSmall = document.getElementById('font-small');
+            const fontNormal = document.getElementById('font-normal');
+            const fontLarge = document.getElementById('font-large');
+            const accessibilityToggle = document.getElementById('accessibility-toggle');
+            const accessibilityMenu = document.getElementById('accessibility-menu');
+            const contrastNormal = document.getElementById('contrast-normal');
+            const contrastHigh = document.getElementById('contrast-high');
+            const reduceMotion = document.getElementById('reduce-motion');
+            const focusVisible = document.getElementById('focus-visible');
+            const resetAccessibility = document.getElementById('reset-accessibility');
+            
+            if (!fontSmall || !fontNormal || !fontLarge || !accessibilityToggle || !accessibilityMenu) return;
+
+            // Toggle dropdown menu
+            accessibilityToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                accessibilityMenu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!accessibilityToggle.contains(e.target) && !accessibilityMenu.contains(e.target)) {
+                    accessibilityMenu.classList.add('hidden');
+                }
+            });
+
+            // Keyboard navigation for accessibility menu
+            accessibilityToggle.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    accessibilityMenu.classList.toggle('hidden');
+                }
+            });
+
+            function setActiveFontButton(activeBtn) {
+                [fontSmall, fontNormal, fontLarge].forEach(btn => {
+                    btn.classList.remove('bg-red-600', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-700');
+                activeBtn.classList.add('bg-red-600', 'text-white');
+            }
+
+            function setActiveContrastButton(activeBtn) {
+                [contrastNormal, contrastHigh].forEach(btn => {
+                    btn.classList.remove('bg-red-600', 'text-white');
+                    btn.classList.add('bg-gray-100', 'text-gray-700');
+                });
+                activeBtn.classList.remove('bg-gray-100', 'text-gray-700');
+                activeBtn.classList.add('bg-red-600', 'text-white');
+            }
+
+            // Font size controls
+            fontSmall.addEventListener('click', function () {
+                document.documentElement.style.fontSize = '14px';
+                setActiveFontButton(this);
+                localStorage.setItem('fontSize', 'small');
+            });
+
+            fontNormal.addEventListener('click', function () {
+                document.documentElement.style.fontSize = '16px';
+                setActiveFontButton(this);
+                localStorage.setItem('fontSize', 'normal');
+            });
+
+            fontLarge.addEventListener('click', function () {
+                document.documentElement.style.fontSize = '18px';
+                setActiveFontButton(this);
+                localStorage.setItem('fontSize', 'large');
+            });
+
+            // Contrast controls
+            contrastNormal.addEventListener('click', function () {
+                document.body.classList.remove('high-contrast');
+                setActiveContrastButton(this);
+                localStorage.setItem('contrast', 'normal');
+            });
+
+            contrastHigh.addEventListener('click', function () {
+                document.body.classList.add('high-contrast');
+                setActiveContrastButton(this);
+                localStorage.setItem('contrast', 'high');
+            });
+
+            // Reduce motion
+            reduceMotion.addEventListener('change', function () {
+                if (this.checked) {
+                    document.body.classList.add('reduce-motion');
+                    localStorage.setItem('reduceMotion', 'true');
+                } else {
+                    document.body.classList.remove('reduce-motion');
+                    localStorage.setItem('reduceMotion', 'false');
+                }
+            });
+
+            // Focus visible
+            focusVisible.addEventListener('change', function () {
+                if (this.checked) {
+                    document.body.classList.add('focus-visible');
+                    localStorage.setItem('focusVisible', 'true');
+                } else {
+                    document.body.classList.remove('focus-visible');
+                    localStorage.setItem('focusVisible', 'false');
+                }
+            });
+
+            // Reset all accessibility settings
+            resetAccessibility.addEventListener('click', function () {
+                // Reset font size
+                document.documentElement.style.fontSize = '16px';
+                setActiveFontButton(fontNormal);
+                localStorage.setItem('fontSize', 'normal');
+
+                // Reset contrast
+                document.body.classList.remove('high-contrast');
+                setActiveContrastButton(contrastNormal);
+                localStorage.setItem('contrast', 'normal');
+
+                // Reset motion
+                reduceMotion.checked = false;
+                document.body.classList.remove('reduce-motion');
+                localStorage.setItem('reduceMotion', 'false');
+
+                // Reset focus
+                focusVisible.checked = true;
+                document.body.classList.add('focus-visible');
+                localStorage.setItem('focusVisible', 'true');
+
+                accessibilityMenu.classList.add('hidden');
+            });
+
+            // Restore saved settings
+            const savedSize = localStorage.getItem('fontSize');
+            if (savedSize === 'small') {
+                fontSmall.click();
+            } else if (savedSize === 'large') {
+                fontLarge.click();
+            } else {
+                setActiveFontButton(fontNormal);
+            }
+
+            const savedContrast = localStorage.getItem('contrast');
+            if (savedContrast === 'high') {
+                contrastHigh.click();
+            } else {
+                setActiveContrastButton(contrastNormal);
+            }
+
+            const savedMotion = localStorage.getItem('reduceMotion');
+            if (savedMotion === 'true') {
+                reduceMotion.checked = true;
+                document.body.classList.add('reduce-motion');
+            }
+
+            const savedFocus = localStorage.getItem('focusVisible');
+            if (savedFocus === 'false') {
+                focusVisible.checked = false;
+                document.body.classList.remove('focus-visible');
+            } else {
+                document.body.classList.add('focus-visible');
+            }
+        }
+
+        function initSmoothScrolling() {
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach((link) => {
+                link.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (!href || href === '#') return;
+                    e.preventDefault();
+                    const targetId = href.substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+
+        function initMapInteractions() {
+            console.log('Inicjalizuję interakcje mapy...');
+            const zdzieszowicePoint = document.getElementById('zdzieszowice-point');
+            console.log('Szukam punktu Zdzieszowice:', zdzieszowicePoint);
+            // Funkcja do obsługi kliknięcia w punkt Zdzieszowice
+            function handleZdzieszowiceClick(e) {
+                console.log('Kliknięto punkt Zdzieszowice!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const address = 'ul. Góra św. Anny 21A, 47-330 Zdzieszowice, Poland';
+                const encodedAddress = encodeURIComponent(address);
+                
+                // Sprawdź czy użytkownik używa urządzenia mobilnego
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    // Na urządzeniach mobilnych - spróbuj otworzyć natywną aplikację map
+                    const googleMapsUrl = `https://maps.google.com/maps?q=${encodedAddress}&navigate=yes`;
+                    const appleMapsUrl = `http://maps.apple.com/?q=${encodedAddress}&dirflg=d`;
+                    
+                    // Dla iOS spróbuj Apple Maps, dla innych Google Maps
+                    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                        window.open(appleMapsUrl, '_blank');
+                    } else {
+                        window.open(googleMapsUrl, '_blank');
+                    }
+                } else {
+                    // Na desktopie - otwórz Google Maps w nowej karcie
+                    const googleMapsUrl = `https://www.google.com/maps/search/${encodedAddress}`;
+                    window.open(googleMapsUrl, '_blank');
+                }
+            }
+
+            // Punkt Zdzieszowice dla desktopa
+            if (zdzieszowicePoint) {
+                console.log('Punkt Zdzieszowice (desktop) znaleziony, dodaję event listener');
+                zdzieszowicePoint.addEventListener('click', handleZdzieszowiceClick);
+
+                // Dodaj efekt hover dla lepszej interakcji
+                zdzieszowicePoint.addEventListener('mouseenter', function() {
+                    this.style.transform = 'scale(1.1)';
+                    this.style.transformOrigin = 'center';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+
+                zdzieszowicePoint.addEventListener('mouseleave', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            }
+            
+            // Punkt Zdzieszowice dla mobile
+            const zdzieszowicePointMobile = document.getElementById('zdzieszowice-point-mobile');
+            console.log('Szukam punktu Zdzieszowice (mobile):', zdzieszowicePointMobile);
+            if (zdzieszowicePointMobile) {
+                console.log('Punkt Zdzieszowice (mobile) znaleziony, dodaję event listener');
+                zdzieszowicePointMobile.addEventListener('click', handleZdzieszowiceClick);
+                
+                // Touch feedback dla mobile
+                zdzieszowicePointMobile.addEventListener('touchstart', function() {
+                    this.style.opacity = '0.7';
+                });
+                
+                zdzieszowicePointMobile.addEventListener('touchend', function() {
+                    this.style.opacity = '1';
+                });
+            }
+        }
+
+        // Hall Image Slider
+        function initHallSlider() {
+            const hallImages = [
+                './imgs/halazdjecie.jpg',
+                './imgs/bcccuu.jpg', 
+                './imgs/suwnica2.jpg',
+                './imgs/bcu1.jpg'
+            ];
+            
+            const slider = document.getElementById('hall-slider');
+            const dots = document.querySelectorAll('.hall-dot');
+            let currentSlide = 0;
+            let sliderInterval;
+            
+            function showSlide(index) {
+                if (slider && dots.length > 0) {
+                    // Zmień zdjęcie
+                    slider.src = hallImages[index];
+                    
+                    // Aktualizuj kropki
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle('bg-white/70', i === index);
+                        dot.classList.toggle('bg-white/30', i !== index);
+                    });
+                    
+                    currentSlide = index;
+                }
+            }
+            
+            function nextSlide() {
+                const nextIndex = (currentSlide + 1) % hallImages.length;
+                showSlide(nextIndex);
+            }
+            
+            function startSlider() {
+                // Sprawdź czy użytkownik ma włączoną redukcję animacji
+                const reduceMotion = localStorage.getItem('reduceMotion') === 'true';
+                if (!reduceMotion) {
+                    sliderInterval = setInterval(nextSlide, 3000);
+                }
+            }
+            
+            function stopSlider() {
+                if (sliderInterval) {
+                    clearInterval(sliderInterval);
+                }
+            }
+            
+            // Obsługa kliknięć w kropki
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    stopSlider();
+                    showSlide(index);
+                    startSlider();
+                });
+            });
+            
+            // Zatrzymaj slider gdy użytkownik jest nad zdjęciem
+            if (slider) {
+                slider.addEventListener('mouseenter', stopSlider);
+                slider.addEventListener('mouseleave', startSlider);
+            }
+            
+            // Uruchom slider
+            startSlider();
+        }
+
+        // === HOME NEWS (3 latest) - database-first ===
+        function initHomeNews() {
+            loadHomeNews();
+        }
+
+        async function loadHomeNews() {
+            const loadingEl = document.getElementById('home-news-loading');
+            const errorEl = document.getElementById('home-news-error');
+            const gridEl = document.getElementById('home-news-grid');
+            const emptyEl = document.getElementById('home-news-empty');
+            
+            // Show loading state
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            try {
+                console.log('🔄 Loading home news from API...');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.log('⏰ API timeout - showing empty state');
+                    controller.abort();
+                }, 10000);
+                
+                const response = await fetch('/api/news?limit=3', {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API Success! Got', data.news ? data.news.length : 0, 'news articles');
+
+                if (data.news && Array.isArray(data.news) && data.news.length > 0) {
+                    renderHomeNews(data.news);
+                } else {
+                    showHomeNewsEmpty();
+                }
+
+            } catch (error) {
+                console.log('💭 API failed:', error.message, '- showing empty state');
+                showHomeNewsEmpty();
+            }
+        }
+
+        function renderHomeNews(newsArticles) {
+            const loadingEl = document.getElementById('home-news-loading');
+            const errorEl = document.getElementById('home-news-error');
+            const gridEl = document.getElementById('home-news-grid');
+            const emptyEl = document.getElementById('home-news-empty');
+            
+            if (newsArticles.length === 0) {
+                showHomeNewsEmpty();
+                return;
+            }
+            
+            // Hide loading and error states
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            // Show grid with news articles
+            if (gridEl) {
+                gridEl.innerHTML = newsArticles.map(createHomeNewsCard).join('');
+                gridEl.classList.remove('hidden');
+            }
+        }
+
+        function showHomeNewsEmpty() {
+            const loadingEl = document.getElementById('home-news-loading');
+            const errorEl = document.getElementById('home-news-error');
+            const gridEl = document.getElementById('home-news-grid');
+            const emptyEl = document.getElementById('home-news-empty');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.remove('hidden');
+        }
+
+        function createHomeNewsCard(item) {
+            // Get category from tags or use default
+            const category = item.tags && item.tags.length > 0 ? item.tags[0].toUpperCase() : 'BRANŻOWE';
+            const badgeClass = category === 'TECHNOLOGIE' ? 'text-secondary bg-blue-50' : 
+                              category === 'KARIERA' ? 'text-green-600 bg-green-50' : 
+                              'text-primary bg-red-50';
+            
+            // Enhanced smart image assignment for news
+            let imageUrl = item.imageUrl;
+            if (!imageUrl || imageUrl === '/imgs/halazdjecie.jpg' || imageUrl === './imgs/halazdjecie.jpg' || imageUrl === './imgs/bcccuu.jpg' || imageUrl === '/imgs/bcccuu.jpg') {
+                const title = (item.title || '').toLowerCase();
+                const content = (item.excerpt || item.contentHTML || '').toLowerCase();
+                const text = title + ' ' + content;
+                
+                if (text.includes('transport') || text.includes('pojazd') || text.includes('ciężar') || text.includes('truck') || text.includes('regulacje') || text.includes('drogowy')) {
+                    const transportImages = [
+                        '/imgs/truck-logistics-operation-dusk.jpg',
+                        '/imgs/abstract-design-background-trucks-transport-trackinghighway-delivering.jpg',
+                        '/imgs/truck-inside-warehouse.jpg',
+                        '/imgs/transportation-logistics-container-cargo-ship-cargo-plane.jpg'
+                    ];
+                    imageUrl = transportImages[Math.abs(text.length) % transportImages.length];
+                } else if (text.includes('magazyn') || text.includes('składow') || text.includes('storage') || text.includes('warehouse')) {
+                    const magazynImages = [
+                        '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg',
+                        '/imgs/warehouse-worker-checking-inventory-arrived-goods-packages-storage-department.jpg',
+                        '/imgs/medium-shot-woman-storage.jpg',
+                        '/imgs/medium-shot-smiley-man-warehouse.jpg'
+                    ];
+                    imageUrl = magazynImages[Math.abs(text.length) % magazynImages.length];
+                } else if (text.includes('dostaw') || text.includes('kurier') || text.includes('przesył') || text.includes('delivery')) {
+                    imageUrl = '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+                } else if (text.includes('logist') || text.includes('spedyc') || text.includes('zarządzanie') || text.includes('planowanie') || text.includes('zielona') || text.includes('raport') || text.includes('rynek')) {
+                    imageUrl = '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+                } else if (text.includes('bezpieczeńst') || text.includes('bhp') || text.includes('pracowni') || text.includes('safety')) {
+                    imageUrl = '/imgs/woman-safety-equipment-working.jpg';
+                } else if (text.includes('pracowni') || text.includes('zespół') || text.includes('employee') || text.includes('worker')) {
+                    imageUrl = '/imgs/happy-employee-holding-scanner-distribution-warehouse.jpg';
+                } else if (text.includes('technolog') || text.includes('innowac') || text.includes('cyfrowy') || text.includes('robot') || text.includes('digitalizac') || text.includes('trendy') || text.includes('ai')) {
+                    imageUrl = '/imgs/drone-flying-modern-warehouse.jpg';
+                } else {
+                    // Fallback: random selection from general logistics images
+                    const fallbackImages = [
+                        '/imgs/transport-logistics-concept.jpg',
+                        '/imgs/truck-logistics-operation-dusk (1).jpg',
+                        '/imgs/16617.jpg'
+                    ];
+                    imageUrl = fallbackImages[Math.abs(text.length) % fallbackImages.length];
+                }
+            } else if (imageUrl && imageUrl.startsWith('./imgs/')) {
+                imageUrl = imageUrl.replace('./imgs/', '/imgs/');
+            }
+            
+            return `
+                <article class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
+                    <div class="news-image-bg image-hover" style="background-image: url('${imageUrl}');"></div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs ${badgeClass} font-semibold px-2 py-1 rounded">${category}</span>
+                            <span class="text-sm text-gray-500">${new Date(item.publishedAt || item.createdAt).toLocaleDateString('pl-PL')}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-black mb-2">${item.title || 'Aktualność'}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${item.excerpt || 'Brak opisu...'}</p>
+                        <button onclick="console.log('🔍 Home News click:', '${item._id || item.slug}'); 
+                                     const articleId = '${item._id || item.slug}';
+                                     if(articleId && articleId !== 'undefined' && articleId !== 'null') { 
+                                         if(typeof window.openArticle === 'function') {
+                                             window.openArticle(articleId);
+                                         } else {
+                                             window.location.href='/article/' + encodeURIComponent(articleId); 
+                                         }
+                                     } else { 
+                                         console.error('No article ID available for:', '${item.title}'); 
+                                         alert('Błąd: Brak identyfikatora artykułu dla: ${item.title}'); 
+                                     }" class="text-primary hover:text-primary-dark font-medium text-sm">
+                            Czytaj więcej →
+                        </button>
+                    </div>
+                </article>
+            `;
+        }
+
+        // === HOME JOBS (3 latest) - database-first ===
+        function initHomeJobs() {
+            loadHomeJobs();
+        }
+
+        async function loadHomeJobs() {
+            const loadingEl = document.getElementById('home-jobs-loading');
+            const errorEl = document.getElementById('home-jobs-error');
+            const gridEl = document.getElementById('home-jobs-grid');
+            const emptyEl = document.getElementById('home-jobs-empty');
+            
+            // Show loading state
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            try {
+                console.log('🔄 Loading home jobs from API...');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.log('⏰ API timeout - showing empty state');
+                    controller.abort();
+                }, 10000);
+                
+                const response = await fetch('/api/job-offers?limit=3', {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API Success! Got', data.jobOffers ? data.jobOffers.length : 0, 'job offers');
+
+                if (data.jobOffers && Array.isArray(data.jobOffers) && data.jobOffers.length > 0) {
+                    renderHomeJobs(data.jobOffers);
+                } else {
+                    showHomeJobsEmpty();
+                }
+
+            } catch (error) {
+                console.log('💭 API failed:', error.message, '- showing empty state');
+                showHomeJobsEmpty();
+            }
+        }
+
+        function renderHomeJobs(jobOffers) {
+            const loadingEl = document.getElementById('home-jobs-loading');
+            const errorEl = document.getElementById('home-jobs-error');
+            const gridEl = document.getElementById('home-jobs-grid');
+            const emptyEl = document.getElementById('home-jobs-empty');
+            
+            if (jobOffers.length === 0) {
+                showHomeJobsEmpty();
+                return;
+            }
+            
+            // Hide loading and error states
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            // Show grid with job offers
+            if (gridEl) {
+                gridEl.innerHTML = jobOffers.map(createHomeJobCard).join('');
+                gridEl.classList.remove('hidden');
+                
+                // Add event listeners for job applications
+                setTimeout(() => {
+                    addJobApplicationListeners();
+                }, 100);
+            }
+        }
+
+        function showHomeJobsEmpty() {
+            const loadingEl = document.getElementById('home-jobs-loading');
+            const errorEl = document.getElementById('home-jobs-error');
+            const gridEl = document.getElementById('home-jobs-grid');
+            const emptyEl = document.getElementById('home-jobs-empty');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.remove('hidden');
+        }
+
+        function createHomeJobCard(job) {
+            const badge = job.employmentType === 'internship' ? { border: 'border-blue-400', bg: 'bg-blue-100', text: 'text-blue-700', label: 'PRAKTYKI' }
+                       : job.employmentType === 'part-time' ? { border: 'border-gray-400', bg: 'bg-gray-100', text: 'text-gray-700', label: 'CZĘŚĆ ETATU' }
+                       : job.employmentType === 'contract' ? { border: 'border-purple-400', bg: 'bg-purple-100', text: 'text-purple-700', label: 'KONTRAKT' }
+                       : { border: 'border-slate-400', bg: 'bg-slate-100', text: 'text-slate-700', label: 'PEŁNY ETAT' };
+            
+            const salaryText = job.salaryFrom && job.salaryTo ? 
+                `${job.salaryFrom} - ${job.salaryTo} PLN` : 
+                job.salaryFrom ? `Od ${job.salaryFrom} PLN` : 
+                job.salaryTo ? `Do ${job.salaryTo} PLN` : '';
+            
+            return `
+                <div class="bg-white rounded-xl p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 border-l-4 ${badge.border} flex flex-col h-full">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-black mb-2">${job.title || 'Brak tytułu'}</h3>
+                            <p class="text-gray-600 font-medium">${job.companyName || 'Brak nazwy firmy'}</p>
+                        </div>
+                        <span class="text-xs ${badge.text} font-bold ${badge.bg} px-3 py-1 rounded-full">${badge.label}</span>
+                    </div>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.bg} rounded-full">
+                                <i class="ri-map-pin-line ${badge.text.replace('text-', '')}"></i>
+                            </div>
+                            <span>${job.location || 'Brak lokalizacji'}</span>
+                        </div>
+                        ${salaryText ? `
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.bg} rounded-full">
+                                <i class="ri-money-dollar-circle-line ${badge.text.replace('text-', '')}"></i>
+                    </div>
+                            <span class="font-semibold">${salaryText}</span>
+                        </div>` : ''}
+                        ${job.expireAt ? `
+                        <div class="flex items-center text-sm text-gray-600">
+                            <div class="w-5 h-5 flex items-center justify-center mr-3 ${badge.bg} rounded-full">
+                                <i class="ri-calendar-line ${badge.text.replace('text-', '')}"></i>
+                            </div>
+                            <span>Wygasa: ${new Date(job.expireAt).toLocaleDateString('pl-PL')}</span>
+                        </div>` : ''}
+                    </div>
+                    ${job.descriptionHTML ? `<div class="text-gray-600 text-sm mb-4 line-clamp-3">${job.descriptionHTML.replace(/<[^>]*>/g, '').substring(0, 120)}...</div>` : ''}
+                    <button data-action="apply-job" data-job-id="${job._id || job.id}" data-job-title="${job.title || 'Oferta pracy'}" class="w-full bg-gradient-to-r from-slate-600 to-slate-700 text-white py-3 px-4 !rounded-button hover:from-slate-700 hover:to-slate-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl mt-auto">
+                        <i class="ri-send-plane-line mr-2"></i>Aplikuj teraz
+                    </button>
+                </div>
+            `;
+        }
+
+        // === HOME NEWS (3 latest) - database-first ===
+        function initHomeNews() {
+            loadHomeNews();
+        }
+
+        async function loadHomeNews() {
+            const loadingEl = document.getElementById('home-news-loading');
+            const errorEl = document.getElementById('home-news-error');
+            const gridEl = document.getElementById('home-news-grid');
+            const emptyEl = document.getElementById('home-news-empty');
+            
+            // Show loading state
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            try {
+                console.log('🔄 Loading home news from API...');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.log('⏰ News API timeout - showing empty state');
+                    controller.abort();
+                }, 10000);
+                
+                const response = await fetch('/api/news?limit=3', {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ News API Success! Got', data.news ? data.news.length : 0, 'news');
+
+                if (data.news && Array.isArray(data.news) && data.news.length > 0) {
+                    renderHomeNews(data.news);
+                } else {
+                    showHomeNewsEmpty();
+                }
+
+            } catch (error) {
+                console.log('💭 News API failed:', error.message, '- showing empty state');
+                showHomeNewsEmpty();
+            }
+        }
+
+        function renderHomeNews(news) {
+            const loadingEl = document.getElementById('home-news-loading');
+            const errorEl = document.getElementById('home-news-error');
+            const gridEl = document.getElementById('home-news-grid');
+            const emptyEl = document.getElementById('home-news-empty');
+            
+            if (news.length === 0) {
+                showHomeNewsEmpty();
+                return;
+            }
+            
+            // Hide loading and error states
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            // Show grid with news
+            if (gridEl) {
+                gridEl.innerHTML = news.map(createHomeNewsCard).join('');
+                gridEl.classList.remove('hidden');
+            }
+        }
+
+        function showHomeNewsEmpty() {
+            const loadingEl = document.getElementById('home-news-loading');
+            const errorEl = document.getElementById('home-news-error');
+            const gridEl = document.getElementById('home-news-grid');
+            const emptyEl = document.getElementById('home-news-empty');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.remove('hidden');
+        }
+
+
+        // === HOME COURSES (6 latest) - database-first ===
+        function initHomeCourses() {
+            loadHomeCourses();
+        }
+
+        async function loadHomeCourses() {
+            const loadingEl = document.getElementById('home-courses-loading');
+            const errorEl = document.getElementById('home-courses-error');
+            const gridEl = document.getElementById('home-courses-grid');
+            const emptyEl = document.getElementById('home-courses-empty');
+            
+            // Show loading state
+            if (loadingEl) loadingEl.classList.remove('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            try {
+                console.log('🔄 Loading home courses from API...');
+                
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => {
+                    console.log('⏰ API timeout - showing empty state');
+                    controller.abort();
+                }, 10000);
+                
+                const response = await fetch('/api/courses?limit=6', {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ API Success! Got', data.courses ? data.courses.length : 0, 'courses');
+
+                if (data.courses && Array.isArray(data.courses) && data.courses.length > 0) {
+                    renderHomeCourses(data.courses);
+                } else {
+                    showHomeCoursesEmpty();
+                }
+
+            } catch (error) {
+                console.log('💭 API failed:', error.message, '- showing empty state');
+                showHomeCoursesEmpty();
+            }
+        }
+
+        function renderHomeCourses(courses) {
+            const loadingEl = document.getElementById('home-courses-loading');
+            const errorEl = document.getElementById('home-courses-error');
+            const gridEl = document.getElementById('home-courses-grid');
+            const emptyEl = document.getElementById('home-courses-empty');
+            
+            if (courses.length === 0) {
+                showHomeCoursesEmpty();
+                return;
+            }
+            
+            // Hide loading and error states
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.add('hidden');
+            
+            // Show grid with courses
+            if (gridEl) {
+                gridEl.innerHTML = courses.map(createHomeCourseCard).join('');
+                gridEl.classList.remove('hidden');
+                
+                // Add event listeners for course application buttons
+                document.querySelectorAll('[data-action="apply"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const courseId = e.currentTarget.dataset.courseId;
+                        const courseTitle = e.currentTarget.dataset.courseTitle;
+                        try {
+                            submitCourseApplication(courseId, courseTitle);
+                        } catch (error) {
+                            console.error('Error calling submitCourseApplication:', error);
+                            alert('Funkcja zgłoszeniowa nie jest dostępna. Odśwież stronę i spróbuj ponownie.');
+                        }
+                    });
+                });
+                
+            }
+        }
+
+        function showHomeCoursesEmpty() {
+            const loadingEl = document.getElementById('home-courses-loading');
+            const errorEl = document.getElementById('home-courses-error');
+            const gridEl = document.getElementById('home-courses-grid');
+            const emptyEl = document.getElementById('home-courses-empty');
+            
+            if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
+            if (gridEl) gridEl.classList.add('hidden');
+            if (emptyEl) emptyEl.classList.remove('hidden');
+        }
+
+        function createHomeCourseCard(course) {
+            // Enhanced gradient colors with better contrast and modern look
+            const gradients = [
+                { from: 'from-indigo-600', to: 'to-indigo-800', accent: 'text-indigo-200', highlight: 'text-indigo-100' },
+                { from: 'from-red-600', to: 'to-red-800', accent: 'text-red-200', highlight: 'text-red-100' },
+                { from: 'from-emerald-600', to: 'to-emerald-800', accent: 'text-emerald-200', highlight: 'text-emerald-100' },
+                { from: 'from-purple-600', to: 'to-purple-800', accent: 'text-purple-200', highlight: 'text-purple-100' },
+                { from: 'from-orange-600', to: 'to-orange-800', accent: 'text-orange-200', highlight: 'text-orange-100' },
+                { from: 'from-slate-700', to: 'to-slate-900', accent: 'text-slate-200', highlight: 'text-slate-100' },
+                { from: 'from-teal-600', to: 'to-teal-800', accent: 'text-teal-200', highlight: 'text-teal-100' },
+                { from: 'from-cyan-600', to: 'to-cyan-800', accent: 'text-cyan-200', highlight: 'text-cyan-100' }
+            ];
+            
+            const gradientIndex = course.title ? course.title.length % gradients.length : 0;
+            const gradient = gradients[gradientIndex];
+            const gradientClass = `bg-gradient-to-br ${gradient.from} ${gradient.to}`;
+            
+            // Enhanced image selection based on course content
+            let imageUrl = course.imageUrl;
+            if (!imageUrl || imageUrl === './imgs/halazdjecie.jpg') {
+                // Enhanced smart image assignment based on course title keywords
+                const title = (course.title || '').toLowerCase();
+                
+                if (title.includes('firma') || title.includes('zarządzanie') || title.includes('prowadzenie')) {
+                    imageUrl = '/imgs/medium-shot-woman-with-tablet.jpg';
+                } else if (title.includes('magazyn') || title.includes('ładunk') || title.includes('manipulacyj') || title.includes('harmonogram')) {
+                    const magazynImages = [
+                        '/imgs/warehouse-operative-checking-purchase-order.jpg',
+                        '/imgs/warehouse-worker-checking-inventory-arrived-goods-packages-storage-department.jpg',
+                        '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg',
+                        '/imgs/medium-shot-smiley-man-warehouse.jpg'
+                    ];
+                    imageUrl = magazynImages[Math.abs(title.length) % magazynImages.length];
+                } else if (title.includes('transport') || title.includes('drogowy') || title.includes('pojazd') || title.includes('logist') || title.includes('zarabia')) {
+                    const transportImages = [
+                        '/imgs/white-truck-delivery-shipping-service-3d-rendering.jpg',
+                        '/imgs/truck-logistics-operation-dusk.jpg',
+                        '/imgs/truck-inside-warehouse.jpg',
+                        '/imgs/abstract-design-background-trucks-transport-trackinghighway-delivering.jpg',
+                        '/imgs/transportation-logistics-container-cargo-ship-cargo-plane.jpg'
+                    ];
+                    imageUrl = transportImages[Math.abs(title.length) % transportImages.length];
+                } else if (title.includes('technolog') || title.includes('automatyc') || title.includes('cyfrowy') || title.includes('dron') || title.includes('identyfikacja')) {
+                    imageUrl = '/imgs/drone-flying-modern-warehouse.jpg';
+                } else if (title.includes('język') || title.includes('komunikacja') || title.includes('marketing') || title.includes('branżowy')) {
+                    imageUrl = '/imgs/16617.jpg';
+                } else if (title.includes('mechanizacja') || title.includes('prac') || title.includes('ładunk')) {
+                    imageUrl = '/imgs/happy-employee-holding-scanner-distribution-warehouse.jpg';
+                } else if (title.includes('eksport') || title.includes('import') || title.includes('celny') || title.includes('międzynarodow')) {
+                    imageUrl = '/imgs/transport-logistics-concept.jpg';
+                } else if (title.includes('bezpieczeńst') || title.includes('pracowni') || title.includes('bhp')) {
+                    imageUrl = '/imgs/woman-safety-equipment-working.jpg';
+                } else if (title.includes('kontrola') || title.includes('planowanie') || title.includes('kosztorys') || title.includes('zlecenia')) {
+                    imageUrl = '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+                } else if (title.includes('dostaw') || title.includes('kurier') || title.includes('przesył')) {
+                    imageUrl = '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+                } else {
+                    // Fallback: random selection from warehouse/transport images
+                    const fallbackImages = [
+                        '/imgs/medium-shot-woman-storage.jpg',
+                        '/imgs/truck-logistics-operation-dusk (1).jpg',
+                        '/imgs/16617.jpg'
+                    ];
+                    imageUrl = fallbackImages[Math.abs(title.length) % fallbackImages.length];
+                }
+            } else if (imageUrl.startsWith('./imgs/')) {
+                imageUrl = imageUrl.replace('./imgs/', '/imgs/');
+            }
+            
+            // Generate course code from title or use existing
+            const courseCode = course.slug ? course.slug.toUpperCase().substring(0, 8) : 'BCUS-' + (course._id ? course._id.toString().slice(-3) : '001');
+            
+            // Status formatting (no price display)
+            const statusText = course.isActive !== false ? 'DOSTĘPNY' : 'NIEDOSTĘPNY';
+            const statusClass = course.isActive !== false ? 'text-green-300' : 'text-red-300';
+            
+            return `
+                <div class="group relative ${gradientClass} rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-white/10 min-h-[420px] flex flex-col">
+                    <!-- Modern corner accents -->
+                    <div class="absolute top-3 left-3 w-6 h-6 border-l-3 border-t-3 border-yellow-400/80 rounded-tl-lg"></div>
+                    <div class="absolute top-3 right-3 w-6 h-6 border-r-3 border-t-3 border-yellow-400/80 rounded-tr-lg"></div>
+                    <div class="absolute bottom-3 left-3 w-6 h-6 border-l-3 border-b-3 border-yellow-400/80 rounded-bl-lg"></div>
+                    <div class="absolute bottom-3 right-3 w-6 h-6 border-r-3 border-b-3 border-yellow-400/80 rounded-br-lg"></div>
+                    
+                    <!-- Course metadata -->
+                    <div class="absolute top-4 right-6 space-y-1">
+                        <div class="text-yellow-400 text-xs font-bold bg-black/30 px-2 py-1 rounded backdrop-blur-sm">${courseCode}</div>
+                        <div class="text-yellow-400 text-xs font-mono bg-black/30 px-2 py-1 rounded backdrop-blur-sm">BCU</div>
+                    </div>
+                    
+                    <!-- Premium texture overlay -->
+                    <div class="absolute inset-0 opacity-5" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.1) 4px, rgba(255,255,255,0.1) 8px);"></div>
+                    
+                    <!-- Hero image section -->
+                    <div class="h-32 bg-cover bg-center relative overflow-hidden" style="background-image: url('${imageUrl}');">
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/60"></div>
+                        <div class="absolute bottom-2 left-3">
+                            <div class="bg-black/40 backdrop-blur-sm rounded-md px-2 py-1 inline-block">
+                                <span class="${statusClass} text-xs font-bold">${statusText}</span>
+                        </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Content section -->
+                    <div class="p-4 text-white relative z-10 flex flex-col flex-1">
+                        <h3 class="text-lg font-bold mb-2 leading-tight group-hover:text-yellow-100 transition-colors line-clamp-2">${course.title || 'Kurs'}</h3>
+                        <p class="${gradient.accent} mb-3 text-xs leading-relaxed flex-grow line-clamp-3">${course.excerpt || course.description || 'Brak opisu...'}</p>
+                        
+                        <!-- Course details -->
+                        <div class="mb-3 text-xs bg-black/20 rounded-lg p-2.5 backdrop-blur-sm">
+                            <div class="grid grid-cols-3 gap-2.5">
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-user-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Grupa docelowa</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.targetGroup || 'dorośli'}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-timer-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Liczba godzin</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.hours || 0}h</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start ${gradient.highlight}">
+                                    <i class="ri-group-line mr-1.5 text-yellow-400 text-sm flex-shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <div class="text-xs opacity-75 mb-0.5">Max</div>
+                                        <div class="font-semibold text-xs leading-tight">${course.maxParticipants || 20}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="mt-auto">
+                            <button data-action="apply" data-course-id="${course._id || course.id || courseCode}" data-course-title="${course.title || 'Kurs'}" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm">
+                                <span class="flex items-center justify-center">
+                                    <i class="ri-user-add-line mr-2"></i>
+                                    ZAPISZ SIĘ
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Contact form handling
+        function initContactForm() {
+            const form = document.getElementById('contact-form');
+            const statusEl = document.getElementById('contact-status');
+            const statusContent = document.getElementById('contact-status-content');
+            
+            if (!form) return;
+            
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Get form data
+                const formData = new FormData(form);
+                const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    subject: formData.get('subject'),
+                    message: formData.get('message'),
+                    privacy: formData.get('privacy')
+                };
+                
+                // Validate required fields
+                if (!data.name || !data.email || !data.subject || !data.message || !data.privacy) {
+                    showContactStatus('error', 'Wypełnij wszystkie wymagane pola');
+                    return;
+                }
+                
+                // Show loading state
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin"></i><span>Wysyłanie...</span>';
+                submitBtn.disabled = true;
+                
+                try {
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        showContactStatus('success', 'Wiadomość została wysłana pomyślnie! Odpowiemy tak szybko, jak to możliwe.');
+                        form.reset();
+                    } else {
+                        throw new Error(result.message || 'Wystąpił błąd podczas wysyłania');
+                    }
+                } catch (error) {
+                    console.error('Contact form error:', error);
+                    showContactStatus('error', 'Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie lub skontaktuj się bezpośrednio: kontakt@bcu-spedycja.pl');
+                } finally {
+                    // Restore button state
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+        
+        function showContactStatus(type, message) {
+            const statusEl = document.getElementById('contact-status');
+            const statusContent = document.getElementById('contact-status-content');
+            
+            if (!statusEl || !statusContent) return;
+            
+            // Clear previous classes
+            statusEl.className = 'mt-4 p-4 rounded-lg';
+            
+            if (type === 'success') {
+                statusEl.classList.add('bg-green-50', 'border', 'border-green-200');
+                statusContent.innerHTML = `
+                    <i class="ri-check-circle-line text-lg text-green-600"></i>
+                    <span class="text-green-800">${message}</span>
+                `;
+            } else if (type === 'error') {
+                statusEl.classList.add('bg-red-50', 'border', 'border-red-200');
+                statusContent.innerHTML = `
+                    <i class="ri-error-warning-line text-lg text-red-600"></i>
+                    <span class="text-red-800">${message}</span>
+                `;
+            }
+            
+            statusEl.classList.remove('hidden');
+            
+            // Auto-hide after 10 seconds for success messages
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.classList.add('hidden');
+                }, 10000);
+            }
+        }
+
+        // Cookie Consent Management
+        function initCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            const acceptBtn = document.getElementById('accept-cookies');
+            const declineBtn = document.getElementById('decline-cookies');
+            
+            if (!banner) return;
+            
+            // Check if user already made a choice
+            const cookieConsent = localStorage.getItem('cookieConsent');
+            
+            if (!cookieConsent) {
+                // Show banner after a short delay
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-full');
+                }, 500);
+            }
+            
+            // Handle accept button
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'accepted');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    
+                    // Enable analytics/tracking if needed
+                    console.log('Cookies accepted');
+                });
+            }
+            
+            // Handle decline button
+            if (declineBtn) {
+                declineBtn.addEventListener('click', () => {
+                    localStorage.setItem('cookieConsent', 'declined');
+                    localStorage.setItem('cookieConsentDate', new Date().toISOString());
+                    hideCookieBanner();
+                    
+                    // Disable analytics/tracking if needed
+                    console.log('Cookies declined');
+                });
+            }
+            
+            function hideCookieBanner() {
+                banner.classList.add('translate-y-full');
+                setTimeout(() => {
+                    banner.style.display = 'none';
+                }, 300);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavigationMenu();
+            initAccessibilityControls();
+            initSmoothScrolling();
+            initMapInteractions();
+            initHallSlider();
+            initContactForm();
+            initHomeNews();
+            initHomeJobs();
+            initHomeCourses();
+            initCookieBanner();
+        });
+
+        // Job application system for homepage
+        let currentJobApplication = null;
+
+        // Show job application modal
+        function showJobApplicationModal(jobId, jobTitle) {
+            currentJobApplication = { jobId, jobTitle };
+            
+            const modal = document.getElementById('job-application-modal');
+            document.getElementById('job-modal-title').textContent = jobTitle;
+            
+            // Reset form
+            document.getElementById('job-application-form').reset();
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        // Hide job application modal
+        function hideJobApplicationModal() {
+            const modal = document.getElementById('job-application-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            currentJobApplication = null;
+        }
+
+        // Submit job application
+        async function submitJobApplication() {
+            if (!currentJobApplication) return;
+
+            const form = document.getElementById('job-application-form');
+            const formData = new FormData(form);
+            const submitBtn = document.getElementById('submit-job-btn');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Wysyłanie...';
+
+            try {
+                // Add job application specific data
+                formData.append('applicationType', 'job');
+                formData.append('jobOffer', currentJobApplication.jobId);
+                formData.append('jobOfferTitle', currentJobApplication.jobTitle);
+
+                const response = await fetch('/api/applications', {
+                    method: 'POST',
+                    body: formData // Send as FormData to handle file upload
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Aplikacja została wysłana pomyślnie! Skontaktujemy się z Tobą wkrótce.');
+                    hideJobApplicationModal();
+                } else {
+                    throw new Error(result.message || 'Błąd podczas wysyłania aplikacji');
+                }
+            } catch (error) {
+                console.error('Error submitting job application:', error);
+                alert('Błąd podczas wysyłania aplikacji: ' + error.message);
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="ri-send-plane-line mr-2"></i>Wyślij aplikację';
+            }
+        }
+
+        // Add event listeners for job applications
+        function addJobApplicationListeners() {
+            // Apply job buttons
+            document.querySelectorAll('[data-action="apply-job"]').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const jobId = e.currentTarget.dataset.jobId;
+                    const jobTitle = e.currentTarget.dataset.jobTitle;
+                    showJobApplicationModal(jobId, jobTitle);
+                });
+            });
+        }
+
+        // Update loadJobOffers to add event listeners
+        const originalLoadJobOffers = window.loadJobOffers;
+        if (originalLoadJobOffers) {
+            window.loadJobOffers = function() {
+                originalLoadJobOffers();
+                // Add delay to ensure DOM is updated
+                setTimeout(() => {
+                    addJobApplicationListeners();
+                }, 100);
+            };
+        }
+
+        // CV file handling
+        function clearCVFile() {
+            const fileInput = document.getElementById('cv-upload');
+            const fileInfo = document.getElementById('cv-file-info');
+            
+            fileInput.value = '';
+            fileInfo.classList.add('hidden');
+        }
+
+        // Initialize job applications on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Modal close events
+            setTimeout(() => {
+                const closeBtn = document.getElementById('close-job-modal');
+                const modal = document.getElementById('job-application-modal');
+                const submitBtn = document.getElementById('submit-job-btn');
+                const cvUpload = document.getElementById('cv-upload');
+                
+                if (closeBtn) closeBtn.addEventListener('click', hideJobApplicationModal);
+                if (modal) modal.addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) hideJobApplicationModal();
+                });
+                if (submitBtn) submitBtn.addEventListener('click', submitJobApplication);
+                
+                // CV upload handler
+                if (cvUpload) {
+                    cvUpload.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        const fileInfo = document.getElementById('cv-file-info');
+                        const fileName = document.getElementById('cv-file-name');
+                        
+                        if (file) {
+                            // Check file size (5MB limit)
+                            if (file.size > 5 * 1024 * 1024) {
+                                alert('Plik jest za duży. Maksymalny rozmiar to 5MB.');
+                                e.target.value = '';
+                                return;
+                            }
+                            
+                            fileName.textContent = file.name;
+                            fileInfo.classList.remove('hidden');
+                        } else {
+                            fileInfo.classList.add('hidden');
+                        }
+                    });
+                }
+            }, 100);
+        });
+    </script>
+    
+    <!-- Job Application Modal -->
+    <div id="job-application-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Aplikuj</h2>
+                        <p class="text-gray-600 mt-1" id="job-modal-title">Nazwa oferty</p>
+                    </div>
+                    <button id="close-job-modal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6">
+                <form id="job-application-form" class="space-y-6">
+                    <!-- Personal Information -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Imię *</label>
+                            <input type="text" name="firstName" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nazwisko *</label>
+                            <input type="text" name="lastName" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                            <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
+                            <input type="tel" name="phone" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+
+                    <!-- CV Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Załącz CV</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
+                            <input type="file" name="cv" id="cv-upload" accept=".pdf,.doc,.docx" class="hidden">
+                            <label for="cv-upload" class="cursor-pointer">
+                                <i class="ri-upload-cloud-line text-3xl text-gray-400 mb-2 block"></i>
+                                <p class="text-gray-600 mb-1">Kliknij aby wybrać plik CV</p>
+                                <p class="text-xs text-gray-500">PDF, DOC, DOCX (max 5MB)</p>
+                            </label>
+                            <div id="cv-file-info" class="hidden mt-3 p-2 bg-green-50 rounded-lg">
+                                <p class="text-sm text-green-700 flex items-center">
+                                    <i class="ri-file-line mr-2"></i>
+                                    <span id="cv-file-name"></span>
+                                    <button type="button" onclick="clearCVFile()" class="ml-auto text-red-500 hover:text-red-700">
+                                        <i class="ri-close-line"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Motywacja / Dodatkowe informacje</label>
+                        <textarea name="motivation" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Dlaczego chcesz pracować w tej firmie? Jakie są Twoje mocne strony?"></textarea>
+                    </div>
+
+                    <!-- Consents -->
+                    <div class="space-y-3">
+                        <label class="flex items-start space-x-3">
+                            <input type="checkbox" name="consentRODO" required class="mt-1 rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="text-sm text-gray-700">
+                                Wyrażam zgodę na przetwarzanie moich danych osobowych w celu rozpatrzenia mojej aplikacji zgodnie z RODO *
+                            </span>
+                        </label>
+                        <label class="flex items-start space-x-3">
+                            <input type="checkbox" name="consentMarketing" class="mt-1 rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="text-sm text-gray-700">
+                                Wyrażam zgodę na otrzymywanie informacji o nowych ofertach pracy
+                            </span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-4">
+                <button type="button" onclick="hideJobApplicationModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                    Anuluj
+                </button>
+                <button type="button" id="submit-job-btn" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                    <i class="ri-send-plane-line mr-2"></i>Wyślij aplikację
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Integration -->
+    <script src="./assets/js/api.js"></script>
+</body>
+</html>
+
