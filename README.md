@@ -85,8 +85,12 @@ MAX_FILE_SIZE=5242880
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 
-# CORS
+# CORS (opcjonalne - domeny produkcyjne dodawane automatycznie)
 ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+# W produkcji automatycznie dodawane:
+# https://app.bcu-spedycja.pl
+# https://www.bcu-spedycja.pl
+# https://bcu-spedycja.pl
 ```
 
 4. **Uruchom MongoDB:**

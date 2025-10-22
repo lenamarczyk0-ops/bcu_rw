@@ -57,13 +57,32 @@ app.use(helmet({
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'];
+    
     // W produkcji na Railway, dodaj automatycznie domenę Railway
     if (process.env.NODE_ENV === 'production' && process.env.RAILWAY_PUBLIC_DOMAIN) {
       allowedOrigins.push(`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`);
     }
-    if (!origin || allowedOrigins.includes(origin)) {
+    
+    // Automatycznie dodaj warianty domen produkcyjnych (z www i bez www)
+    if (process.env.NODE_ENV === 'production') {
+      const productionDomains = [
+        'https://app.bcu-spedycja.pl',
+        'https://www.bcu-spedycja.pl',
+        'https://bcu-spedycja.pl'
+      ];
+      allowedOrigins.push(...productionDomains);
+    }
+    
+    // Pozwól na żądania bez origin (np. Postman, server-side requests)
+    if (!origin) {
+      return callback(null, true);
+    }
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.warn(`🚫 CORS blocked origin: ${origin}`);
+      console.warn(`✅ Allowed origins:`, allowedOrigins);
       callback(new Error('Not allowed by CORS'));
     }
   },
