@@ -166,6 +166,57 @@ async function showCourseModal(slug) {
         const response = await api.getCourse(slug);
         const course = response.course;
         
+        // Smart image selection based on course content
+        let imageUrl = course.imageUrl;
+        if (!imageUrl || imageUrl === './imgs/halazdjecie.jpg') {
+            const title = (course.title || '').toLowerCase();
+            
+            if (title.includes('firma') || title.includes('zarządzanie') || title.includes('prowadzenie')) {
+                imageUrl = '/imgs/medium-shot-woman-with-tablet.jpg';
+            } else if (title.includes('magazyn') || title.includes('ładunk') || title.includes('manipulacyj') || title.includes('harmonogram')) {
+                const magazynImages = [
+                    '/imgs/warehouse-operative-checking-purchase-order.jpg',
+                    '/imgs/warehouse-worker-checking-inventory-arrived-goods-packages-storage-department.jpg',
+                    '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg',
+                    '/imgs/medium-shot-smiley-man-warehouse.jpg'
+                ];
+                imageUrl = magazynImages[Math.abs(title.length) % magazynImages.length];
+            } else if (title.includes('transport') || title.includes('drogowy') || title.includes('pojazd') || title.includes('logist') || title.includes('zarabia')) {
+                const transportImages = [
+                    '/imgs/white-truck-delivery-shipping-service-3d-rendering.jpg',
+                    '/imgs/truck-logistics-operation-dusk.jpg',
+                    '/imgs/truck-inside-warehouse.jpg',
+                    '/imgs/abstract-design-background-trucks-transport-trackinghighway-delivering.jpg',
+                    '/imgs/transportation-logistics-container-cargo-ship-cargo-plane.jpg'
+                ];
+                imageUrl = transportImages[Math.abs(title.length) % transportImages.length];
+            } else if (title.includes('technolog') || title.includes('automatyc') || title.includes('cyfrowy') || title.includes('dron') || title.includes('identyfikacja')) {
+                imageUrl = '/imgs/drone-flying-modern-warehouse.jpg';
+            } else if (title.includes('język') || title.includes('komunikacja') || title.includes('marketing') || title.includes('branżowy')) {
+                imageUrl = '/imgs/16617.jpg';
+            } else if (title.includes('mechanizacja') || title.includes('prac') || title.includes('ładunk')) {
+                imageUrl = '/imgs/happy-employee-holding-scanner-distribution-warehouse.jpg';
+            } else if (title.includes('eksport') || title.includes('import') || title.includes('celny') || title.includes('międzynarodow')) {
+                imageUrl = '/imgs/transport-logistics-concept.jpg';
+            } else if (title.includes('bezpieczeńst') || title.includes('pracowni') || title.includes('bhp')) {
+                imageUrl = '/imgs/woman-safety-equipment-working.jpg';
+            } else if (title.includes('kontrola') || title.includes('planowanie') || title.includes('kosztorys') || title.includes('zlecenia')) {
+                imageUrl = '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+            } else if (title.includes('dostaw') || title.includes('kurier') || title.includes('przesył')) {
+                imageUrl = '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+            } else {
+                // Fallback: random selection from warehouse/transport images
+                const fallbackImages = [
+                    '/imgs/medium-shot-woman-storage.jpg',
+                    '/imgs/truck-logistics-operation-dusk (1).jpg',
+                    '/imgs/16617.jpg'
+                ];
+                imageUrl = fallbackImages[Math.abs(title.length) % fallbackImages.length];
+            }
+        } else if (imageUrl.startsWith('./imgs/')) {
+            imageUrl = imageUrl.replace('./imgs/', '/imgs/');
+        }
+        
         // Create modal HTML
         const modalHTML = `
             <div id="course-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -177,7 +228,7 @@ async function showCourseModal(slug) {
                         </div>
                         
                         <div class="mb-4">
-                            <img src="${course.imageUrl}" alt="${course.title}" class="w-full h-48 object-cover rounded-lg">
+                            <img src="${imageUrl}" alt="${course.title}" class="w-full h-48 object-cover rounded-lg">
                         </div>
                         
                         <div class="mb-4">

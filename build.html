@@ -1015,7 +1015,6 @@
                                 <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="3"></button>
                             </div>
                         </div>
-                        <p class="text-sm text-gray-500 text-center">Nowoczesna hala dydaktyczna</p>
                     </div>
                 </div>
 
@@ -1079,6 +1078,115 @@
             </div>
         </section>
 
+        <!-- GALERIA ZDJĘĆ -->
+        <section class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl font-bold text-black mb-6">NASZA GALERIA</h2>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto">
+                        Zobacz nasze nowoczesne zaplecze dydaktyczne i infrastrukturę szkoleniową
+                    </p>
+                </div>
+
+                <!-- Gallery Carousel -->
+                <div class="relative">
+                    <!-- Main Gallery Container -->
+                    <div id="gallery-carousel" class="relative overflow-hidden rounded-2xl">
+                        <div id="gallery-track" class="flex transition-transform duration-500 ease-out">
+                            <!-- Gallery Images -->
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2655.jpg" alt="BCU Galeria 1" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(0)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2709.jpg" alt="BCU Galeria 2" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(1)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2712.jpg" alt="BCU Galeria 3" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(2)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2734.jpg" alt="BCU Galeria 4" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(3)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2742.jpg" alt="BCU Galeria 5" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(4)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2747.jpg" alt="BCU Galeria 6" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(5)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2755.jpg" alt="BCU Galeria 7" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(6)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2756.jpg" alt="BCU Galeria 8" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(7)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2776.jpg" alt="BCU Galeria 9" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(8)" loading="lazy">
+                            </div>
+                            <div class="gallery-slide min-w-full px-2">
+                                <img src="./imgs/galeria/IF0A2789.jpg" alt="BCU Galeria 10" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(9)" loading="lazy">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Arrows -->
+                    <button id="gallery-prev" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-4 shadow-lg transition-all z-10 group">
+                        <i class="ri-arrow-left-s-line text-2xl group-hover:scale-110 transition-transform"></i>
+                    </button>
+                    <button id="gallery-next" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-4 shadow-lg transition-all z-10 group">
+                        <i class="ri-arrow-right-s-line text-2xl group-hover:scale-110 transition-transform"></i>
+                    </button>
+
+                    <!-- Dots Navigation -->
+                    <div class="flex justify-center mt-6 gap-2">
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-red-600 transition-all" data-slide="0"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="1"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="2"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="3"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="4"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="5"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="6"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="7"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="8"></button>
+                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="9"></button>
+                    </div>
+                </div>
+
+                <!-- Thumbnail Grid (Optional - below carousel) -->
+                <div class="grid grid-cols-5 gap-4 mt-8">
+                    <img src="./imgs/galeria/IF0A2655.jpg" alt="Miniatura 1" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(0)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2709.jpg" alt="Miniatura 2" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(1)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2712.jpg" alt="Miniatura 3" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(2)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2734.jpg" alt="Miniatura 4" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(3)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2742.jpg" alt="Miniatura 5" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(4)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2747.jpg" alt="Miniatura 6" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(5)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2755.jpg" alt="Miniatura 7" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(6)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2756.jpg" alt="Miniatura 8" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(7)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2776.jpg" alt="Miniatura 9" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(8)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2789.jpg" alt="Miniatura 10" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(9)" loading="lazy">
+                </div>
+            </div>
+        </section>
+
+        <!-- Lightbox Modal -->
+        <div id="lightbox" class="fixed inset-0 bg-black/95 z-[9999] hidden items-center justify-center">
+            <button onclick="closeLightbox()" class="absolute top-6 right-6 text-white text-4xl hover:text-gray-300 transition-colors z-10">
+                <i class="ri-close-line"></i>
+            </button>
+            
+            <button onclick="lightboxPrev()" class="absolute left-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:text-gray-300 transition-colors">
+                <i class="ri-arrow-left-s-line"></i>
+            </button>
+            
+            <button onclick="lightboxNext()" class="absolute right-6 top-1/2 -translate-y-1/2 text-white text-5xl hover:text-gray-300 transition-colors">
+                <i class="ri-arrow-right-s-line"></i>
+            </button>
+            
+            <img id="lightbox-img" src="" alt="Powiększone zdjęcie" class="max-w-[90vw] max-h-[90vh] object-contain">
+            
+            <div id="lightbox-counter" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-lg">
+                <span id="lightbox-current">1</span> / <span id="lightbox-total">10</span>
+            </div>
+        </div>
+
     </main>
 
     <!-- SEKCJA KONTAKT -->
@@ -1135,7 +1243,7 @@
                         <div class="space-y-2 text-gray-600">
                             <div class="flex justify-between">
                                 <span>Poniedziałek - Piątek:</span>
-                                <span class="font-medium">7:00 - 15:00</span>
+                                <span class="font-medium">7-15</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>Sobota - Niedziela:</span>
@@ -2774,6 +2882,168 @@
             </div>
         </div>
     </div>
+    
+    <!-- Gallery Carousel & Lightbox Script -->
+    <script>
+        // Gallery images array
+        const galleryImages = [
+            './imgs/galeria/IF0A2655.jpg',
+            './imgs/galeria/IF0A2709.jpg',
+            './imgs/galeria/IF0A2712.jpg',
+            './imgs/galeria/IF0A2734.jpg',
+            './imgs/galeria/IF0A2742.jpg',
+            './imgs/galeria/IF0A2747.jpg',
+            './imgs/galeria/IF0A2755.jpg',
+            './imgs/galeria/IF0A2756.jpg',
+            './imgs/galeria/IF0A2776.jpg',
+            './imgs/galeria/IF0A2789.jpg'
+        ];
+
+        let currentSlide = 0;
+        let currentLightboxIndex = 0;
+
+        // Initialize gallery carousel
+        function initGalleryCarousel() {
+            const track = document.getElementById('gallery-track');
+            const prevBtn = document.getElementById('gallery-prev');
+            const nextBtn = document.getElementById('gallery-next');
+            const dots = document.querySelectorAll('.gallery-dot');
+
+            if (!track) return;
+
+            // Next slide
+            nextBtn?.addEventListener('click', () => {
+                currentSlide = (currentSlide + 1) % galleryImages.length;
+                updateGallerySlide();
+            });
+
+            // Previous slide
+            prevBtn?.addEventListener('click', () => {
+                currentSlide = (currentSlide - 1 + galleryImages.length) % galleryImages.length;
+                updateGallerySlide();
+            });
+
+            // Dots navigation
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    currentSlide = index;
+                    updateGallerySlide();
+                });
+            });
+
+            // Auto-play carousel (optional)
+            setInterval(() => {
+                currentSlide = (currentSlide + 1) % galleryImages.length;
+                updateGallerySlide();
+            }, 5000); // Change slide every 5 seconds
+        }
+
+        function updateGallerySlide() {
+            const track = document.getElementById('gallery-track');
+            const dots = document.querySelectorAll('.gallery-dot');
+            
+            if (track) {
+                track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            }
+
+            // Update dots
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.remove('bg-gray-300');
+                    dot.classList.add('bg-red-600');
+                } else {
+                    dot.classList.remove('bg-red-600');
+                    dot.classList.add('bg-gray-300');
+                }
+            });
+        }
+
+        // Go to specific slide (from thumbnails)
+        function goToSlide(index) {
+            currentSlide = index;
+            updateGallerySlide();
+        }
+
+        // Lightbox functions
+        function openLightbox(index) {
+            currentLightboxIndex = index;
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCurrent = document.getElementById('lightbox-current');
+            
+            if (lightbox && lightboxImg) {
+                lightboxImg.src = galleryImages[index];
+                lightboxCurrent.textContent = index + 1;
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            }
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox) {
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        }
+
+        function lightboxNext() {
+            currentLightboxIndex = (currentLightboxIndex + 1) % galleryImages.length;
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCurrent = document.getElementById('lightbox-current');
+            if (lightboxImg) {
+                lightboxImg.src = galleryImages[currentLightboxIndex];
+                lightboxCurrent.textContent = currentLightboxIndex + 1;
+            }
+        }
+
+        function lightboxPrev() {
+            currentLightboxIndex = (currentLightboxIndex - 1 + galleryImages.length) % galleryImages.length;
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCurrent = document.getElementById('lightbox-current');
+            if (lightboxImg) {
+                lightboxImg.src = galleryImages[currentLightboxIndex];
+                lightboxCurrent.textContent = currentLightboxIndex + 1;
+            }
+        }
+
+        // Keyboard navigation for lightbox
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (lightbox && !lightbox.classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                } else if (e.key === 'ArrowRight') {
+                    lightboxNext();
+                } else if (e.key === 'ArrowLeft') {
+                    lightboxPrev();
+                }
+            }
+        });
+
+        // Close lightbox on background click
+        document.getElementById('lightbox')?.addEventListener('click', (e) => {
+            if (e.target.id === 'lightbox') {
+                closeLightbox();
+            }
+        });
+
+        // Initialize gallery on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initGalleryCarousel);
+        } else {
+            initGalleryCarousel();
+        }
+
+        // Make functions globally available
+        window.goToSlide = goToSlide;
+        window.openLightbox = openLightbox;
+        window.closeLightbox = closeLightbox;
+        window.lightboxNext = lightboxNext;
+        window.lightboxPrev = lightboxPrev;
+    </script>
     
     <!-- API Integration -->
     <script src="./assets/js/api.js"></script>
