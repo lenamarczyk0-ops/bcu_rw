@@ -1050,6 +1050,8 @@ async function handleLogin(e) {
 // Export for use in other scripts
 window.BCUAPI = BCUAPI;
 window.api = api;
+window.showCourseModal = showCourseModal;
+window.closeCourseModal = closeCourseModal;
 window.showRegistrationModal = showRegistrationModal;
 window.showLoginModal = showLoginModal;
 window.closeRegistrationModal = closeRegistrationModal;

@@ -988,7 +988,7 @@
                                 <div class="w-8 h-8 bg-blue-800 rounded-full flex items-center justify-center flex-shrink-0 badge-animate">
                                     <i class="ri-check-line text-white text-sm"></i>
                                 </div>
-                                <p class="text-gray-700">Internat dla uczestników szkoleń kilkudniowych</p>
+                                <p class="text-gray-700">Internat 10-osobowy + pokój opiekuna</p>
                             </div>
                             <div class="flex items-center space-x-4">
                                 <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center flex-shrink-0 badge-animate">
@@ -1135,7 +1135,7 @@
                         <div class="space-y-2 text-gray-600">
                             <div class="flex justify-between">
                                 <span>Poniedziałek - Piątek:</span>
-                                <span class="font-medium">8:00 - 16:00</span>
+                                <span class="font-medium">7:00 - 15:00</span>
                             </div>
                             <div class="flex justify-between">
                                 <span>Sobota - Niedziela:</span>
@@ -2336,7 +2336,13 @@
                         </div>
                         
                         <!-- CTA Buttons -->
-                        <div class="mt-auto">
+                        <div class="mt-auto space-y-2">
+                            <a href="/courses#course-${course.slug || course._id}" class="block w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm border border-white/30 text-center no-underline">
+                                <span class="flex items-center justify-center">
+                                    <i class="ri-information-line mr-2"></i>
+                                    SZCZEGÓŁY
+                                </span>
+                            </a>
                             <button data-action="apply" data-course-id="${course._id || course.id || courseCode}" data-course-title="${course.title || 'Kurs'}" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm">
                                 <span class="flex items-center justify-center">
                                     <i class="ri-user-add-line mr-2"></i>

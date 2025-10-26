@@ -524,7 +524,31 @@
             // Load ONLY courses from database (added via admin panel)
             console.log('🔄 Loading courses from database...');
                 loadCoursesFromAPI();
+            
+            // Check if we need to open a specific course modal from URL hash
+            checkAndOpenCourseFromHash();
         });
+        
+        // Check URL hash and open course modal if specified
+        function checkAndOpenCourseFromHash() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#course-')) {
+                const courseSlug = hash.replace('#course-', '');
+                console.log('🔗 Opening course from hash:', courseSlug);
+                
+                // Wait a bit for courses to load, then open the modal
+                setTimeout(() => {
+                    if (typeof showCourseModal === 'function') {
+                        showCourseModal(courseSlug);
+                    } else if (typeof window.showCourseModal === 'function') {
+                        window.showCourseModal(courseSlug);
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Listen for hash changes (when user navigates back/forward)
+        window.addEventListener('hashchange', checkAndOpenCourseFromHash);
 
         // Load courses ONLY from database (admin panel)
         async function loadCoursesFromAPI() {
@@ -793,7 +817,13 @@
                         </div>
                         
                         <!-- CTA Buttons -->
-                        <div class="mt-auto">
+                        <div class="mt-auto space-y-2">
+                            <button onclick="showCourseModal('${course.slug || course._id}')" class="w-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm border border-white/30">
+                                <span class="flex items-center justify-center">
+                                    <i class="ri-information-line mr-2"></i>
+                                    SZCZEGÓŁY
+                                </span>
+                            </button>
                             <button data-action="apply" data-course-id="${course._id || course.id || courseCode}" data-course-title="${course.title || 'Kurs'}" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm">
                                 <span class="flex items-center justify-center">
                                     <i class="ri-user-add-line mr-2"></i>
