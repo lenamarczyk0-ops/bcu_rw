@@ -1006,13 +1006,17 @@
                     </div>
                     <div class="space-y-4">
                         <div class="relative w-full image-large rounded-lg shadow-lg overflow-hidden">
-                            <img id="hall-slider" src="./imgs/halazdjecie.jpg" alt="Hala dydaktyczna BCU" class="w-full h-full object-cover image-hover transition-opacity duration-500" style="object-position: center 30%;">
+                            <img id="hall-slider" src="./imgs/galeria_dwa/hala.jpg" alt="Hala dydaktyczna BCU" class="w-full h-full object-cover image-hover transition-opacity duration-500" style="object-position: center 30%;">
                             <!-- Navigation dots -->
                             <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
                                 <button class="hall-dot w-2 h-2 rounded-full bg-white/70 hover:bg-white transition-colors" data-slide="0"></button>
                                 <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="1"></button>
                                 <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="2"></button>
                                 <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="3"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="4"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="5"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="6"></button>
+                                <button class="hall-dot w-2 h-2 rounded-full bg-white/30 hover:bg-white transition-colors" data-slide="7"></button>
                             </div>
                         </div>
                     </div>
@@ -1707,10 +1711,14 @@
         // Hall Image Slider
         function initHallSlider() {
             const hallImages = [
-                './imgs/halazdjecie.jpg',
-                './imgs/bcccuu.jpg', 
-                './imgs/suwnica2.jpg',
-                './imgs/bcu1.jpg'
+                './imgs/galeria_dwa/hala.jpg',
+                './imgs/galeria_dwa/suwnica2.jpg',
+                './imgs/galeria_dwa/bcu1.jpg',
+                './imgs/galeria_dwa/IF0A2712.jpg',
+                './imgs/galeria_dwa/IF0A2734.jpg',
+                './imgs/galeria_dwa/IF0A2776.jpg',
+                './imgs/galeria_dwa/warehouse-operative-checking-purchase-order.jpg',
+                './imgs/galeria_dwa/16617.jpg'
             ];
             
             const slider = document.getElementById('hall-slider');
