@@ -238,8 +238,8 @@ async function showCourseModal(slug) {
                         <div class="mb-4">
                             <div class="grid grid-cols-3 gap-4 text-sm">
                                 <div>
-                                    <strong>Czas trwania:</strong><br>
-                                    ${course.weeks ? `${course.weeks} tygodni` : '—'}
+                                    <strong>Przeznaczone dla:</strong><br>
+                                    ${course.targetGroup || 'dorosłych'}
                                 </div>
                                 <div>
                                     <strong>Liczba godzin:</strong><br>

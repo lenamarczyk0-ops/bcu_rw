@@ -1027,7 +1027,7 @@
                     <div class="text-center">
                         <img src="./imgs/bcu2.jpg" alt="Internat BCU" class="w-full image-standard object-cover rounded-lg shadow-lg mb-4 image-hover">
                         <h4 class="text-lg font-bold text-black mb-2">Internat</h4>
-                        <p class="text-gray-600">Komfortowe zakwaterowanie dla uczestników</p>
+                        <p class="text-gray-600">Komfortowe zakwaterowanie dla 10 uczestników oraz opiekuna</p>
                     </div>
                     <div class="text-center">
                         <img src="./imgs/praktykaspedycyjan.jpg" alt="Praktyka spedycyjna" class="w-full image-standard object-cover rounded-lg shadow-lg mb-4 image-hover">
@@ -1088,80 +1088,18 @@
                     </p>
                 </div>
 
-                <!-- Gallery Carousel -->
-                <div class="relative">
-                    <!-- Main Gallery Container -->
-                    <div id="gallery-carousel" class="relative overflow-hidden rounded-2xl">
-                        <div id="gallery-track" class="flex transition-transform duration-500 ease-out">
-                            <!-- Gallery Images -->
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2655.jpg" alt="BCU Galeria 1" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(0)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2709.jpg" alt="BCU Galeria 2" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(1)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2712.jpg" alt="BCU Galeria 3" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(2)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2734.jpg" alt="BCU Galeria 4" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(3)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2742.jpg" alt="BCU Galeria 5" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(4)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2747.jpg" alt="BCU Galeria 6" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(5)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2755.jpg" alt="BCU Galeria 7" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(6)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2756.jpg" alt="BCU Galeria 8" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(7)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2776.jpg" alt="BCU Galeria 9" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(8)" loading="lazy">
-                            </div>
-                            <div class="gallery-slide min-w-full px-2">
-                                <img src="./imgs/galeria/IF0A2789.jpg" alt="BCU Galeria 10" class="w-full h-[500px] object-cover rounded-xl cursor-pointer hover:opacity-90 transition-opacity" onclick="openLightbox(9)" loading="lazy">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Navigation Arrows -->
-                    <button id="gallery-prev" class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-4 shadow-lg transition-all z-10 group">
-                        <i class="ri-arrow-left-s-line text-2xl group-hover:scale-110 transition-transform"></i>
-                    </button>
-                    <button id="gallery-next" class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-4 shadow-lg transition-all z-10 group">
-                        <i class="ri-arrow-right-s-line text-2xl group-hover:scale-110 transition-transform"></i>
-                    </button>
-
-                    <!-- Dots Navigation -->
-                    <div class="flex justify-center mt-6 gap-2">
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-red-600 transition-all" data-slide="0"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="1"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="2"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="3"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="4"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="5"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="6"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="7"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="8"></button>
-                        <button class="gallery-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-gray-400 transition-all" data-slide="9"></button>
-                    </div>
-                </div>
-
-                <!-- Thumbnail Grid (Optional - below carousel) -->
-                <div class="grid grid-cols-5 gap-4 mt-8">
-                    <img src="./imgs/galeria/IF0A2655.jpg" alt="Miniatura 1" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(0)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2709.jpg" alt="Miniatura 2" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(1)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2712.jpg" alt="Miniatura 3" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(2)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2734.jpg" alt="Miniatura 4" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(3)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2742.jpg" alt="Miniatura 5" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(4)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2747.jpg" alt="Miniatura 6" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(5)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2755.jpg" alt="Miniatura 7" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(6)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2756.jpg" alt="Miniatura 8" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(7)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2776.jpg" alt="Miniatura 9" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(8)" loading="lazy">
-                    <img src="./imgs/galeria/IF0A2789.jpg" alt="Miniatura 10" class="w-full h-24 object-cover rounded-lg cursor-pointer hover:opacity-75 transition-opacity" onclick="goToSlide(9)" loading="lazy">
+                <!-- Gallery Grid (Kolaż) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <img src="./imgs/galeria/IF0A2655.jpg" alt="BCU Galeria 1" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(0)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2709.jpg" alt="BCU Galeria 2" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(1)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2712.jpg" alt="BCU Galeria 3" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(2)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2734.jpg" alt="BCU Galeria 4" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(3)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2742.jpg" alt="BCU Galeria 5" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(4)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2747.jpg" alt="BCU Galeria 6" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(5)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2755.jpg" alt="BCU Galeria 7" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(6)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2756.jpg" alt="BCU Galeria 8" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(7)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2776.jpg" alt="BCU Galeria 9" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(8)" loading="lazy">
+                    <img src="./imgs/galeria/IF0A2789.jpg" alt="BCU Galeria 10" class="w-full h-64 object-cover rounded-xl cursor-pointer hover:opacity-90 hover:scale-105 transition-all shadow-lg" onclick="openLightbox(9)" loading="lazy">
                 </div>
             </div>
         </section>
