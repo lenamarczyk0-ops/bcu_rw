@@ -10,7 +10,7 @@
     <meta id="og-title" property="og:title" content="Artykuł - BCU SPEDYCJA">
     <meta property="og:type" content="article">
     <meta id="og-description" property="og:description" content="">
-    <meta id="og-image" property="og:image" content="./imgs/bcu2.jpg">
+    <meta id="og-image" property="og:image" content="https://app.bcu-spedycja.pl/imgs/bcu2.jpg">
     <meta id="og-url" property="og:url" content="">
     <meta property="og:site_name" content="BCU SPEDYCJA - Branżowe Centrum Umiejętności">
     <meta property="og:locale" content="pl_PL">
@@ -19,7 +19,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta id="twitter-title" name="twitter:title" content="Artykuł - BCU SPEDYCJA">
     <meta id="twitter-description" name="twitter:description" content="">
-    <meta id="twitter-image" name="twitter:image" content="./imgs/bcu2.jpg">
+    <meta id="twitter-image" name="twitter:image" content="https://app.bcu-spedycja.pl/imgs/bcu2.jpg">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -571,9 +571,19 @@
             const ogTitle = `${article.title} - BCU SPEDYCJA`;
             const ogDescription = article.excerpt || '';
             let imageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
-            if (imageUrl.startsWith('./')) {
-                imageUrl = imageUrl.replace('./', '/');
+            
+            // Convert relative paths to absolute URLs for Open Graph
+            if (imageUrl && !imageUrl.startsWith('http')) {
+                if (imageUrl.startsWith('./')) {
+                    imageUrl = imageUrl.replace('./', '/');
+                }
+                if (imageUrl.startsWith('/')) {
+                    imageUrl = `https://app.bcu-spedycja.pl${imageUrl}`;
+                } else {
+                    imageUrl = `https://app.bcu-spedycja.pl/${imageUrl}`;
+                }
             }
+            
             const ogUrl = window.location.href;
             
             document.getElementById('og-title').setAttribute('content', ogTitle);
