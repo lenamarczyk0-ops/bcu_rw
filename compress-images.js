@@ -67,3 +67,5 @@ async function compressGallery() {
 // Uruchom kompresję
 compressGallery().catch(console.error);
 
+
+

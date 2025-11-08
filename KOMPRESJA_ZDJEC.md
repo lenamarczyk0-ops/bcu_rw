@@ -142,3 +142,5 @@ npm install
 - **Zachowaj backup** oryginalnych zdjęć na wszelki wypadek
 - **Testuj na telefonie** - tam widać największą różnicę w szybkości
 
+
+

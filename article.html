@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="article-title">Artykuł - BCU SPEDYCJA</title>
     <meta id="article-description" name="description" content="">
+    
+    <!-- Open Graph Meta Tags (dynamiczne) -->
+    <meta id="og-title" property="og:title" content="Artykuł - BCU SPEDYCJA">
+    <meta property="og:type" content="article">
+    <meta id="og-description" property="og:description" content="">
+    <meta id="og-image" property="og:image" content="./imgs/bcu2.jpg">
+    <meta id="og-url" property="og:url" content="">
+    <meta property="og:site_name" content="BCU SPEDYCJA - Branżowe Centrum Umiejętności">
+    <meta property="og:locale" content="pl_PL">
+    
+    <!-- Twitter Card Meta Tags (dynamiczne) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta id="twitter-title" name="twitter:title" content="Artykuł - BCU SPEDYCJA">
+    <meta id="twitter-description" name="twitter:description" content="">
+    <meta id="twitter-image" name="twitter:image" content="./imgs/bcu2.jpg">
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -551,6 +566,25 @@
             document.title = `${article.title} - BCU SPEDYCJA`;
             document.getElementById('article-title').textContent = `${article.title} - BCU SPEDYCJA`;
             document.getElementById('article-description').setAttribute('content', article.excerpt || '');
+            
+            // Update Open Graph meta tags
+            const ogTitle = `${article.title} - BCU SPEDYCJA`;
+            const ogDescription = article.excerpt || '';
+            let imageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
+            if (imageUrl.startsWith('./')) {
+                imageUrl = imageUrl.replace('./', '/');
+            }
+            const ogUrl = window.location.href;
+            
+            document.getElementById('og-title').setAttribute('content', ogTitle);
+            document.getElementById('og-description').setAttribute('content', ogDescription);
+            document.getElementById('og-image').setAttribute('content', imageUrl);
+            document.getElementById('og-url').setAttribute('content', ogUrl);
+            
+            // Update Twitter Card meta tags
+            document.getElementById('twitter-title').setAttribute('content', ogTitle);
+            document.getElementById('twitter-description').setAttribute('content', ogDescription);
+            document.getElementById('twitter-image').setAttribute('content', imageUrl);
 
             // Update breadcrumb
             document.getElementById('breadcrumb-title').textContent = article.title;
