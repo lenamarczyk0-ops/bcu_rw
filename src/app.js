@@ -46,7 +46,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-hashes'", "https://cdn.jsdelivr.net", "https://cdn.tailwindcss.com", "https://fonts.googleapis.com"],
       scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'"],
+      connectSrc: ["'self'", "https://api.web3forms.com"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
       frameSrc: ["'none'"],
@@ -632,7 +632,7 @@ app.get('/api/auth/me', (req, res) => {
 
 // Helper function to set relaxed CSP for pages with inline event handlers
 function setRelaxedCSP(res) {
-  res.setHeader('Content-Security-Policy', "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-hashes' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://fonts.googleapis.com; script-src-attr 'unsafe-inline'; img-src 'self' data: https: http:; connect-src 'self'; object-src 'none'; media-src 'self'; frame-src 'none';");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; script-src 'self' 'unsafe-inline' 'unsafe-hashes' https://cdn.jsdelivr.net https://cdn.tailwindcss.com https://fonts.googleapis.com; script-src-attr 'unsafe-inline'; img-src 'self' data: https: http:; connect-src 'self' https://api.web3forms.com; object-src 'none'; media-src 'self'; frame-src 'none';");
 }
 
 // Serve main HTML files
