@@ -705,6 +705,7 @@
         function renderNews(newsArticles) {
             const gridEl = document.getElementById('news-grid');
             const loadingEl = document.getElementById('news-loading');
+            const errorEl = document.getElementById('news-error');
             
             if (newsArticles.length === 0) {
                 gridEl.innerHTML = '<div class="col-span-full text-center py-8"><p class="text-gray-500">Brak dostępnych aktualności.</p></div>';
@@ -712,8 +713,9 @@
                 gridEl.innerHTML = newsArticles.map(article => createNewsCard(article)).join('');
             }
 
-            // Hide loading and show grid
+            // Hide loading and error, show grid
             if (loadingEl) loadingEl.classList.add('hidden');
+            if (errorEl) errorEl.classList.add('hidden');
             gridEl.classList.remove('hidden');
         }
 

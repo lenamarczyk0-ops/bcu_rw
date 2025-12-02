@@ -1254,7 +1254,7 @@
                     
                     <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-4">
                         <!-- Web3Forms Access Key -->
-                        <input type="hidden" name="access_key" value="f0b37b19-be27-4933-827a-91fa6dfc75f8">
+                        <input type="hidden" name="access_key" value="83b6fb4f-c32a-4eae-a8a5-2987ae24bcd2">
                         
                         <!-- Redirect to thank you message (optional) -->
                         <input type="hidden" name="from_name" value="Formularz kontaktowy BCU SPEDYCJA">
@@ -2509,7 +2509,7 @@
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
-                            access_key: 'f0b37b19-be27-4933-827a-91fa6dfc75f8',
+                            access_key: '83b6fb4f-c32a-4eae-a8a5-2987ae24bcd2',
                             name: formData.get('name'),
                             email: formData.get('email'),
                             phone: formData.get('phone') || '',
@@ -2558,7 +2558,7 @@
             if (type === 'success') {
                 statusEl.classList.add('bg-green-50', 'border', 'border-green-200');
                 statusContent.innerHTML = `
-                    <i class="ri-check-line text-xl text-green-600 font-bold"></i>
+                    <i class="ri-check-circle-line text-lg text-green-600"></i>
                     <span class="text-green-800">${message}</span>
                 `;
             } else if (type === 'error') {

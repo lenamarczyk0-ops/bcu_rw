@@ -3,6 +3,10 @@ const { body, validationResult } = require('express-validator');
 const JobOffer = require('../models/JobOffer');
 const { requireAuth, requireJobManager } = require('../auth/middleware');
 
+// Import serwisów do automatycznej aktualizacji ofert
+const pracaGovService = require('../services/pracaGovService');
+const jobScheduler = require('../services/jobScheduler');
+
 const router = express.Router();
 
 // Get all published job offers (public)
@@ -315,6 +319,236 @@ router.get('/stats/overview', requireAuth, async (req, res) => {
   } catch (error) {
     console.error('Get job offer stats error:', error);
     res.status(500).json({ message: 'Błąd serwera' });
+  }
+});
+
+// ============================================
+// ENDPOINTY DO IMPORTU OFERT Z PRACA.GOV.PL
+// ============================================
+
+/**
+ * Ręczny import ofert pracy z praca.gov.pl
+ * POST /api/job-offers/import/praca-gov
+ * Wymaga uprawnień admin lub redaktor
+ */
+router.post('/import/praca-gov', requireAuth, async (req, res) => {
+  try {
+    // Sprawdź uprawnienia
+    if (req.user.role !== 'admin' && req.user.role !== 'redaktor') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Brak uprawnień do importu ofert' 
+      });
+    }
+
+    const { 
+      keywords = pracaGovService.JOB_KEYWORDS,
+      maxOffersPerKeyword = 20,
+      updateExisting = false 
+    } = req.body;
+
+    console.log(`📥 Ręczny import ofert z praca.gov.pl przez użytkownika: ${req.user.email}`);
+
+    const result = await pracaGovService.importJobOffers({
+      keywords: Array.isArray(keywords) ? keywords : [keywords],
+      maxOffersPerKeyword,
+      updateExisting
+    });
+
+    res.json({
+      success: true,
+      message: `Import zakończony. Nowych: ${result.newOffers}, zaktualizowanych: ${result.updatedOffers}`,
+      result
+    });
+
+  } catch (error) {
+    console.error('Import job offers error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd importu ofert',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Statystyki importowanych ofert z praca.gov.pl
+ * GET /api/job-offers/import/stats
+ */
+router.get('/import/stats', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin' && req.user.role !== 'redaktor') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Brak uprawnień' 
+      });
+    }
+
+    const importStats = await pracaGovService.getImportStats();
+    const schedulerStatus = jobScheduler.getSchedulerStatus();
+
+    res.json({
+      success: true,
+      importStats,
+      scheduler: {
+        isRunning: schedulerStatus.isRunning,
+        lastRun: schedulerStatus.lastRun,
+        nextScheduledRun: schedulerStatus.nextScheduledRun,
+        config: schedulerStatus.config
+      }
+    });
+
+  } catch (error) {
+    console.error('Get import stats error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd pobierania statystyk',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Status schedulera automatycznej aktualizacji
+ * GET /api/job-offers/scheduler/status
+ */
+router.get('/scheduler/status', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Brak uprawnień' 
+      });
+    }
+
+    const status = jobScheduler.getSchedulerStatus();
+    
+    res.json({
+      success: true,
+      scheduler: status
+    });
+
+  } catch (error) {
+    console.error('Get scheduler status error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd pobierania statusu schedulera',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Wymuś natychmiastową aktualizację ofert
+ * POST /api/job-offers/scheduler/force-update
+ */
+router.post('/scheduler/force-update', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Brak uprawnień do wymuszenia aktualizacji' 
+      });
+    }
+
+    console.log(`🔄 Wymuszona aktualizacja ofert przez użytkownika: ${req.user.email}`);
+    
+    // Uruchom aktualizację asynchronicznie
+    jobScheduler.forceUpdate().catch(err => {
+      console.error('Force update error:', err);
+    });
+
+    res.json({
+      success: true,
+      message: 'Aktualizacja ofert została uruchomiona w tle'
+    });
+
+  } catch (error) {
+    console.error('Force update error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd uruchamiania aktualizacji',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Usuń wygasłe importowane oferty
+ * DELETE /api/job-offers/import/cleanup
+ */
+router.delete('/import/cleanup', requireAuth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Brak uprawnień' 
+      });
+    }
+
+    const deletedCount = await pracaGovService.cleanupExpiredImportedOffers();
+
+    res.json({
+      success: true,
+      message: `Usunięto ${deletedCount} wygasłych ofert`,
+      deletedCount
+    });
+
+  } catch (error) {
+    console.error('Cleanup error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd usuwania ofert',
+      error: error.message 
+    });
+  }
+});
+
+/**
+ * Pobierz listę dostępnych słów kluczowych do importu
+ * GET /api/job-offers/import/keywords
+ */
+router.get('/import/keywords', async (req, res) => {
+  res.json({
+    success: true,
+    keywords: pracaGovService.JOB_KEYWORDS,
+    description: 'Słowa kluczowe używane do wyszukiwania ofert pracy w praca.gov.pl'
+  });
+});
+
+/**
+ * Wyszukaj oferty bezpośrednio w praca.gov.pl (bez zapisywania)
+ * GET /api/job-offers/search/praca-gov?keyword=spedytor&limit=10
+ */
+router.get('/search/praca-gov', async (req, res) => {
+  try {
+    const { keyword = 'spedytor', limit = 10, page = 0 } = req.query;
+
+    const result = await pracaGovService.searchJobOffers(keyword, parseInt(page), parseInt(limit));
+
+    if (!result) {
+      return res.status(502).json({
+        success: false,
+        message: 'Nie udało się połączyć z API praca.gov.pl'
+      });
+    }
+
+    res.json({
+      success: true,
+      keyword,
+      totalElements: result.totalElements || 0,
+      totalPages: result.totalPages || 0,
+      currentPage: result.number || 0,
+      offers: result.content || []
+    });
+
+  } catch (error) {
+    console.error('Search praca.gov.pl error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Błąd wyszukiwania',
+      error: error.message 
+    });
   }
 });
 

@@ -79,6 +79,20 @@ const jobOfferSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+  // Pola dla importowanych ofert z zewnętrznych źródeł
+  externalId: {
+    type: String,
+    sparse: true,
+    index: true
+  },
+  source: {
+    type: String,
+    enum: ['manual', 'praca.gov.pl', 'other'],
+    default: 'manual'
+  },
+  lastSyncedAt: {
+    type: Date
   }
 }, {
   timestamps: true
@@ -97,6 +111,9 @@ jobOfferSchema.index({ status: 1, expireAt: 1 });
 jobOfferSchema.index({ location: 1, status: 1 });
 jobOfferSchema.index({ owner: 1 });
 jobOfferSchema.index({ createdAt: -1 });
+// Indexy dla importowanych ofert
+jobOfferSchema.index({ source: 1, status: 1 });
+jobOfferSchema.index({ externalId: 1 }, { sparse: true });
 
 module.exports = mongoose.model('JobOffer', jobOfferSchema);
 
