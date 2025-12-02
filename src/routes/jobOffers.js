@@ -343,21 +343,21 @@ router.post('/import/praca-gov', requireAuth, async (req, res) => {
 
     const { 
       keywords = pracaGovService.JOB_KEYWORDS,
-      maxOffersPerKeyword = 20,
-      updateExisting = false 
+      maxOffers = 300,
+      updateExisting = true 
     } = req.body;
 
     console.log(`📥 Ręczny import ofert z praca.gov.pl przez użytkownika: ${req.user.email}`);
 
     const result = await pracaGovService.importJobOffers({
       keywords: Array.isArray(keywords) ? keywords : [keywords],
-      maxOffersPerKeyword,
+      maxOffers,
       updateExisting
     });
 
     res.json({
       success: true,
-      message: `Import zakończony. Nowych: ${result.newOffers}, zaktualizowanych: ${result.updatedOffers}`,
+      message: `Import zakończony. Nowych: ${result.newOffers}, zaktualizowanych: ${result.updatedOffers}, pasujących: ${result.totalMatched}`,
       result
     });
 

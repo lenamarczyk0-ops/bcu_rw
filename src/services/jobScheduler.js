@@ -90,7 +90,7 @@ async function runScheduledUpdate() {
     // 2. Importuj nowe oferty
     console.log('\n📥 Importuję nowe oferty z praca.gov.pl...');
     const result = await pracaGovService.importJobOffers({
-      maxOffersPerKeyword: 25,
+      maxOffers: 300,
       updateExisting: true
     });
 

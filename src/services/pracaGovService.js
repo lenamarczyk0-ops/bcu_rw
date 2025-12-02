@@ -36,19 +36,10 @@ const JOB_KEYWORDS = [
  */
 async function searchJobOffers(keyword, page = 0, size = 50) {
   try {
-    const searchPayload = {
-      stanowisko: keyword,
-      kraj: 'Polska',
-      // Możliwe filtry:
-      // wojewodztwo: null,
-      // miejscowosc: null,
-      // typUmowy: null,
-      // wymiaryEtatu: null,
-      // dataDodaniaOd: null,
-      // dataDodaniaDo: null
-    };
+    // API nie filtruje - wysyłamy pusty obiekt
+    const searchPayload = {};
 
-    const response = await fetch(`${SEARCH_ENDPOINT}?page=${page}&size=${size}&sort=dataPublikacji,desc`, {
+    const response = await fetch(`${SEARCH_ENDPOINT}?page=${page}&size=${size}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -64,7 +55,14 @@ async function searchJobOffers(keyword, page = 0, size = 50) {
     }
 
     const data = await response.json();
-    return data;
+    
+    // API zwraca dane w formacie: { status, msg, payload: { ofertyPracyPage: { content: [...] } } }
+    if (data.status === 200 && data.payload && data.payload.ofertyPracyPage) {
+      return data.payload.ofertyPracyPage;
+    }
+    
+    console.log(`⚠️ Nieoczekiwana odpowiedź API dla "${keyword}":`, JSON.stringify(data).substring(0, 200));
+    return null;
   } catch (error) {
     console.error(`❌ Błąd pobierania ofert dla "${keyword}":`, error.message);
     return null;
@@ -100,67 +98,83 @@ async function getOfferDetails(offerId) {
 
 /**
  * Mapuje ofertę z praca.gov.pl na format BCU JobOffer
+ * API praca.gov.pl zwraca pola:
+ * - id, stanowisko, miejscePracy, pracodawca, rodzajUmowy
+ * - dataWaznDo, wynagrodzenie, zakresObowiazkow, wymagania
+ * - telefon, email, typOferty
+ * 
  * @param {Object} govOffer - Oferta z praca.gov.pl
  * @param {string} adminId - ID użytkownika admin jako owner
  * @returns {Object} - Oferta w formacie BCU
  */
 function mapGovOfferToBcuFormat(govOffer, adminId) {
-  // Parsowanie wynagrodzenia
+  // Parsowanie wynagrodzenia z tekstu np. "od 4 666 PLN" lub "od 37,00 PLN"
   let salaryFrom = null;
   let salaryTo = null;
   
-  if (govOffer.wynagrodzenieOd) {
-    salaryFrom = parseFloat(govOffer.wynagrodzenieOd);
-  }
-  if (govOffer.wynagrodzenieDo) {
-    salaryTo = parseFloat(govOffer.wynagrodzenieDo);
+  if (govOffer.wynagrodzenie) {
+    const salaryText = govOffer.wynagrodzenie;
+    // Szukaj liczb w tekście
+    const numbers = salaryText.match(/[\d\s]+(?:[,.][\d]+)?/g);
+    if (numbers && numbers.length > 0) {
+      // Pierwsza liczba to "od"
+      const firstNum = numbers[0].replace(/\s/g, '').replace(',', '.');
+      salaryFrom = parseFloat(firstNum);
+      
+      // Jeśli jest druga liczba, to "do"
+      if (numbers.length > 1) {
+        const secondNum = numbers[1].replace(/\s/g, '').replace(',', '.');
+        salaryTo = parseFloat(secondNum);
+      }
+    }
   }
 
   // Mapowanie typu umowy na employmentType
   let employmentType = 'full-time';
-  const typUmowy = (govOffer.typUmowy || '').toLowerCase();
-  if (typUmowy.includes('praktyk') || typUmowy.includes('staż')) {
+  const rodzajUmowy = (govOffer.rodzajUmowy || '').toLowerCase();
+  if (rodzajUmowy.includes('praktyk') || rodzajUmowy.includes('staż')) {
     employmentType = 'internship';
-  } else if (typUmowy.includes('zleceni') || typUmowy.includes('dzieło')) {
+  } else if (rodzajUmowy.includes('zleceni') || rodzajUmowy.includes('dzieło')) {
     employmentType = 'contract';
-  } else if (typUmowy.includes('część') || typUmowy.includes('niepełn')) {
+  } else if (rodzajUmowy.includes('część') || rodzajUmowy.includes('niepełn')) {
     employmentType = 'part-time';
   }
 
   // Budowanie opisu HTML
   const descriptionParts = [];
   
-  if (govOffer.opisStanowiska) {
-    descriptionParts.push(`<h3>Opis stanowiska</h3><p>${govOffer.opisStanowiska}</p>`);
+  if (govOffer.zakresObowiazkow) {
+    descriptionParts.push(`<h3>Zakres obowiązków</h3><p>${govOffer.zakresObowiazkow.replace(/\n/g, '<br>')}</p>`);
   }
   
-  if (govOffer.wymaganiaKonieczne) {
-    descriptionParts.push(`<h3>Wymagania</h3><p>${govOffer.wymaganiaKonieczne}</p>`);
+  if (govOffer.wymagania) {
+    descriptionParts.push(`<h3>Wymagania</h3><p>${govOffer.wymagania.replace(/\n/g, '<br>')}</p>`);
   }
   
-  if (govOffer.oferujemy) {
-    descriptionParts.push(`<h3>Oferujemy</h3><p>${govOffer.oferujemy}</p>`);
+  if (govOffer.wynagrodzenie) {
+    descriptionParts.push(`<h3>Wynagrodzenie</h3><p>${govOffer.wynagrodzenie}</p>`);
   }
 
-  if (govOffer.obowiazki) {
-    descriptionParts.push(`<h3>Obowiązki</h3><p>${govOffer.obowiazki}</p>`);
+  if (govOffer.rodzajUmowy) {
+    descriptionParts.push(`<p><strong>Rodzaj umowy:</strong> ${govOffer.rodzajUmowy}</p>`);
   }
 
   // Informacja o źródle
   descriptionParts.push(`<hr><p class="text-sm text-gray-500"><em>Źródło: praca.gov.pl | ID: ${govOffer.id || 'N/A'}</em></p>`);
 
-  // Lokalizacja
-  const location = [
-    govOffer.miejscowosc,
-    govOffer.wojewodztwo
-  ].filter(Boolean).join(', ') || 'Polska';
+  // Lokalizacja - używamy miejscePracy
+  const location = govOffer.miejscePracy || 'Polska';
 
-  // Data wygaśnięcia (domyślnie 30 dni od teraz jeśli brak)
+  // Data wygaśnięcia - format "31.12.2025"
   let expireAt = new Date();
   expireAt.setDate(expireAt.getDate() + 30);
   
-  if (govOffer.dataWaznosciOferty) {
-    expireAt = new Date(govOffer.dataWaznosciOferty);
+  if (govOffer.dataWaznDo) {
+    // Parsuj format DD.MM.YYYY
+    const parts = govOffer.dataWaznDo.split('.');
+    if (parts.length === 3) {
+      expireAt = new Date(parts[2], parts[1] - 1, parts[0]);
+    }
   }
 
   // Tagi na podstawie stanowiska
@@ -179,20 +193,24 @@ function mapGovOfferToBcuFormat(govOffer, adminId) {
   if (stanowisko.includes('transport')) {
     tags.push('transport');
   }
+  if (stanowisko.includes('kierowca') || stanowisko.includes('driver')) {
+    tags.push('kierowca');
+  }
 
   return {
     title: govOffer.stanowisko || 'Oferta pracy',
-    companyName: govOffer.pracodawca || govOffer.nazwaFirmy || 'Pracodawca',
+    companyName: govOffer.pracodawca || 'Pracodawca',
     location: location,
     descriptionHTML: descriptionParts.join('\n') || '<p>Brak opisu</p>',
-    requirements: govOffer.wymaganiaKonieczne || '',
-    benefits: govOffer.oferujemy || '',
+    requirements: govOffer.wymagania || '',
+    benefits: '',
     salaryFrom: salaryFrom,
     salaryTo: salaryTo,
     employmentType: employmentType,
     experienceLevel: 'any',
-    applyUrl: govOffer.linkDoAplikowania || `https://oferty.praca.gov.pl/portal/oferta/${govOffer.id}`,
+    applyUrl: `https://oferty.praca.gov.pl/portal/oferta/${govOffer.id}`,
     contactEmail: govOffer.email || null,
+    contactPhone: govOffer.telefon || null,
     expireAt: expireAt,
     owner: adminId,
     status: 'published',
@@ -206,18 +224,19 @@ function mapGovOfferToBcuFormat(govOffer, adminId) {
 
 /**
  * Importuje oferty pracy z praca.gov.pl do bazy danych BCU
+ * UWAGA: API praca.gov.pl nie obsługuje filtrowania - filtrujemy po stronie klienta
  * @param {Object} options - Opcje importu
  * @returns {Promise<Object>} - Wynik importu
  */
 async function importJobOffers(options = {}) {
   const { 
     keywords = JOB_KEYWORDS,
-    maxOffersPerKeyword = 20,
+    maxOffers = 200,
     updateExisting = false 
   } = options;
 
   console.log('🔄 Rozpoczynam import ofert pracy z praca.gov.pl...');
-  console.log(`📋 Słowa kluczowe: ${keywords.join(', ')}`);
+  console.log(`📋 Słowa kluczowe do filtrowania: ${keywords.join(', ')}`);
 
   // Znajdź administratora jako właściciela ofert
   const admin = await User.findOne({ role: 'admin' });
@@ -227,107 +246,122 @@ async function importJobOffers(options = {}) {
 
   const results = {
     totalFetched: 0,
+    totalMatched: 0,
     newOffers: 0,
     updatedOffers: 0,
     skippedOffers: 0,
     errors: [],
-    keywords: {}
+    matchedKeywords: {}
   };
 
-  // Pobierz oferty dla każdego słowa kluczowego
-  for (const keyword of keywords) {
-    console.log(`\n🔍 Szukam ofert dla: "${keyword}"...`);
+  try {
+    // Pobierz dużą partię ofert (API nie filtruje, więc pobieramy więcej i filtrujemy sami)
+    console.log(`\n📥 Pobieram ${maxOffers} najnowszych ofert z praca.gov.pl...`);
     
-    try {
-      const searchResult = await searchJobOffers(keyword, 0, maxOffersPerKeyword);
-      
-      if (!searchResult || !searchResult.content) {
-        console.log(`⚠️ Brak wyników dla "${keyword}"`);
-        results.keywords[keyword] = { fetched: 0, imported: 0 };
-        continue;
-      }
-
-      const offers = searchResult.content || [];
-      console.log(`📦 Znaleziono ${offers.length} ofert dla "${keyword}"`);
-      
-      results.totalFetched += offers.length;
-      results.keywords[keyword] = { fetched: offers.length, imported: 0 };
-
-      // Przetwórz każdą ofertę
-      for (const govOffer of offers) {
-        try {
-          const externalId = `praca-gov-${govOffer.id}`;
-          
-          // Sprawdź czy oferta już istnieje
-          const existingOffer = await JobOffer.findOne({ 
-            $or: [
-              { externalId: externalId },
-              { 
-                title: govOffer.stanowisko,
-                companyName: govOffer.pracodawca || govOffer.nazwaFirmy
-              }
-            ]
-          });
-
-          if (existingOffer) {
-            if (updateExisting) {
-              // Aktualizuj istniejącą ofertę
-              const bcuOffer = mapGovOfferToBcuFormat(govOffer, admin._id);
-              delete bcuOffer.owner; // Nie zmieniaj właściciela
-              
-              Object.assign(existingOffer, bcuOffer);
-              await existingOffer.save();
-              
-              results.updatedOffers++;
-              results.keywords[keyword].imported++;
-              console.log(`🔄 Zaktualizowano: ${govOffer.stanowisko}`);
-            } else {
-              results.skippedOffers++;
-              console.log(`⏭️ Pominięto (już istnieje): ${govOffer.stanowisko}`);
-            }
-            continue;
-          }
-
-          // Utwórz nową ofertę
-          const bcuOffer = mapGovOfferToBcuFormat(govOffer, admin._id);
-          bcuOffer.externalId = externalId;
-          
-          const newJobOffer = new JobOffer(bcuOffer);
-          await newJobOffer.save();
-          
-          results.newOffers++;
-          results.keywords[keyword].imported++;
-          console.log(`✅ Zaimportowano: ${govOffer.stanowisko} - ${bcuOffer.companyName}`);
-
-        } catch (offerError) {
-          console.error(`❌ Błąd importu oferty:`, offerError.message);
-          results.errors.push({
-            keyword,
-            offerId: govOffer.id,
-            error: offerError.message
-          });
-        }
-      }
-
-      // Opóźnienie między zapytaniami (rate limiting)
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-    } catch (keywordError) {
-      console.error(`❌ Błąd dla słowa kluczowego "${keyword}":`, keywordError.message);
-      results.errors.push({
-        keyword,
-        error: keywordError.message
-      });
+    const searchResult = await searchJobOffers('', 0, maxOffers);
+    
+    if (!searchResult || !searchResult.content) {
+      console.log('⚠️ Brak wyników z API');
+      return results;
     }
+
+    const allOffers = searchResult.content || [];
+    results.totalFetched = allOffers.length;
+    console.log(`📦 Pobrano ${allOffers.length} ofert, filtruję po słowach kluczowych...`);
+
+    // Filtruj oferty po słowach kluczowych (w stanowisku lub opisie)
+    const matchedOffers = allOffers.filter(offer => {
+      const searchText = [
+        offer.stanowisko || '',
+        offer.zakresObowiazkow || '',
+        offer.wymagania || ''
+      ].join(' ').toLowerCase();
+      
+      const matchedKeyword = keywords.find(keyword => 
+        searchText.includes(keyword.toLowerCase())
+      );
+      
+      if (matchedKeyword) {
+        // Zliczaj które słowa kluczowe zostały dopasowane
+        results.matchedKeywords[matchedKeyword] = (results.matchedKeywords[matchedKeyword] || 0) + 1;
+        return true;
+      }
+      return false;
+    });
+
+    results.totalMatched = matchedOffers.length;
+    console.log(`✅ Znaleziono ${matchedOffers.length} ofert pasujących do słów kluczowych`);
+    
+    if (Object.keys(results.matchedKeywords).length > 0) {
+      console.log('📊 Dopasowania:', JSON.stringify(results.matchedKeywords));
+    }
+
+    // Przetwórz pasujące oferty
+    for (const govOffer of matchedOffers) {
+      try {
+        const externalId = `praca-gov-${govOffer.id}`;
+        
+        // Sprawdź czy oferta już istnieje
+        const existingOffer = await JobOffer.findOne({ 
+          $or: [
+            { externalId: externalId },
+            { 
+              title: govOffer.stanowisko,
+              companyName: govOffer.pracodawca
+            }
+          ]
+        });
+
+        if (existingOffer) {
+          if (updateExisting) {
+            // Aktualizuj istniejącą ofertę
+            const bcuOffer = mapGovOfferToBcuFormat(govOffer, admin._id);
+            delete bcuOffer.owner; // Nie zmieniaj właściciela
+            
+            Object.assign(existingOffer, bcuOffer);
+            await existingOffer.save();
+            
+            results.updatedOffers++;
+            console.log(`🔄 Zaktualizowano: ${govOffer.stanowisko.substring(0, 50)}`);
+          } else {
+            results.skippedOffers++;
+          }
+          continue;
+        }
+
+        // Utwórz nową ofertę
+        const bcuOffer = mapGovOfferToBcuFormat(govOffer, admin._id);
+        bcuOffer.externalId = externalId;
+        
+        const newJobOffer = new JobOffer(bcuOffer);
+        await newJobOffer.save();
+        
+        results.newOffers++;
+        console.log(`✅ Zaimportowano: ${govOffer.stanowisko.substring(0, 50)} - ${bcuOffer.companyName.substring(0, 30)}`);
+
+      } catch (offerError) {
+        console.error(`❌ Błąd importu oferty ${govOffer.id}:`, offerError.message);
+        results.errors.push({
+          offerId: govOffer.id,
+          title: govOffer.stanowisko,
+          error: offerError.message
+        });
+      }
+    }
+
+  } catch (error) {
+    console.error('❌ Błąd pobierania ofert:', error.message);
+    results.errors.push({ error: error.message });
   }
 
   // Podsumowanie
   console.log('\n' + '='.repeat(50));
   console.log('📊 PODSUMOWANIE IMPORTU:');
-  console.log(`   Pobrano ofert: ${results.totalFetched}`);
+  console.log(`   Pobrano z API: ${results.totalFetched}`);
+  console.log(`   Pasujących do słów kluczowych: ${results.totalMatched}`);
   console.log(`   Nowych: ${results.newOffers}`);
   console.log(`   Zaktualizowanych: ${results.updatedOffers}`);
-  console.log(`   Pominiętych: ${results.skippedOffers}`);
+  console.log(`   Pominiętych (duplikaty): ${results.skippedOffers}`);
   console.log(`   Błędów: ${results.errors.length}`);
   console.log('='.repeat(50));
 
