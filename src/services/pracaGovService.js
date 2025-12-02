@@ -244,14 +244,18 @@ async function importJobOffers(options = {}) {
     updateExisting = false 
   } = options;
 
-  console.log('🔄 Rozpoczynam import ofert pracy z praca.gov.pl...');
-  console.log(`📋 Słowa kluczowe do filtrowania: ${keywords.join(', ')}`);
+  console.log('🔄 [pracaGovService] Rozpoczynam import ofert pracy z praca.gov.pl...');
+  console.log(`📋 [pracaGovService] Słowa kluczowe do filtrowania: ${keywords.join(', ')}`);
+  console.log(`📋 [pracaGovService] maxOffers: ${maxOffers}, updateExisting: ${updateExisting}`);
 
   // Znajdź administratora jako właściciela ofert
+  console.log('🔍 [pracaGovService] Szukam użytkownika admin...');
   const admin = await User.findOne({ role: 'admin' });
   if (!admin) {
+    console.error('❌ [pracaGovService] Nie znaleziono admina!');
     throw new Error('Nie znaleziono użytkownika admin - wymagany do importu ofert');
   }
+  console.log(`✅ [pracaGovService] Znaleziono admina: ${admin.email}`);
 
   const results = {
     totalFetched: 0,
@@ -265,18 +269,21 @@ async function importJobOffers(options = {}) {
 
   try {
     // Pobierz dużą partię ofert (API nie filtruje, więc pobieramy więcej i filtrujemy sami)
-    console.log(`\n📥 Pobieram ${maxOffers} najnowszych ofert z praca.gov.pl...`);
+    console.log(`\n📥 [pracaGovService] Pobieram ${maxOffers} najnowszych ofert z praca.gov.pl...`);
+    console.log(`📥 [pracaGovService] URL: ${SEARCH_ENDPOINT}`);
     
     const searchResult = await searchJobOffers('', 0, maxOffers);
     
+    console.log(`📥 [pracaGovService] Odpowiedź z API:`, searchResult ? 'otrzymano dane' : 'brak danych');
+    
     if (!searchResult || !searchResult.content) {
-      console.log('⚠️ Brak wyników z API');
+      console.log('⚠️ [pracaGovService] Brak wyników z API - searchResult:', JSON.stringify(searchResult).substring(0, 200));
       return results;
     }
 
     const allOffers = searchResult.content || [];
     results.totalFetched = allOffers.length;
-    console.log(`📦 Pobrano ${allOffers.length} ofert, filtruję po słowach kluczowych...`);
+    console.log(`📦 [pracaGovService] Pobrano ${allOffers.length} ofert, filtruję po słowach kluczowych...`);
 
     // Filtruj oferty po słowach kluczowych (w stanowisku lub opisie)
     const matchedOffers = allOffers.filter(offer => {

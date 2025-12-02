@@ -1,4 +1,4 @@
-require('dotenv').config();
+brequire('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
@@ -910,6 +910,53 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
+// Maintenance mode fallback server
+function startMaintenanceServer(errorMessage) {
+  const maintenanceApp = require('express')();
+  const path = require('path');
+  const fs = require('fs');
+  
+  console.log('⚠️ Starting in MAINTENANCE MODE due to:', errorMessage);
+  
+  // Serve maintenance page for all routes
+  maintenanceApp.use((req, res) => {
+    const maintenancePath = path.join(__dirname, '..', 'maintenance.html');
+    
+    if (fs.existsSync(maintenancePath)) {
+      res.status(503).sendFile(maintenancePath);
+    } else {
+      // Fallback if maintenance.html doesn't exist
+      res.status(503).send(`
+        <!DOCTYPE html>
+        <html lang="pl">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Prace serwisowe - BCU SPEDYCJA</title>
+          <style>
+            body { font-family: Arial, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #1a1a2e; color: white; text-align: center; }
+            h1 { color: #e94560; }
+          </style>
+        </head>
+        <body>
+          <div>
+            <h1>🚛 Trwają prace serwisowe</h1>
+            <p>Przepraszamy za utrudnienia. Wrócimy wkrótce.</p>
+            <p>Kontakt: sekretariat@bcu-spedycja.pl</p>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+  });
+  
+  const server = maintenanceApp.listen(PORT, HOST, () => {
+    console.log(`🔧 Maintenance server running on ${HOST}:${PORT}`);
+  });
+  
+  return server;
+}
+
 // Initialize AdminJS before starting server
 async function startServer() {
   try {
@@ -953,8 +1000,15 @@ async function startServer() {
     
     return server;
   } catch (error) {
-    console.error('❌ Error starting server:', error);
-    process.exit(1);
+    console.error('❌ Error starting main server:', error.message);
+    
+    // Try to start maintenance server instead of crashing
+    try {
+      return startMaintenanceServer(error.message);
+    } catch (maintenanceError) {
+      console.error('❌ Could not start maintenance server:', maintenanceError.message);
+      process.exit(1);
+    }
   }
 }
 

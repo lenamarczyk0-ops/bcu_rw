@@ -333,8 +333,12 @@ router.get('/stats/overview', requireAuth, async (req, res) => {
  */
 router.post('/import/praca-gov', requireAuth, async (req, res) => {
   try {
+    console.log('🔄 [IMPORT] Rozpoczynam import z praca.gov.pl...');
+    console.log('🔄 [IMPORT] User:', req.user?.email, 'Role:', req.user?.role);
+    
     // Sprawdź uprawnienia
     if (req.user.role !== 'admin' && req.user.role !== 'redaktor') {
+      console.log('❌ [IMPORT] Brak uprawnień dla roli:', req.user.role);
       return res.status(403).json({ 
         success: false,
         message: 'Brak uprawnień do importu ofert' 
@@ -347,13 +351,15 @@ router.post('/import/praca-gov', requireAuth, async (req, res) => {
       updateExisting = true 
     } = req.body;
 
-    console.log(`📥 Ręczny import ofert z praca.gov.pl przez użytkownika: ${req.user.email}`);
+    console.log(`📥 [IMPORT] Parametry: keywords=${keywords.length}, maxOffers=${maxOffers}, updateExisting=${updateExisting}`);
 
     const result = await pracaGovService.importJobOffers({
       keywords: Array.isArray(keywords) ? keywords : [keywords],
       maxOffers,
       updateExisting
     });
+
+    console.log(`✅ [IMPORT] Zakończony:`, JSON.stringify(result));
 
     res.json({
       success: true,
@@ -362,7 +368,8 @@ router.post('/import/praca-gov', requireAuth, async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Import job offers error:', error);
+    console.error('❌ [IMPORT] Błąd:', error.message);
+    console.error('❌ [IMPORT] Stack:', error.stack);
     res.status(500).json({ 
       success: false,
       message: 'Błąd importu ofert',
