@@ -385,7 +385,7 @@
 
                     <!-- Featured Image -->
                     <div class="mb-12">
-                        <img id="featured-image" src="" alt="" class="w-full h-96 object-cover rounded-xl shadow-2xl">
+                        <img id="featured-image" src="" alt="" class="w-full max-h-[600px] object-contain rounded-xl shadow-2xl bg-gray-100">
                     </div>
 
                     <!-- Article Text -->
@@ -622,11 +622,21 @@
             // Set featured image
             const featuredImage = document.getElementById('featured-image');
             let featuredImageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
-            if (featuredImageUrl.startsWith('./')) {
+            if (featuredImageUrl && featuredImageUrl.startsWith('./')) {
                 featuredImageUrl = featuredImageUrl.replace('./', '/');
             }
+            
+            // Set up image error handler before setting src
+            featuredImage.onerror = () => {
+                console.warn('Featured image failed to load:', featuredImageUrl);
+                // Fallback to smart image selection
+                featuredImage.src = getSmartImage(article.title, article.excerpt || '');
+            };
+            
             featuredImage.src = featuredImageUrl;
             featuredImage.alt = article.title;
+            
+            console.log('📷 Featured image set to:', featuredImageUrl);
 
             // Set article body
             const articleBody = document.getElementById('article-body');

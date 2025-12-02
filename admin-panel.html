@@ -1732,22 +1732,32 @@
 
                 // Add event listeners for image upload (news only)
                 if (type === 'news') {
+                    console.log('📷 Setting up news image upload handlers...');
                     const uploadBtn = modal.querySelector('[data-action="upload-news-image"]');
                     const removeBtn = modal.querySelector('[data-action="remove-news-image"]');
                     const fileInput = modal.querySelector('#news-image-upload');
                     
+                    console.log('📷 Upload button found:', !!uploadBtn);
+                    console.log('📷 File input found:', !!fileInput);
+                    console.log('📷 Remove button found:', !!removeBtn);
+                    
                     if (uploadBtn && fileInput) {
                         uploadBtn.addEventListener('click', () => {
+                            console.log('📷 Upload button clicked, opening file dialog...');
                             fileInput.click();
                         });
                         
                         fileInput.addEventListener('change', (e) => {
+                            console.log('📷 File selected:', e.target.files[0]?.name);
                             this.handleNewsImageUpload(e.target.files[0]);
                         });
+                    } else {
+                        console.error('❌ News image upload elements not found!');
                     }
                     
                     if (removeBtn) {
                         removeBtn.addEventListener('click', () => {
+                            console.log('📷 Remove image button clicked');
                             this.removeNewsImage();
                         });
                     }
@@ -1811,12 +1821,15 @@
                 try {
                     let response;
                     if (type === 'news') {
-                        response = await fetch(`/api/news/id/${id}`, { credentials: 'include' });
+                        // Use admin endpoint to get drafts too (public endpoint only returns published)
+                        response = await fetch(`/api/news/admin/id/${id}`, { credentials: 'include' });
                     } else if (type === 'course') {
+                        // Course endpoint already returns all statuses
                         response = await fetch(`/api/courses/id/${id}`, { credentials: 'include' });
                     } else if (type === 'material') {
                         response = await fetch(`/api/materials/${id}`, { credentials: 'include' });
                     } else {
+                        // Job offers endpoint already returns all statuses
                         response = await fetch(`/api/job-offers/id/${id}`, { credentials: 'include' });
                     }
                     
@@ -1848,17 +1861,34 @@
                         }
                         
                         // Special handling for news image preview
-                        if (type === 'news' && item.imageUrl && item.imageUrl !== './imgs/bcccuu.jpg' && item.imageUrl !== '/imgs/halazdjecie.jpg') {
+                        if (type === 'news') {
+                            console.log('📷 Loading news image for edit. imageUrl:', item.imageUrl);
                             const imageUrlInput = document.getElementById('news-image-url');
                             const previewDiv = document.getElementById('news-image-preview');
                             const previewImg = document.getElementById('news-preview-img');
                             const removeBtn = document.querySelector('[data-action="remove-news-image"]');
                             
-                            if (imageUrlInput && previewDiv && previewImg && removeBtn) {
-                                imageUrlInput.value = item.imageUrl;
-                                previewImg.src = item.imageUrl;
-                                previewDiv.classList.remove('hidden');
-                                removeBtn.classList.remove('hidden');
+                            console.log('📷 Elements found:', {
+                                imageUrlInput: !!imageUrlInput,
+                                previewDiv: !!previewDiv,
+                                previewImg: !!previewImg,
+                                removeBtn: !!removeBtn
+                            });
+                            
+                            if (item.imageUrl && item.imageUrl !== './imgs/bcccuu.jpg' && item.imageUrl !== '/imgs/halazdjecie.jpg') {
+                                if (imageUrlInput && previewDiv && previewImg && removeBtn) {
+                                    imageUrlInput.value = item.imageUrl;
+                                    previewImg.src = item.imageUrl;
+                                    previewImg.onerror = () => {
+                                        console.warn('📷 Image failed to load:', item.imageUrl);
+                                        previewImg.src = '/imgs/bcccuu.jpg';
+                                    };
+                                    previewDiv.classList.remove('hidden');
+                                    removeBtn.classList.remove('hidden');
+                                    console.log('📷 Existing image loaded successfully');
+                                }
+                            } else {
+                                console.log('📷 No custom image or using default image');
                             }
                         }
                     }
@@ -3706,7 +3736,12 @@
             }
 
             async handleNewsImageUpload(file) {
-                if (!file) return;
+                console.log('📷 handleNewsImageUpload called with file:', file?.name, file?.size, file?.type);
+                
+                if (!file) {
+                    console.warn('📷 No file provided');
+                    return;
+                }
                 
                 // Validate file size (5MB)
                 if (file.size > 5 * 1024 * 1024) {
@@ -3721,20 +3756,36 @@
                 }
                 
                 const progressDiv = document.getElementById('news-upload-progress');
-                const progressBar = progressDiv.querySelector('.bg-blue-600');
+                const progressBar = progressDiv?.querySelector('.bg-blue-600');
                 const previewDiv = document.getElementById('news-image-preview');
                 const previewImg = document.getElementById('news-preview-img');
                 const imageUrlInput = document.getElementById('news-image-url');
                 const removeBtn = document.querySelector('[data-action="remove-news-image"]');
                 
+                console.log('📷 Upload elements:', {
+                    progressDiv: !!progressDiv,
+                    previewDiv: !!previewDiv,
+                    previewImg: !!previewImg,
+                    imageUrlInput: !!imageUrlInput,
+                    removeBtn: !!removeBtn
+                });
+                
+                if (!progressDiv || !previewDiv || !previewImg || !imageUrlInput) {
+                    console.error('📷 Missing required elements for image upload!');
+                    this.showNotification('Błąd: Nie znaleziono elementów formularza', 'error');
+                    return;
+                }
+                
                 try {
                     // Show progress
                     progressDiv.classList.remove('hidden');
-                    progressBar.style.width = '0%';
+                    if (progressBar) progressBar.style.width = '0%';
                     
                     // Create FormData
                     const formData = new FormData();
                     formData.append('image', file);
+                    
+                    console.log('📷 Uploading image to /api/news/upload-image...');
                     
                     // Upload to server
                     const response = await fetch('/api/news/upload-image', {
@@ -3743,7 +3794,9 @@
                         body: formData
                     });
                     
-                    progressBar.style.width = '100%';
+                    if (progressBar) progressBar.style.width = '100%';
+                    
+                    console.log('📷 Upload response status:', response.status);
                     
                     if (!response.ok) {
                         const errorData = await response.json();
@@ -3751,17 +3804,23 @@
                     }
                     
                     const result = await response.json();
+                    console.log('📷 Upload result:', result);
                     
                     // Update UI
                     imageUrlInput.value = result.imageUrl;
                     previewImg.src = result.imageUrl;
+                    previewImg.onerror = () => {
+                        console.warn('📷 Uploaded image failed to load:', result.imageUrl);
+                    };
                     previewDiv.classList.remove('hidden');
-                    removeBtn.classList.remove('hidden');
+                    if (removeBtn) removeBtn.classList.remove('hidden');
                     progressDiv.classList.add('hidden');
                     
                     this.showNotification('Zdjęcie zostało wgrane pomyślnie!', 'success');
+                    console.log('📷 Image upload complete, URL:', result.imageUrl);
                     
                 } catch (error) {
+                    console.error('📷 Upload error:', error);
                     progressDiv.classList.add('hidden');
                     this.showNotification('Błąd podczas wgrywania zdjęcia: ' + error.message, 'error');
                 }
