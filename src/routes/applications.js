@@ -1,11 +1,304 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
+const nodemailer = require('nodemailer');
 const Application = require('../models/Application');
 const Course = require('../models/Course');
 const JobOffer = require('../models/JobOffer');
 const { requireAuth, requireApplicationAccess } = require('../auth/middleware');
 
 const router = express.Router();
+
+// Email configuration for notifications
+const NOTIFICATION_EMAIL = 'sekretariat@bcu-spedycja.pl';
+
+const createTransporter = () => {
+  if (process.env.SMTP_HOST) {
+    const port = parseInt(process.env.SMTP_PORT) || 587;
+    const secure = process.env.SMTP_SECURE === 'true';
+    
+    return nodemailer.createTransporter({
+      host: process.env.SMTP_HOST,
+      port: port,
+      secure: secure,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2'
+      }
+    });
+  }
+  
+  if (process.env.GMAIL_USER && process.env.GMAIL_PASS) {
+    return nodemailer.createTransporter({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+  }
+  
+  return null;
+};
+
+// Send email notification for new course application
+async function sendCourseApplicationNotification(application, courseTitle) {
+  try {
+    const transporter = createTransporter();
+    if (!transporter) {
+      console.log('⚠️ Email not configured, skipping notification');
+      return;
+    }
+
+    const emailSubject = `[BCU SPEDYCJA] Nowe zgłoszenie na kurs: ${courseTitle}`;
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); color: white; padding: 25px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h2 style="margin: 0;">📚 Nowe zgłoszenie na kurs</h2>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">BCU SPEDYCJA - Branżowe Centrum Umiejętności</p>
+        </div>
+        
+        <div style="padding: 30px; background: #f9fafb;">
+          <div style="background: white; padding: 25px; border-radius: 8px; border-left: 4px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="color: #10b981; margin-top: 0;">🎓 ${courseTitle}</h3>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151; width: 140px;">👤 Imię i nazwisko:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${application.firstName} ${application.lastName}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📧 Email:</td>
+                <td style="padding: 12px 0; color: #1f2937;"><a href="mailto:${application.email}" style="color: #2563eb;">${application.email}</a></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📱 Telefon:</td>
+                <td style="padding: 12px 0; color: #1f2937;"><a href="tel:${application.phone}" style="color: #2563eb;">${application.phone}</a></td>
+              </tr>
+              ${application.company ? `
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">🏢 Firma:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${application.company}</td>
+              </tr>
+              ` : ''}
+              ${application.position ? `
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">💼 Stanowisko:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${application.position}</td>
+              </tr>
+              ` : ''}
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📊 Doświadczenie:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${getExperienceLabel(application.experience)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📅 Data zgłoszenia:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${new Date().toLocaleString('pl-PL')}</td>
+              </tr>
+            </table>
+          </div>
+          
+          ${application.motivation ? `
+          <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #374151; margin-top: 0;">💬 Motywacja uczestnika:</h4>
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 6px; color: #374151; line-height: 1.6; font-style: italic;">
+              "${application.motivation}"
+            </div>
+          </div>
+          ` : ''}
+          
+          <div style="margin-top: 25px; text-align: center;">
+            <a href="https://app.bcu-spedycja.pl/admin" style="display: inline-block; background: #dc2626; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Przejdź do panelu administracyjnego →
+            </a>
+          </div>
+        </div>
+        
+        <div style="background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
+          <p style="margin: 0;">To jest automatyczne powiadomienie z systemu BCU SPEDYCJA</p>
+          <p style="margin: 5px 0 0 0;">© 2025 BCU SPEDYCJA - Branżowe Centrum Umiejętności</p>
+        </div>
+      </div>
+    `;
+
+    const emailText = `
+Nowe zgłoszenie na kurs: ${courseTitle}
+
+Dane uczestnika:
+- Imię i nazwisko: ${application.firstName} ${application.lastName}
+- Email: ${application.email}
+- Telefon: ${application.phone}
+${application.company ? `- Firma: ${application.company}` : ''}
+${application.position ? `- Stanowisko: ${application.position}` : ''}
+- Doświadczenie: ${getExperienceLabel(application.experience)}
+- Data zgłoszenia: ${new Date().toLocaleString('pl-PL')}
+
+${application.motivation ? `Motywacja:\n${application.motivation}` : ''}
+
+---
+Panel administracyjny: https://app.bcu-spedycja.pl/admin
+    `;
+
+    const mailOptions = {
+      from: {
+        name: 'BCU SPEDYCJA - Zgłoszenia',
+        address: process.env.SMTP_USER || 'noreply@bcu-spedycja.pl'
+      },
+      to: NOTIFICATION_EMAIL,
+      subject: emailSubject,
+      text: emailText,
+      html: emailHtml,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Course application notification sent:', {
+      messageId: info.messageId,
+      course: courseTitle,
+      applicant: `${application.firstName} ${application.lastName}`,
+      email: application.email
+    });
+  } catch (error) {
+    console.error('❌ Failed to send course application notification:', error.message);
+    // Don't throw - email failure shouldn't block the application
+  }
+}
+
+// Send email notification for new job application
+async function sendJobApplicationNotification(application, jobTitle, companyName) {
+  try {
+    const transporter = createTransporter();
+    if (!transporter) {
+      console.log('⚠️ Email not configured, skipping notification');
+      return;
+    }
+
+    const emailSubject = `[BCU SPEDYCJA] Nowa aplikacja na pracę: ${jobTitle}`;
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1f2937 0%, #374151 100%); color: white; padding: 25px; text-align: center; border-radius: 8px 8px 0 0;">
+          <h2 style="margin: 0;">💼 Nowa aplikacja na ofertę pracy</h2>
+          <p style="margin: 10px 0 0 0; opacity: 0.9;">BCU SPEDYCJA - Branżowe Centrum Umiejętności</p>
+        </div>
+        
+        <div style="padding: 30px; background: #f9fafb;">
+          <div style="background: white; padding: 25px; border-radius: 8px; border-left: 4px solid #3b82f6; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="color: #3b82f6; margin-top: 0;">🏢 ${jobTitle}</h3>
+            ${companyName ? `<p style="color: #6b7280; margin-top: -10px;">${companyName}</p>` : ''}
+            
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151; width: 140px;">👤 Imię i nazwisko:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${application.firstName} ${application.lastName}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📧 Email:</td>
+                <td style="padding: 12px 0; color: #1f2937;"><a href="mailto:${application.email}" style="color: #2563eb;">${application.email}</a></td>
+              </tr>
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📱 Telefon:</td>
+                <td style="padding: 12px 0; color: #1f2937;"><a href="tel:${application.phone}" style="color: #2563eb;">${application.phone}</a></td>
+              </tr>
+              ${application.company ? `
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">🏢 Firma:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${application.company}</td>
+              </tr>
+              ` : ''}
+              ${application.position ? `
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">💼 Stanowisko:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${application.position}</td>
+              </tr>
+              ` : ''}
+              <tr style="border-bottom: 1px solid #e5e7eb;">
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📊 Doświadczenie:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${getExperienceLabel(application.experience)}</td>
+              </tr>
+              <tr>
+                <td style="padding: 12px 0; font-weight: bold; color: #374151;">📅 Data aplikacji:</td>
+                <td style="padding: 12px 0; color: #1f2937;">${new Date().toLocaleString('pl-PL')}</td>
+              </tr>
+            </table>
+          </div>
+          
+          ${application.motivation ? `
+          <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="color: #374151; margin-top: 0;">💬 Motywacja kandydata:</h4>
+            <div style="background: #f3f4f6; padding: 15px; border-radius: 6px; color: #374151; line-height: 1.6; font-style: italic;">
+              "${application.motivation}"
+            </div>
+          </div>
+          ` : ''}
+          
+          <div style="margin-top: 25px; text-align: center;">
+            <a href="https://app.bcu-spedycja.pl/admin" style="display: inline-block; background: #dc2626; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; font-weight: bold;">
+              Przejdź do panelu administracyjnego →
+            </a>
+          </div>
+        </div>
+        
+        <div style="background: #1f2937; color: #9ca3af; padding: 20px; text-align: center; font-size: 12px; border-radius: 0 0 8px 8px;">
+          <p style="margin: 0;">To jest automatyczne powiadomienie z systemu BCU SPEDYCJA</p>
+          <p style="margin: 5px 0 0 0;">© 2025 BCU SPEDYCJA - Branżowe Centrum Umiejętności</p>
+        </div>
+      </div>
+    `;
+
+    const emailText = `
+Nowa aplikacja na ofertę pracy: ${jobTitle}
+${companyName ? `Firma: ${companyName}` : ''}
+
+Dane kandydata:
+- Imię i nazwisko: ${application.firstName} ${application.lastName}
+- Email: ${application.email}
+- Telefon: ${application.phone}
+${application.company ? `- Firma: ${application.company}` : ''}
+${application.position ? `- Stanowisko: ${application.position}` : ''}
+- Doświadczenie: ${getExperienceLabel(application.experience)}
+- Data aplikacji: ${new Date().toLocaleString('pl-PL')}
+
+${application.motivation ? `Motywacja:\n${application.motivation}` : ''}
+
+---
+Panel administracyjny: https://app.bcu-spedycja.pl/admin
+    `;
+
+    const mailOptions = {
+      from: {
+        name: 'BCU SPEDYCJA - Aplikacje',
+        address: process.env.SMTP_USER || 'noreply@bcu-spedycja.pl'
+      },
+      to: NOTIFICATION_EMAIL,
+      subject: emailSubject,
+      text: emailText,
+      html: emailHtml,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Job application notification sent:', {
+      messageId: info.messageId,
+      job: jobTitle,
+      applicant: `${application.firstName} ${application.lastName}`,
+      email: application.email
+    });
+  } catch (error) {
+    console.error('❌ Failed to send job application notification:', error.message);
+  }
+}
+
+// Helper function to get experience level label
+function getExperienceLabel(experience) {
+  const labels = {
+    'none': 'Brak doświadczenia',
+    'beginner': 'Początkujący',
+    'intermediate': 'Średniozaawansowany',
+    'advanced': 'Zaawansowany'
+  };
+  return labels[experience] || experience || 'Nie podano';
+}
 
 // Submit application for course or job (public)
 router.post('/', [
@@ -134,11 +427,23 @@ router.post('/', [
 
     const application = new Application(applicationPayload);
     await application.save();
+    
+    // Populate related data
     if (application.course) {
       await application.populate('course', 'title startDate');
     }
     if (application.jobOffer) {
-      await application.populate('jobOffer', 'title location');
+      await application.populate('jobOffer', 'title companyName location');
+    }
+
+    // Send email notification (non-blocking)
+    if (applicationPayload.applicationType === 'job') {
+      const jobTitle = application.jobOffer?.title || applicationPayload.jobOfferTitle || 'Nieznana oferta';
+      const companyName = application.jobOffer?.companyName || '';
+      sendJobApplicationNotification(application, jobTitle, companyName);
+    } else {
+      const courseTitle = application.course?.title || applicationPayload.courseTitle || 'Nieznany kurs';
+      sendCourseApplicationNotification(application, courseTitle);
     }
 
     const message = applicationPayload.applicationType === 'job' ? 

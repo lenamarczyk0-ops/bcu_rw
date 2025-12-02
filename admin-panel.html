@@ -482,9 +482,37 @@
                         <h2 class="text-2xl font-bold text-gray-900">Oferty Pracy</h2>
                         <p class="text-gray-600">Zarządzaj ofertami pracy i praktyk</p>
                     </div>
-                    <button id="add-job-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
-                        <i class="ri-add-line mr-2"></i>Dodaj ofertę
-                    </button>
+                    <div class="flex space-x-2">
+                        <button id="import-praca-gov-btn" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="ri-download-cloud-line mr-2"></i>Import z praca.gov.pl
+                        </button>
+                        <button id="add-job-btn" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="ri-add-line mr-2"></i>Dodaj ofertę
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Import Stats Box -->
+                <div id="import-stats-box" class="mb-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg shadow p-4 border border-blue-200">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="p-2 bg-blue-100 rounded-lg mr-4">
+                                <i class="ri-government-line text-blue-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">Import z praca.gov.pl</h4>
+                                <p class="text-sm text-gray-600" id="import-stats-text">Ładowanie statystyk...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span id="import-active-count" class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                                -- aktywnych
+                            </span>
+                            <button id="refresh-import-stats-btn" class="text-gray-500 hover:text-gray-700 p-1" title="Odśwież statystyki">
+                                <i class="ri-refresh-line"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Jobs List -->
@@ -852,6 +880,10 @@
                 document.getElementById('refresh-materials-btn').addEventListener('click', () => this.loadMaterials());
                 document.getElementById('add-material-btn').addEventListener('click', () => this.showMaterialModal());
                 document.getElementById('refresh-users-btn').addEventListener('click', () => this.loadUsers());
+                
+                // Import from praca.gov.pl
+                document.getElementById('import-praca-gov-btn').addEventListener('click', () => this.importFromPracaGov());
+                document.getElementById('refresh-import-stats-btn').addEventListener('click', () => this.loadImportStats());
 
                 // Filters
                 document.getElementById('news-status-filter').addEventListener('change', () => this.filterNews());
@@ -1206,12 +1238,93 @@
                         this.jobs = data.jobOffers || [];
                         this.renderJobs();
                         this.addEventListeners();
+                        // Load import stats when jobs section is active
+                        this.loadImportStats();
                     } else {
                         throw new Error(data.message || 'Błąd ładowania ofert pracy');
                     }
                 } catch (error) {
                     console.error('Error loading jobs:', error);
                     this.showNotification('Błąd ładowania ofert pracy: ' + error.message, 'error');
+                }
+            }
+
+            // Import job offers from praca.gov.pl
+            async importFromPracaGov() {
+                const btn = document.getElementById('import-praca-gov-btn');
+                const originalText = btn.innerHTML;
+                
+                try {
+                    btn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-2"></i>Importuję...';
+                    btn.disabled = true;
+                    
+                    this.showNotification('Rozpoczynam import ofert z praca.gov.pl... To może potrwać kilka minut.', 'info');
+                    
+                    const response = await fetch('/api/job-offers/import/praca-gov', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                            maxOffersPerKeyword: 25,
+                            updateExisting: true
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.showNotification(`Import zakończony! Nowych: ${data.result.newOffers}, zaktualizowanych: ${data.result.updatedOffers}`, 'success');
+                        // Reload jobs list
+                        await this.loadJobs();
+                        await this.loadImportStats();
+                    } else {
+                        throw new Error(data.message || 'Błąd importu');
+                    }
+                } catch (error) {
+                    console.error('Error importing from praca.gov.pl:', error);
+                    this.showNotification('Błąd importu: ' + error.message, 'error');
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // Load import statistics from praca.gov.pl
+            async loadImportStats() {
+                try {
+                    const response = await fetch('/api/job-offers/import/stats', { credentials: 'include' });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const stats = data.importStats;
+                        const statsText = document.getElementById('import-stats-text');
+                        const activeCount = document.getElementById('import-active-count');
+                        
+                        if (stats) {
+                            const lastImportDate = stats.lastImportedAt 
+                                ? new Date(stats.lastImportedAt).toLocaleString('pl-PL') 
+                                : 'nigdy';
+                            statsText.textContent = `Ostatni import: ${lastImportDate}`;
+                            activeCount.textContent = `${stats.active || 0} aktywnych`;
+                            
+                            // Color coding based on how many active offers
+                            if (stats.active > 10) {
+                                activeCount.className = 'bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium';
+                            } else if (stats.active > 0) {
+                                activeCount.className = 'bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium';
+                            } else {
+                                activeCount.className = 'bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium';
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading import stats:', error);
+                    const statsText = document.getElementById('import-stats-text');
+                    if (statsText) {
+                        statsText.textContent = 'Nie można załadować statystyk';
+                    }
                 }
             }
 
@@ -1223,9 +1336,15 @@
                         <div class="text-center py-8">
                             <i class="ri-briefcase-line text-4xl text-gray-400 mb-4"></i>
                             <p class="text-gray-500 mb-4">Brak ofert pracy</p>
-                            <button data-action="add-job" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
-                                Dodaj pierwszą ofertę
-                            </button>
+                            <div class="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-3">
+                                <button data-action="import-praca-gov" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="ri-download-cloud-line mr-2"></i>Importuj z praca.gov.pl
+                                </button>
+                                <button data-action="add-job" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors">
+                                    <i class="ri-add-line mr-2"></i>Dodaj ręcznie
+                                </button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-4">Możesz automatycznie zaimportować oferty pracy dla spedytorów i logistyków z portalu praca.gov.pl</p>
                         </div>
                     `;
                     return;
@@ -3391,6 +3510,10 @@
                 // Add event listeners for job actions
                 document.querySelectorAll('[data-action="add-job"]').forEach(button => {
                     button.addEventListener('click', () => this.showJobModal());
+                });
+                
+                document.querySelectorAll('[data-action="import-praca-gov"]').forEach(button => {
+                    button.addEventListener('click', () => this.importFromPracaGov());
                 });
                 
                 document.querySelectorAll('[data-action="edit-job"]').forEach(button => {
