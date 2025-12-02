@@ -1446,6 +1446,44 @@
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Lokalizacja *</label>
                                         <input type="text" name="location" required class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                     </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                        <select name="status" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="draft">Szkic</option>
+                                            <option value="published">Opublikowana</option>
+                                            <option value="archived">Zarchiwizowana</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Data wygaśnięcia</label>
+                                        <input type="date" name="expireAt" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Typ zatrudnienia</label>
+                                        <select name="employmentType" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="full-time">Pełny etat</option>
+                                            <option value="part-time">Część etatu</option>
+                                            <option value="contract">Kontrakt</option>
+                                            <option value="internship">Praktyki/Staż</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Poziom doświadczenia</label>
+                                        <select name="experienceLevel" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="any">Dowolny</option>
+                                            <option value="junior">Junior</option>
+                                            <option value="mid">Mid</option>
+                                            <option value="senior">Senior</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Wynagrodzenie od (PLN)</label>
+                                        <input type="number" name="salaryFrom" min="0" placeholder="np. 4000" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Wynagrodzenie do (PLN)</label>
+                                        <input type="number" name="salaryTo" min="0" placeholder="np. 8000" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                    </div>
                                     <div class="flex items-center">
                                         <label class="flex items-center">
                                             <input type="checkbox" name="isActive" checked class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary">
@@ -1460,6 +1498,41 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Opis</label>
                                     <textarea name="description" rows="4" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Opcjonalny opis materiału..."></textarea>
                                 </div>
+                                ` : type === 'job' ? `
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Opis oferty pracy *</label>
+                                    <div class="border border-gray-300 rounded-md overflow-hidden">
+                                        <div class="bg-gray-50 border-b border-gray-300 px-3 py-2 flex flex-wrap gap-2">
+                                            <button type="button" data-action="format-bold" data-target="descriptionHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Pogrubienie">
+                                                <i class="ri-bold"></i> <b>B</b>
+                                            </button>
+                                            <button type="button" data-action="format-italic" data-target="descriptionHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Kursywa">
+                                                <i class="ri-italic"></i> <i>I</i>
+                                            </button>
+                                            <button type="button" data-action="format-list" data-target="descriptionHTML" class="px-2 py-1 text-sm bg-white border border-gray-300 rounded hover:bg-gray-100" title="Lista">
+                                                <i class="ri-list-unordered"></i>
+                                            </button>
+                                        </div>
+                                        <textarea name="descriptionHTML" rows="8" required class="w-full px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary border-0 resize-y" placeholder="Opisz stanowisko, wymagania, obowiązki i oferowane benefity..."></textarea>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Pełny opis oferty pracy. Możesz używać znaczników HTML dla formatowania.</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Wymagania</label>
+                                    <textarea name="requirements" rows="4" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Jakie umiejętności i doświadczenie są wymagane?"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Benefity / Co oferujemy</label>
+                                    <textarea name="benefits" rows="4" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary" placeholder="Jakie benefity oferuje firma?"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Link do aplikacji (opcjonalny)</label>
+                                    <input type="url" name="applyUrl" placeholder="https://example.com/apply" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Email kontaktowy</label>
+                                    <input type="email" name="contactEmail" placeholder="rekrutacja@firma.pl" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                </div>
                                 ` : `
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Krótki opis (excerpt) *</label>
@@ -1472,7 +1545,7 @@
                                                 <i class="ri-italic"></i>
                                             </button>
                                         </div>
-                                        <textarea name="${type === 'news' ? 'excerpt' : 'excerpt'}" rows="3" ${type === 'news' ? '' : 'required'} class="w-full px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary border-0 resize-none" placeholder="Krótki opis (max 300 znaków)..."></textarea>
+                                        <textarea name="excerpt" rows="3" class="w-full px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary border-0 resize-none" placeholder="Krótki opis (max 300 znaków)..."></textarea>
                                     </div>
                                     <p class="text-xs text-gray-500 mt-1">Krótkie streszczenie, które będzie wyświetlane na listach</p>
                                 </div>
@@ -1697,11 +1770,39 @@
                         if (data.price) data.price = parseFloat(data.price);
                         
                         console.log('Course data before submit:', data);
-                    } else if (type === 'news' || type === 'job') {
+                    } else if (type === 'news') {
                         const isActiveCheckbox = form.querySelector('input[name="isActive"]');
                         data.isActive = isActiveCheckbox ? isActiveCheckbox.checked : false;
                         
-                        console.log(`${type} checkbox values:`, { isActive: data.isActive });
+                        console.log('News checkbox values:', { isActive: data.isActive });
+                    } else if (type === 'job') {
+                        const isActiveCheckbox = form.querySelector('input[name="isActive"]');
+                        data.isActive = isActiveCheckbox ? isActiveCheckbox.checked : false;
+                        
+                        // Convert numeric fields for job offers
+                        if (data.salaryFrom) data.salaryFrom = parseFloat(data.salaryFrom);
+                        if (data.salaryTo) data.salaryTo = parseFloat(data.salaryTo);
+                        
+                        // Convert expireAt to ISO date if provided
+                        if (data.expireAt) {
+                            data.expireAt = new Date(data.expireAt).toISOString();
+                        } else {
+                            // Default expire date: 30 days from now
+                            const defaultExpire = new Date();
+                            defaultExpire.setDate(defaultExpire.getDate() + 30);
+                            data.expireAt = defaultExpire.toISOString();
+                        }
+                        
+                        // Remove empty optional fields
+                        if (!data.salaryFrom) delete data.salaryFrom;
+                        if (!data.salaryTo) delete data.salaryTo;
+                        if (!data.applyUrl) delete data.applyUrl;
+                        if (!data.contactEmail) delete data.contactEmail;
+                        if (!data.requirements) delete data.requirements;
+                        if (!data.benefits) delete data.benefits;
+                        
+                        console.log('Job checkbox values:', { isActive: data.isActive });
+                        console.log('Job data before submit:', data);
                     } else if (type === 'material') {
                         const isPublicCheckbox = form.querySelector('input[name="isPublic"]');
                         data.isPublic = isPublicCheckbox ? isPublicCheckbox.checked : false;

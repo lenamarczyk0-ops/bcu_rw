@@ -621,11 +621,11 @@
 
             // Set featured image
             const featuredImage = document.getElementById('featured-image');
-            let imageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
-            if (imageUrl.startsWith('./')) {
-                imageUrl = imageUrl.replace('./', '/');
+            let featuredImageUrl = article.imageUrl || getSmartImage(article.title, article.excerpt || '');
+            if (featuredImageUrl.startsWith('./')) {
+                featuredImageUrl = featuredImageUrl.replace('./', '/');
             }
-            featuredImage.src = imageUrl;
+            featuredImage.src = featuredImageUrl;
             featuredImage.alt = article.title;
 
             // Set article body
