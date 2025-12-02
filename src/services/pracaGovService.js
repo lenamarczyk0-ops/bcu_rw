@@ -159,6 +159,16 @@ function mapGovOfferToBcuFormat(govOffer, adminId) {
     descriptionParts.push(`<p><strong>Rodzaj umowy:</strong> ${govOffer.rodzajUmowy}</p>`);
   }
 
+  // Kontakt
+  if (govOffer.telefon || govOffer.email || govOffer.osobaDoKontaktu) {
+    let contactInfo = '<h3>Kontakt</h3><p>';
+    if (govOffer.osobaDoKontaktu) contactInfo += `<strong>Osoba:</strong> ${govOffer.osobaDoKontaktu}<br>`;
+    if (govOffer.telefon) contactInfo += `<strong>Tel:</strong> ${govOffer.telefon}<br>`;
+    if (govOffer.email) contactInfo += `<strong>Email:</strong> ${govOffer.email}`;
+    contactInfo += '</p>';
+    descriptionParts.push(contactInfo);
+  }
+
   // Informacja o źródle
   descriptionParts.push(`<hr><p class="text-sm text-gray-500"><em>Źródło: praca.gov.pl | ID: ${govOffer.id || 'N/A'}</em></p>`);
 
@@ -210,7 +220,6 @@ function mapGovOfferToBcuFormat(govOffer, adminId) {
     experienceLevel: 'any',
     applyUrl: `https://oferty.praca.gov.pl/portal/oferta/${govOffer.id}`,
     contactEmail: govOffer.email || null,
-    contactPhone: govOffer.telefon || null,
     expireAt: expireAt,
     owner: adminId,
     status: 'published',

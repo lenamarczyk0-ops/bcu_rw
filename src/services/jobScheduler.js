@@ -137,8 +137,9 @@ function startScheduler() {
   // Zaplanuj następne uruchomienie
   scheduleNextRun();
   
-  // Jeśli to pierwsze uruchomienie i brak ofert, wykonaj import od razu
-  checkAndRunInitialImport();
+  // Automatyczny import przy starcie jest wyłączony - użyj przycisku w panelu admina
+  // checkAndRunInitialImport();
+  console.log('   💡 Aby zaimportować oferty z praca.gov.pl, użyj przycisku w panelu administratora');
 }
 
 /**
