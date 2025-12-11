@@ -169,11 +169,13 @@ router.get('/admin/list', requireAuth, async (req, res) => {
 router.post('/', requireAuth, [
   body('title').notEmpty().withMessage('Tytuł jest wymagany'),
   body('excerpt').notEmpty().withMessage('Opis jest wymagany'),
-  body('contentHTML').notEmpty().withMessage('Treść jest wymagana'),
-  body('startDate').isISO8601().withMessage('Data rozpoczęcia jest wymagana'),
-  body('duration').notEmpty().withMessage('Czas trwania jest wymagany'),
-  body('isPaid').optional().isBoolean(),
-  body('isActive').optional().isBoolean(),
+  body('contentHTML').optional(),
+  body('startDate').optional().isISO8601().withMessage('Data rozpoczęcia musi być prawidłową datą'),
+  body('duration').optional(),
+  body('isPaid').optional(),
+  body('isActive').optional(),
+  body('isCompleted').optional(),
+  body('targetUrl').optional(),
   body('price').optional().isFloat({ min: 0 })
 ], async (req, res) => {
   try {
@@ -190,6 +192,11 @@ router.post('/', requireAuth, [
       ...req.body,
       author: req.user._id
     };
+    
+    // Sanitizacja boolean
+    if (courseData.isActive !== undefined) courseData.isActive = courseData.isActive === true || courseData.isActive === 'true' || courseData.isActive === 'on';
+    if (courseData.isCompleted !== undefined) courseData.isCompleted = courseData.isCompleted === true || courseData.isCompleted === 'true' || courseData.isCompleted === 'on';
+    if (courseData.isPaid !== undefined) courseData.isPaid = courseData.isPaid === true || courseData.isPaid === 'true' || courseData.isPaid === 'on';
 
     const course = new Course(courseData);
     await course.save();
@@ -213,11 +220,13 @@ router.post('/', requireAuth, [
 router.put('/:id', requireAuth, [
   body('title').optional().notEmpty().withMessage('Tytuł nie może być pusty'),
   body('excerpt').optional().notEmpty().withMessage('Opis nie może być pusty'),
-  body('contentHTML').optional().notEmpty().withMessage('Treść nie może być pusta'),
+  body('contentHTML').optional(),
   body('startDate').optional().isISO8601().withMessage('Nieprawidłowa data rozpoczęcia'),
-  body('duration').optional().notEmpty().withMessage('Czas trwania nie może być pusty'),
-  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean'),
-  body('isPaid').optional().isBoolean().withMessage('isPaid musi być boolean')
+  body('duration').optional(),
+  body('isActive').optional(),
+  body('isPaid').optional(),
+  body('isCompleted').optional(),
+  body('targetUrl').optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -246,9 +255,16 @@ router.put('/:id', requireAuth, [
     }
 
     console.log('Updating course with data:', req.body);
-    Object.assign(course, req.body);
+    
+    // Sanitizacja boolean przed aktualizacją
+    const updateData = { ...req.body };
+    if (updateData.isActive !== undefined) updateData.isActive = updateData.isActive === true || updateData.isActive === 'true' || updateData.isActive === 'on';
+    if (updateData.isCompleted !== undefined) updateData.isCompleted = updateData.isCompleted === true || updateData.isCompleted === 'true' || updateData.isCompleted === 'on';
+    if (updateData.isPaid !== undefined) updateData.isPaid = updateData.isPaid === true || updateData.isPaid === 'true' || updateData.isPaid === 'on';
+    
+    Object.assign(course, updateData);
     await course.save();
-    console.log('Course after save:', { isActive: course.isActive, isPaid: course.isPaid });
+    console.log('Course after save:', { isActive: course.isActive, isCompleted: course.isCompleted });
 
     res.json({
       success: true,

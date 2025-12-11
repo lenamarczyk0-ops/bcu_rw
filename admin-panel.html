@@ -1214,6 +1214,9 @@
                                       course.status === 'published' ? 'Opublikowany' : 
                                       course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
                                 </span>
+                                <button data-action="copy-course-link" data-slug="${course.slug}" class="text-green-600 hover:text-green-800" title="Kopiuj link do kursu">
+                                    <i class="ri-link"></i>
+                                </button>
                                 <button data-action="preview-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Podgląd">
                                     <i class="ri-eye-line"></i>
                                 </button>
@@ -1222,6 +1225,16 @@
                                 </button>
                                 <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800" title="Usuń">
                                     <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-gray-100">
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="ri-link mr-1"></i>
+                                <span class="font-medium mr-1">Link:</span>
+                                <code class="bg-gray-100 px-2 py-0.5 rounded select-all text-blue-600">/course/${course.slug}</code>
+                                <button data-action="copy-course-link" data-slug="${course.slug}" class="ml-2 bg-green-100 text-green-700 hover:bg-green-200 px-2 py-0.5 rounded text-xs font-medium transition-colors">
+                                    📋 Kopiuj pełny link
                                 </button>
                             </div>
                         </div>

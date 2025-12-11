@@ -174,7 +174,9 @@ router.post('/', requireAuth, [
   body('weeks').optional().isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
-  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean')
+  body('isActive').optional(),
+  body('isCompleted').optional(),
+  body('targetUrl').optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -198,7 +200,8 @@ router.post('/', requireAuth, [
     // Sanitizacja typów liczbowych i boolean z formularza
     if (courseData.weeks !== undefined) courseData.weeks = Number(courseData.weeks);
     if (courseData.hours !== undefined) courseData.hours = Number(courseData.hours);
-    if (courseData.isActive !== undefined) courseData.isActive = courseData.isActive === true || courseData.isActive === 'true';
+    if (courseData.isActive !== undefined) courseData.isActive = courseData.isActive === true || courseData.isActive === 'true' || courseData.isActive === 'on';
+    if (courseData.isCompleted !== undefined) courseData.isCompleted = courseData.isCompleted === true || courseData.isCompleted === 'true' || courseData.isCompleted === 'on';
 
     const course = new Course(courseData);
     await course.save();
@@ -233,7 +236,9 @@ router.put('/:id', requireAuth, [
   body('weeks').optional().isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').optional().isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').optional().isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
-  body('isActive').optional().isBoolean().withMessage('isActive musi być boolean')
+  body('isActive').optional(),
+  body('isCompleted').optional(),
+  body('targetUrl').optional()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -262,9 +267,21 @@ router.put('/:id', requireAuth, [
     }
 
     console.log('Updating course with data:', req.body);
-    Object.assign(course, req.body);
+    
+    // Sanitizacja boolean przed aktualizacją
+    const updateData = { ...req.body };
+    if (updateData.isActive !== undefined) {
+      updateData.isActive = updateData.isActive === true || updateData.isActive === 'true' || updateData.isActive === 'on';
+    }
+    if (updateData.isCompleted !== undefined) {
+      updateData.isCompleted = updateData.isCompleted === true || updateData.isCompleted === 'true' || updateData.isCompleted === 'on';
+    }
+    if (updateData.weeks !== undefined) updateData.weeks = Number(updateData.weeks);
+    if (updateData.hours !== undefined) updateData.hours = Number(updateData.hours);
+    
+    Object.assign(course, updateData);
     await course.save();
-    console.log('Course after save:', { isActive: course.isActive, isPaid: course.isPaid });
+    console.log('Course after save:', { isActive: course.isActive, isCompleted: course.isCompleted });
 
     res.json({
       success: true,
