@@ -1516,6 +1516,14 @@
                                         </div>
                                     </div>
                                     ` : type === 'course' ? `
+                                    <div class="md:col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                        <label class="block text-sm font-medium text-blue-800 mb-2">
+                                            <i class="ri-external-link-line mr-1"></i>
+                                            Link docelowy / Link do zapisów (opcjonalny)
+                                        </label>
+                                        <input type="url" name="targetUrl" placeholder="https://example.com/zapisy-na-kurs" class="w-full border border-blue-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                        <p class="text-xs text-blue-600 mt-1">Jeśli podasz link, przycisk "Zapisz się" będzie kierować na ten adres. Idealne do reklam!</p>
+                                    </div>
                                     <div class="grid grid-cols-2 gap-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Liczba godzin *</label>
@@ -1559,11 +1567,6 @@
                                     <div id="price-field" class="hidden">
                                         <label class="block text-sm font-medium text-gray-700 mb-2">Cena (PLN)</label>
                                         <input type="number" name="price" min="0" placeholder="0" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                    </div>
-                                    <div class="md:col-span-2">
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Link docelowy (opcjonalny)</label>
-                                        <input type="url" name="targetUrl" placeholder="https://example.com/zapisy" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                        <p class="text-xs text-gray-500 mt-1">Link zewnętrzny do formularza zapisów lub strony z dodatkowymi informacjami</p>
                                     </div>
                                     ` : `
                                     <div>
