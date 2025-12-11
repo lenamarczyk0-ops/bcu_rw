@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurs - BCU SPEDYCJA</title>
+    
+    <!-- Open Graph Meta Tags - będą dynamicznie aktualizowane -->
+    <meta property="og:title" content="Kurs - BCU SPEDYCJA" id="og-title">
+    <meta property="og:type" content="website">
+    <meta property="og:description" content="Profesjonalny kurs z zakresu spedycji i logistyki w Branżowym Centrum Umiejętności" id="og-description">
+    <meta property="og:image" content="https://app.bcu-spedycja.pl/imgs/bcu2.jpg" id="og-image">
+    <meta property="og:url" content="https://app.bcu-spedycja.pl/course" id="og-url">
+    <meta property="og:site_name" content="BCU SPEDYCJA - Branżowe Centrum Umiejętności">
+    <meta property="og:locale" content="pl_PL">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Kurs - BCU SPEDYCJA" id="twitter-title">
+    <meta name="twitter:description" content="Profesjonalny kurs z zakresu spedycji i logistyki w Branżowym Centrum Umiejętności" id="twitter-description">
+    <meta name="twitter:image" content="https://app.bcu-spedycja.pl/imgs/bcu2.jpg" id="twitter-image">
+    
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        
+        *:focus {
+            outline: none !important;
+        }
+        
+        button:focus,
+        a:focus,
+        input:focus,
+        select:focus,
+        textarea:focus {
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4) !important;
+            border-color: #3B82F6 !important;
+        }
+        
+        .border-3 { border-width: 3px; }
+        .border-l-3 { border-left-width: 3px; }
+        .border-r-3 { border-right-width: 3px; }
+        .border-t-3 { border-top-width: 3px; }
+        .border-b-3 { border-bottom-width: 3px; }
+        
+        .shadow-3xl { 
+            box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25), 
+                       0 0 0 1px rgba(255, 255, 255, 0.1); 
+        }
+        
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .prose h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; }
+        .prose h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; margin-top: 1.5rem; }
+        .prose h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; margin-top: 1rem; }
+        .prose p { margin-bottom: 1rem; line-height: 1.7; }
+        .prose ul, .prose ol { margin-bottom: 1rem; padding-left: 1.5rem; }
+        .prose li { margin-bottom: 0.5rem; }
+        .prose ul { list-style-type: disc; }
+        .prose ol { list-style-type: decimal; }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E30613',
+                        'primary-dark': '#B8050F',
+                        'primary-light': '#FF1A2B',
+                        secondary: '#004080',
+                        neutral: '#B3B3B3'
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-black min-h-screen">
+    <!-- HEADER -->
+    <header class="bg-secondary shadow-lg sticky top-0 z-50">
+        <div class="w-full px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
+                    <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
+                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                    </a>
+                    <img src="./imgs/logoo_powiat.png" alt="Powiat Krapkowicki" class="h-8 w-auto">
+                    <img src="./imgs/zdzieszowice1.png" alt="Zdzieszowice" class="h-6 w-auto">
+                    <img src="./imgs/salogo_PUT-18.png" alt="Politechnika Opolska" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/opolska1.png" alt="Województwo Opolskie" class="h-6 w-auto hidden md:block">
+                    <img src="./imgs/frse-bialy-poziom.svg" alt="FRSE" class="h-5 w-auto hidden md:block">
+                </div>
+                <div class="flex items-center space-x-2">
+                    <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
+                        <a href="/courses" class="text-white hover:text-neutral transition-colors font-bold" aria-label="Przejdź do strony z kursami">Kursy</a>
+                        <a href="/job-offers" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do ofert pracy">Oferty Pracy</a>
+                        <a href="/news" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do aktualności">Aktualności</a>
+                        <a href="/#o-nas" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do sekcji O nas">O nas</a>
+                        <a href="/#kontakt" class="text-white hover:text-neutral transition-colors" aria-label="Przejdź do kontaktu">Kontakt</a>
+                    </nav>
+                    <button id="mobile-menu-button" class="md:hidden text-white" aria-label="Otwórz menu mobilne">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-menu-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE DRAWER MENU -->
+    <div id="mobile-drawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+        <div class="absolute inset-0 bg-black/50" id="mobile-backdrop"></div>
+        <aside class="absolute right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl p-6 flex flex-col">
+            <div class="flex items-center justify-between mb-6">
+                <span class="text-secondary font-bold">Menu</span>
+                <button id="mobile-close" aria-label="Zamknij menu" class="text-gray-500 hover:text-gray-800">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <nav class="flex flex-col space-y-4" aria-label="Menu mobilne">
+                <a href="/courses" class="text-gray-800 hover:text-secondary">Kursy</a>
+                <a href="/job-offers" class="text-gray-800 hover:text-secondary">Oferty Pracy</a>
+                <a href="/news" class="text-gray-800 hover:text-secondary">Aktualności</a>
+                <a href="/#o-nas" class="text-gray-800 hover:text-secondary">O nas</a>
+                <a href="/#kontakt" class="text-gray-800 hover:text-secondary">Kontakt</a>
+            </nav>
+        </aside>
+    </div>
+
+    <main>
+        <!-- BREADCRUMB -->
+        <section class="bg-white border-b py-4">
+            <div class="max-w-7xl mx-auto px-6">
+                <nav class="text-sm" aria-label="Breadcrumb">
+                    <ol class="flex items-center space-x-2">
+                        <li><a href="/" class="text-secondary hover:text-primary transition-colors">Strona główna</a></li>
+                        <li><i class="ri-arrow-right-s-line text-gray-400"></i></li>
+                        <li><a href="/courses" class="text-secondary hover:text-primary transition-colors">Kursy</a></li>
+                        <li><i class="ri-arrow-right-s-line text-gray-400"></i></li>
+                        <li><span id="breadcrumb-title" class="text-gray-600">Ładowanie...</span></li>
+                    </ol>
+                </nav>
+            </div>
+        </section>
+
+        <!-- COURSE CONTENT -->
+        <section class="py-12">
+            <div class="max-w-5xl mx-auto px-6">
+                <!-- Loading State -->
+                <div id="course-loading" class="text-center py-16">
+                    <div class="inline-flex items-center px-6 py-3 font-semibold leading-6 text-lg shadow rounded-lg text-gray-500 bg-white">
+                        <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Ładowanie kursu...
+                    </div>
+                </div>
+                
+                <!-- Error State -->
+                <div id="course-error" class="text-center py-16 hidden">
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-8 max-w-md mx-auto">
+                        <i class="ri-error-warning-line text-red-500 text-5xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-red-800 mb-2">Kurs nie został znaleziony</h3>
+                        <p class="text-red-600 mb-6">Przepraszamy, nie udało się znaleźć kursu o podanym adresie.</p>
+                        <a href="/courses" class="inline-flex items-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-colors">
+                            <i class="ri-arrow-left-line mr-2"></i>
+                            Zobacz wszystkie kursy
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Course Content Container -->
+                <div id="course-content" class="hidden">
+                    <!-- Course Header -->
+                    <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+                        <!-- Course Image -->
+                        <div id="course-image" class="h-64 md:h-80 bg-cover bg-center relative">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <span id="course-status" class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">DOSTĘPNY</span>
+                                    <span id="course-target-group" class="bg-white/20 backdrop-blur-sm text-white text-xs font-medium px-3 py-1 rounded-full"></span>
+                                </div>
+                                <h1 id="course-title" class="text-3xl md:text-4xl font-bold text-white"></h1>
+                            </div>
+                        </div>
+                        
+                        <!-- Course Info Bar -->
+                        <div class="bg-secondary text-white p-6">
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                <div class="text-center">
+                                    <i class="ri-time-line text-2xl text-yellow-400 mb-2"></i>
+                                    <div class="text-sm opacity-80">Liczba godzin</div>
+                                    <div id="course-hours" class="text-xl font-bold">-</div>
+                                </div>
+                                <div class="text-center">
+                                    <i class="ri-calendar-line text-2xl text-yellow-400 mb-2"></i>
+                                    <div class="text-sm opacity-80">Czas trwania</div>
+                                    <div id="course-duration" class="text-xl font-bold">-</div>
+                                </div>
+                                <div class="text-center">
+                                    <i class="ri-group-line text-2xl text-yellow-400 mb-2"></i>
+                                    <div class="text-sm opacity-80">Max uczestników</div>
+                                    <div id="course-participants" class="text-xl font-bold">-</div>
+                                </div>
+                                <div class="text-center">
+                                    <i class="ri-price-tag-3-line text-2xl text-yellow-400 mb-2"></i>
+                                    <div class="text-sm opacity-80">Cena</div>
+                                    <div id="course-price" class="text-xl font-bold">Bezpłatny</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Two Column Layout -->
+                    <div class="grid lg:grid-cols-3 gap-8">
+                        <!-- Main Content -->
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-2xl shadow-lg p-8">
+                                <h2 class="text-2xl font-bold text-gray-900 mb-4">O kursie</h2>
+                                <p id="course-excerpt" class="text-lg text-gray-600 mb-6 leading-relaxed"></p>
+                                
+                                <h3 class="text-xl font-bold text-gray-900 mb-4">Szczegółowy opis</h3>
+                                <div id="course-description" class="prose max-w-none text-gray-700"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sidebar -->
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+                                <h3 class="text-xl font-bold text-gray-900 mb-6">Zapisz się na kurs</h3>
+                                
+                                <div class="space-y-4 mb-6">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="ri-user-line text-primary mr-3"></i>
+                                        <span>Dla: <strong id="sidebar-target-group">-</strong></span>
+                                    </div>
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="ri-timer-line text-primary mr-3"></i>
+                                        <span>Czas: <strong id="sidebar-hours">-</strong> godzin</span>
+                                    </div>
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="ri-team-line text-primary mr-3"></i>
+                                        <span>Max: <strong id="sidebar-participants">-</strong> osób</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- CTA Button - będzie dynamicznie aktualizowany -->
+                                <div id="cta-container">
+                                    <button id="apply-btn" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center">
+                                        <i class="ri-user-add-line mr-2"></i>
+                                        ZAPISZ SIĘ NA KURS
+                                    </button>
+                                </div>
+                                
+                                <p class="text-center text-sm text-gray-500 mt-4">
+                                    Masz pytania? <a href="/#kontakt" class="text-primary hover:underline">Skontaktuj się z nami</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-secondary text-white py-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
+                    <p class="text-gray-300 mb-4">Branżowe Centrum Umiejętności w dziedzinie spedycji, logistyki i transportu.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=61580378476009" target="_blank" rel="noopener noreferrer" aria-label="Facebook BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
+                            <i class="ri-facebook-line"></i>
+                        </a>
+                        <a href="https://www.instagram.com/bcu_spedycja" target="_blank" rel="noopener noreferrer" aria-label="Instagram BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
+                            <i class="ri-instagram-line"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <h3 class="text-lg font-bold mb-4">O projekcie</h3>
+                    <p class="text-gray-300 text-sm leading-relaxed mb-4">
+                        Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowej (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
+                    </p>
+                    <div class="flex justify-start">
+                        <img src="./imgs/logo_KPOWHite.png" alt="Krajowy Plan Odbudowy - NextGenerationEU" class="h-12 w-auto">
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Kontakt</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-phone-line text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">77 474 90 50</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-mail-line text-sm"></i>
+                            </div>
+                            <span class="text-gray-300">sekretariat@bcu-spedycja.pl</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-4 h-4 flex items-center justify-center">
+                                <i class="ri-map-pin-line text-sm"></i>
+                            </div>
+                            <a href="https://maps.app.goo.gl/cipcDAf9RgVEceCr6" target="_blank" rel="noopener noreferrer" class="text-gray-300 underline decoration-dotted hover:text-white">
+                                ul. Góra św. Anny 21A, 47-330 Zdzieszowice
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white/20 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400 text-sm">© 2025 BCU Spedycja. Wszystkie prawa zastrzeżone.</p>
+                    <div class="flex space-x-6 mt-4 md:mt-0">
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Polityka prywatności</a>
+                        <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Regulamin</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize mobile menu
+        function initNavigationMenu() {
+            const mobileBtn = document.getElementById('mobile-menu-button');
+            const drawer = document.getElementById('mobile-drawer');
+            const backdrop = document.getElementById('mobile-backdrop');
+            const closeBtn = document.getElementById('mobile-close');
+
+            function openDrawer() {
+                if (!drawer) return;
+                drawer.classList.remove('hidden');
+            }
+
+            function closeDrawer() {
+                if (!drawer) return;
+                drawer.classList.add('hidden');
+            }
+
+            mobileBtn?.addEventListener('click', openDrawer);
+            backdrop?.addEventListener('click', closeDrawer);
+            closeBtn?.addEventListener('click', closeDrawer);
+            if (drawer) drawer.addEventListener('click', (e) => { if (e.target.tagName === 'A') closeDrawer(); });
+        }
+
+        // Get course slug from URL
+        function getCourseSlug() {
+            const path = window.location.pathname;
+            const match = path.match(/\/course\/(.+)/);
+            return match ? decodeURIComponent(match[1]) : null;
+        }
+
+        // Smart image selection
+        function getSmartImage(course) {
+            let imageUrl = course.imageUrl;
+            if (!imageUrl || imageUrl === './imgs/halazdjecie.jpg') {
+                const title = (course.title || '').toLowerCase();
+                
+                if (title.includes('firma') || title.includes('zarządzanie') || title.includes('prowadzenie')) {
+                    imageUrl = '/imgs/medium-shot-woman-with-tablet.jpg';
+                } else if (title.includes('magazyn') || title.includes('ładunk') || title.includes('manipulacyj') || title.includes('harmonogram')) {
+                    const magazynImages = [
+                        '/imgs/warehouse-operative-checking-purchase-order.jpg',
+                        '/imgs/warehouse-worker-checking-inventory-arrived-goods-packages-storage-department.jpg',
+                        '/imgs/cargo-transport-robot-is-parked-floor-near-shelves-with-merchandise-spacious-warehouse-that-is-lit-night-by-generative-ai.jpg',
+                        '/imgs/medium-shot-smiley-man-warehouse.jpg'
+                    ];
+                    imageUrl = magazynImages[Math.abs(title.length) % magazynImages.length];
+                } else if (title.includes('transport') || title.includes('drogowy') || title.includes('pojazd') || title.includes('logist') || title.includes('zarabia')) {
+                    const transportImages = [
+                        '/imgs/white-truck-delivery-shipping-service-3d-rendering.jpg',
+                        '/imgs/truck-logistics-operation-dusk.jpg',
+                        '/imgs/truck-inside-warehouse.jpg',
+                        '/imgs/abstract-design-background-trucks-transport-trackinghighway-delivering.jpg',
+                        '/imgs/transportation-logistics-container-cargo-ship-cargo-plane.jpg'
+                    ];
+                    imageUrl = transportImages[Math.abs(title.length) % transportImages.length];
+                } else if (title.includes('technolog') || title.includes('automatyc') || title.includes('cyfrowy') || title.includes('dron') || title.includes('identyfikacja')) {
+                    imageUrl = '/imgs/drone-flying-modern-warehouse.jpg';
+                } else if (title.includes('język') || title.includes('komunikacja') || title.includes('marketing') || title.includes('branżowy')) {
+                    imageUrl = '/imgs/16617.jpg';
+                } else if (title.includes('mechanizacja') || title.includes('prac') || title.includes('ładunk')) {
+                    imageUrl = '/imgs/happy-employee-holding-scanner-distribution-warehouse.jpg';
+                } else if (title.includes('eksport') || title.includes('import') || title.includes('celny') || title.includes('międzynarodow')) {
+                    imageUrl = '/imgs/transport-logistics-concept.jpg';
+                } else if (title.includes('bezpieczeńst') || title.includes('pracowni') || title.includes('bhp')) {
+                    imageUrl = '/imgs/woman-safety-equipment-working.jpg';
+                } else if (title.includes('kontrola') || title.includes('planowanie') || title.includes('kosztorys') || title.includes('zlecenia')) {
+                    imageUrl = '/imgs/transport-logistic-manager-checking-control-logistic-network-distribution-customer.jpg';
+                } else if (title.includes('dostaw') || title.includes('kurier') || title.includes('przesył')) {
+                    imageUrl = '/imgs/courier-with-delivery-cardboard-box-by-car.jpg';
+                } else {
+                    const fallbackImages = [
+                        '/imgs/medium-shot-woman-storage.jpg',
+                        '/imgs/truck-logistics-operation-dusk (1).jpg',
+                        '/imgs/16617.jpg'
+                    ];
+                    imageUrl = fallbackImages[Math.abs(title.length) % fallbackImages.length];
+                }
+            } else if (imageUrl.startsWith('./imgs/')) {
+                imageUrl = imageUrl.replace('./imgs/', '/imgs/');
+            }
+            return imageUrl;
+        }
+
+        // Load and display course
+        async function loadCourse() {
+            const slug = getCourseSlug();
+            
+            if (!slug) {
+                showError();
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/courses/${slug}`);
+                
+                if (!response.ok) {
+                    throw new Error('Course not found');
+                }
+                
+                const data = await response.json();
+                const course = data.course;
+                
+                if (!course) {
+                    throw new Error('Course not found');
+                }
+                
+                displayCourse(course);
+                
+            } catch (error) {
+                console.error('Error loading course:', error);
+                showError();
+            }
+        }
+
+        // Display course data
+        function displayCourse(course) {
+            // Hide loading, show content
+            document.getElementById('course-loading').classList.add('hidden');
+            document.getElementById('course-content').classList.remove('hidden');
+            
+            // Update page title
+            document.title = `${course.title} - BCU SPEDYCJA`;
+            
+            // Update meta tags
+            document.getElementById('og-title').setAttribute('content', `${course.title} - BCU SPEDYCJA`);
+            document.getElementById('og-description').setAttribute('content', course.excerpt || '');
+            document.getElementById('twitter-title').setAttribute('content', `${course.title} - BCU SPEDYCJA`);
+            document.getElementById('twitter-description').setAttribute('content', course.excerpt || '');
+            
+            const imageUrl = getSmartImage(course);
+            document.getElementById('og-image').setAttribute('content', `https://app.bcu-spedycja.pl${imageUrl}`);
+            document.getElementById('twitter-image').setAttribute('content', `https://app.bcu-spedycja.pl${imageUrl}`);
+            document.getElementById('og-url').setAttribute('content', window.location.href);
+            
+            // Update breadcrumb
+            document.getElementById('breadcrumb-title').textContent = course.title;
+            
+            // Update course image
+            document.getElementById('course-image').style.backgroundImage = `url('${imageUrl}')`;
+            
+            // Update course title
+            document.getElementById('course-title').textContent = course.title;
+            
+            // Update status
+            const statusEl = document.getElementById('course-status');
+            const isCompleted = course.isCompleted === true;
+            
+            if (isCompleted) {
+                statusEl.textContent = 'ZREALIZOWANY';
+                statusEl.className = 'bg-gray-500 text-white text-xs font-bold px-3 py-1 rounded-full';
+                // Add grayscale to image
+                document.getElementById('course-image').classList.add('grayscale-[40%]');
+            } else if (course.isActive !== false) {
+                statusEl.textContent = 'DOSTĘPNY';
+                statusEl.className = 'bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full';
+            } else {
+                statusEl.textContent = 'NIEDOSTĘPNY';
+                statusEl.className = 'bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full';
+            }
+            
+            // Update target group
+            const targetGroup = course.targetGroup || 'dorośli';
+            document.getElementById('course-target-group').textContent = targetGroup;
+            document.getElementById('sidebar-target-group').textContent = targetGroup;
+            
+            // Update hours
+            const hours = course.hours || 0;
+            document.getElementById('course-hours').textContent = `${hours}h`;
+            document.getElementById('sidebar-hours').textContent = hours;
+            
+            // Update duration
+            document.getElementById('course-duration').textContent = course.duration || `${course.weeks || 1} tyg.`;
+            
+            // Update participants
+            const maxParticipants = course.maxParticipants || 20;
+            document.getElementById('course-participants').textContent = maxParticipants;
+            document.getElementById('sidebar-participants').textContent = maxParticipants;
+            
+            // Update price
+            const priceEl = document.getElementById('course-price');
+            if (course.price && course.price > 0) {
+                priceEl.textContent = `${course.price} PLN`;
+            } else {
+                priceEl.textContent = 'Bezpłatny';
+            }
+            
+            // Update excerpt
+            document.getElementById('course-excerpt').textContent = course.excerpt || '';
+            
+            // Update description
+            document.getElementById('course-description').innerHTML = course.contentHTML || '<p>Brak szczegółowego opisu.</p>';
+            
+            // Update CTA button
+            const ctaContainer = document.getElementById('cta-container');
+            if (isCompleted) {
+                ctaContainer.innerHTML = `
+                    <div class="w-full bg-gray-400 text-white/80 py-4 px-6 rounded-xl font-bold text-lg text-center cursor-not-allowed">
+                        <i class="ri-check-double-line mr-2"></i>
+                        KURS ZREALIZOWANY
+                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-3">Ten kurs został już zakończony.</p>
+                `;
+            } else if (course.targetUrl) {
+                ctaContainer.innerHTML = `
+                    <a href="${course.targetUrl}" target="_blank" rel="noopener noreferrer" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center">
+                        <i class="ri-external-link-line mr-2"></i>
+                        ZAPISZ SIĘ NA KURS
+                    </a>
+                `;
+            } else {
+                ctaContainer.innerHTML = `
+                    <button onclick="submitCourseApplication('${course._id}', '${course.title}')" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-4 px-6 rounded-xl font-bold text-lg transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center">
+                        <i class="ri-user-add-line mr-2"></i>
+                        ZAPISZ SIĘ NA KURS
+                    </button>
+                `;
+            }
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('course-loading').classList.add('hidden');
+            document.getElementById('course-error').classList.remove('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initNavigationMenu();
+            loadCourse();
+        });
+    </script>
+    
+    <!-- API Integration for application form -->
+    <script src="./assets/js/api.js"></script>
+</body>
+</html>
+

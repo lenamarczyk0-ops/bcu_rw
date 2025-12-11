@@ -697,6 +697,9 @@
 
         // Create course card HTML
         function createCourseCard(course) {
+            // Check if course is completed
+            const isCompleted = course.isCompleted === true;
+            
             // Enhanced gradient colors with better contrast and modern look (identical to build.html)
             const gradients = [
                 { from: 'from-indigo-600', to: 'to-indigo-800', accent: 'text-indigo-200', highlight: 'text-indigo-100' },
@@ -709,8 +712,11 @@
                 { from: 'from-cyan-600', to: 'to-cyan-800', accent: 'text-cyan-200', highlight: 'text-cyan-100' }
             ];
             
+            // Use gray gradient for completed courses
+            const completedGradient = { from: 'from-gray-500', to: 'to-gray-700', accent: 'text-gray-300', highlight: 'text-gray-200' };
+            
             const gradientIndex = course.title ? course.title.length % gradients.length : 0;
-            const gradient = gradients[gradientIndex];
+            const gradient = isCompleted ? completedGradient : gradients[gradientIndex];
             const gradientClass = `bg-gradient-to-br ${gradient.from} ${gradient.to}`;
             
             // Enhanced image selection based on course content
@@ -769,16 +775,37 @@
             const courseCode = course.slug ? course.slug.toUpperCase().substring(0, 8) : 'BCUS-' + (course._id ? course._id.toString().slice(-3) : '001');
             
             // Status formatting (no price display)
-            const statusText = course.isActive !== false ? 'DOSTĘPNY' : 'NIEDOSTĘPNY';
-            const statusClass = course.isActive !== false ? 'text-green-300' : 'text-red-300';
+            let statusText, statusClass;
+            if (isCompleted) {
+                statusText = 'ZREALIZOWANY';
+                statusClass = 'text-gray-300';
+            } else if (course.isActive !== false) {
+                statusText = 'DOSTĘPNY';
+                statusClass = 'text-green-300';
+            } else {
+                statusText = 'NIEDOSTĘPNY';
+                statusClass = 'text-red-300';
+            }
+            
+            // Corner accent color - gray for completed, yellow for active
+            const accentColor = isCompleted ? 'border-gray-400/60' : 'border-yellow-400/80';
             
             return `
-                <div class="group relative ${gradientClass} rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-white/10 min-h-[420px] flex flex-col">
+                <div class="group relative ${gradientClass} rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] overflow-hidden border border-white/10 min-h-[420px] flex flex-col ${isCompleted ? 'grayscale-[30%]' : ''}">
+                    ${isCompleted ? `
+                    <!-- Completed banner -->
+                    <div class="absolute top-0 left-0 right-0 bg-gray-800/90 text-white text-center py-2 z-20">
+                        <span class="flex items-center justify-center text-sm font-bold">
+                            <i class="ri-check-double-line mr-2"></i>
+                            KURS ZREALIZOWANY
+                        </span>
+                    </div>
+                    ` : ''}
                     <!-- Modern corner accents -->
-                    <div class="absolute top-3 left-3 w-6 h-6 border-l-3 border-t-3 border-yellow-400/80 rounded-tl-lg"></div>
-                    <div class="absolute top-3 right-3 w-6 h-6 border-r-3 border-t-3 border-yellow-400/80 rounded-tr-lg"></div>
-                    <div class="absolute bottom-3 left-3 w-6 h-6 border-l-3 border-b-3 border-yellow-400/80 rounded-bl-lg"></div>
-                    <div class="absolute bottom-3 right-3 w-6 h-6 border-r-3 border-b-3 border-yellow-400/80 rounded-br-lg"></div>
+                    <div class="absolute ${isCompleted ? 'top-12' : 'top-3'} left-3 w-6 h-6 border-l-3 border-t-3 ${accentColor} rounded-tl-lg"></div>
+                    <div class="absolute ${isCompleted ? 'top-12' : 'top-3'} right-3 w-6 h-6 border-r-3 border-t-3 ${accentColor} rounded-tr-lg"></div>
+                    <div class="absolute bottom-3 left-3 w-6 h-6 border-l-3 border-b-3 ${accentColor} rounded-bl-lg"></div>
+                    <div class="absolute bottom-3 right-3 w-6 h-6 border-r-3 border-b-3 ${accentColor} rounded-br-lg"></div>
                     
                     <!-- Course metadata -->
                     <div class="absolute top-4 right-6 space-y-1">
@@ -839,12 +866,28 @@
                                     SZCZEGÓŁY
                                 </span>
                             </button>
+                            ${isCompleted ? `
+                            <div class="w-full bg-gray-400/50 text-white/70 py-2 px-3 rounded-lg font-semibold text-sm text-center cursor-not-allowed">
+                                <span class="flex items-center justify-center">
+                                    <i class="ri-check-double-line mr-2"></i>
+                                    ZREALIZOWANY
+                                </span>
+                            </div>
+                            ` : course.targetUrl ? `
+                            <a href="${course.targetUrl}" target="_blank" rel="noopener noreferrer" class="block w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm text-center">
+                                <span class="flex items-center justify-center">
+                                    <i class="ri-external-link-line mr-2"></i>
+                                    ZAPISZ SIĘ
+                                </span>
+                            </a>
+                            ` : `
                             <button data-action="apply" data-course-id="${course._id || course.id || courseCode}" data-course-title="${course.title || 'Kurs'}" class="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white py-2 px-3 rounded-lg font-semibold transition-all duration-300 shadow-md hover:shadow-lg text-sm">
                                 <span class="flex items-center justify-center">
                                     <i class="ri-user-add-line mr-2"></i>
                                     ZAPISZ SIĘ
                                 </span>
                             </button>
+                            `}
                         </div>
                     </div>
                 </div>

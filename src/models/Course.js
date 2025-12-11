@@ -81,7 +81,16 @@ const courseSchema = new mongoose.Schema({
   applications: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Application'
-  }]
+  }],
+  targetUrl: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  isCompleted: {
+    type: Boolean,
+    default: false
+  }
 }, {
   timestamps: true
 });

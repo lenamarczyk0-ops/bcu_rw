@@ -661,6 +661,18 @@ app.get('/courses', (req, res) => {
   }
 });
 
+// Single course page - for direct links/ads
+app.get('/course/:slug', (req, res) => {
+  try {
+    setRelaxedCSP(res);
+    const filePath = path.join(__dirname, '../course.html');
+    res.sendFile(filePath);
+  } catch (error) {
+    console.error('Error serving single course page:', error);
+    res.status(500).send('Błąd serwera - strona kursu niedostępna');
+  }
+});
+
 app.get('/job-offers', (req, res) => {
   try {
     setRelaxedCSP(res);

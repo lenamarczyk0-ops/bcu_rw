@@ -262,9 +262,21 @@ async function showCourseModal(slug) {
                         </div>
                         
                         <div class="flex gap-4">
+                            ${course.isCompleted ? `
+                            <div class="bg-gray-400 text-white/80 px-6 py-2 rounded-lg flex-1 text-center cursor-not-allowed flex items-center justify-center gap-2">
+                                <i class="ri-check-double-line"></i>
+                                Kurs zrealizowany
+                            </div>
+                            ` : course.targetUrl ? `
+                            <a href="${course.targetUrl}" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-6 py-2 rounded-lg hover:from-red-700 hover:to-red-600 transition-all flex-1 text-center flex items-center justify-center gap-2">
+                                <i class="ri-external-link-line"></i>
+                                Zapisz się na kurs
+                            </a>
+                            ` : `
                             <button onclick="submitCourseApplication('${course._id}', '${course.title}')" class="bg-gradient-to-r from-primary-dark to-primary-light text-white px-6 py-2 rounded-lg hover:from-red-700 hover:to-red-600 transition-all flex-1">
                                 Zapisz się na kurs
                             </button>
+                            `}
                             <button onclick="closeCourseModal()" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors">
                                 Zamknij
                             </button>
