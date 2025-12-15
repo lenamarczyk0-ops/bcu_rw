@@ -221,7 +221,12 @@ router.put('/:id', requireAuth, [
   body('title').optional().notEmpty().withMessage('Tytuł nie może być pusty'),
   body('excerpt').optional().notEmpty().withMessage('Opis nie może być pusty'),
   body('contentHTML').optional(),
-  body('startDate').optional().isISO8601().withMessage('Nieprawidłowa data rozpoczęcia'),
+  body('startDate').optional({ nullable: true }).custom((value) => {
+    if (value === null || value === '' || value === undefined) return true;
+    const date = new Date(value);
+    if (isNaN(date.getTime())) throw new Error('Nieprawidłowa data rozpoczęcia');
+    return true;
+  }),
   body('duration').optional(),
   body('isActive').optional(),
   body('isPaid').optional(),
@@ -261,6 +266,11 @@ router.put('/:id', requireAuth, [
     if (updateData.isActive !== undefined) updateData.isActive = updateData.isActive === true || updateData.isActive === 'true' || updateData.isActive === 'on';
     if (updateData.isCompleted !== undefined) updateData.isCompleted = updateData.isCompleted === true || updateData.isCompleted === 'true' || updateData.isCompleted === 'on';
     if (updateData.isPaid !== undefined) updateData.isPaid = updateData.isPaid === true || updateData.isPaid === 'true' || updateData.isPaid === 'on';
+    
+    // Handle null startDate - clear the field
+    if (updateData.startDate === null || updateData.startDate === '') {
+      updateData.startDate = undefined;
+    }
     
     Object.assign(course, updateData);
     await course.save();

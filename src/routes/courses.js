@@ -232,7 +232,12 @@ router.put('/:id', requireAuth, [
   body('title').optional().notEmpty().withMessage('Tytuł nie może być pusty'),
   body('excerpt').optional().notEmpty().withMessage('Opis nie może być pusty'),
   body('contentHTML').optional().notEmpty().withMessage('Treść nie może być pusta'),
-  body('startDate').optional().isISO8601().withMessage('Nieprawidłowa data rozpoczęcia'),
+  body('startDate').optional({ nullable: true }).custom((value) => {
+    if (value === null || value === '' || value === undefined) return true;
+    const date = new Date(value);
+    if (isNaN(date.getTime())) throw new Error('Nieprawidłowa data rozpoczęcia');
+    return true;
+  }),
   body('weeks').optional().isInt({ min: 1 }).withMessage('Liczba tygodni musi być liczbą większą od 0'),
   body('targetGroup').optional().isIn(['uczniowie i studenci', 'nauczyciele', 'dorośli']).withMessage('Nieprawidłowa grupa docelowa'),
   body('hours').optional().isInt({ min: 1 }).withMessage('Liczba godzin musi być liczbą większą od 0'),
@@ -278,6 +283,11 @@ router.put('/:id', requireAuth, [
     }
     if (updateData.weeks !== undefined) updateData.weeks = Number(updateData.weeks);
     if (updateData.hours !== undefined) updateData.hours = Number(updateData.hours);
+    
+    // Handle null startDate - clear the field
+    if (updateData.startDate === null || updateData.startDate === '') {
+      updateData.startDate = undefined;
+    }
     
     Object.assign(course, updateData);
     await course.save();

@@ -1545,12 +1545,15 @@
                                             <input type="number" name="hours" required min="1" placeholder="np. 30" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                                <i class="ri-calendar-line mr-1"></i>
-                                                Data rozpoczęcia
+                                            <label class="flex items-center mb-2 cursor-pointer">
+                                                <input type="checkbox" name="enableStartDate" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary mr-2" onchange="toggleStartDateField(this)">
+                                                <span class="text-sm font-medium text-gray-700">
+                                                    <i class="ri-calendar-line mr-1"></i>
+                                                    Włącz datę rozpoczęcia
+                                                </span>
                                             </label>
-                                            <input type="date" name="startDate" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
-                                            <p class="text-xs text-gray-500 mt-1">Opcjonalne - jeśli podasz, wyświetli się "Termin: data"</p>
+                                            <input type="date" name="startDate" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary disabled:bg-gray-100 disabled:cursor-not-allowed" disabled>
+                                            <p class="text-xs text-gray-500 mt-1">Wyświetli się "Termin: data" na karcie kursu</p>
                                         </div>
                                     </div>
                                     <div>
@@ -1893,6 +1896,21 @@
                             if (isPaidCheckbox) {
                                 isPaidCheckbox.dispatchEvent(new Event('change'));
                             }
+                            
+                            // Handle enableStartDate checkbox based on whether startDate exists
+                            const enableStartDateCheckbox = form.querySelector('input[name="enableStartDate"]');
+                            const startDateInput = form.querySelector('input[name="startDate"]');
+                            if (enableStartDateCheckbox && startDateInput) {
+                                if (item.startDate) {
+                                    enableStartDateCheckbox.checked = true;
+                                    startDateInput.disabled = false;
+                                    startDateInput.value = new Date(item.startDate).toISOString().split('T')[0];
+                                } else {
+                                    enableStartDateCheckbox.checked = false;
+                                    startDateInput.disabled = true;
+                                    startDateInput.value = '';
+                                }
+                            }
                         }
                         
                         // Special handling for news image preview
@@ -1955,11 +1973,12 @@
                         if (data.maxParticipants) data.maxParticipants = parseInt(data.maxParticipants);
                         if (data.price) data.price = parseFloat(data.price);
                         
-                        // Handle startDate - convert to ISO format if provided
-                        if (data.startDate) {
+                        // Handle startDate - only include if checkbox is enabled and date is provided
+                        const enableStartDateCheckbox = form.querySelector('input[name="enableStartDate"]');
+                        if (enableStartDateCheckbox && enableStartDateCheckbox.checked && data.startDate) {
                             data.startDate = new Date(data.startDate).toISOString();
                         } else {
-                            delete data.startDate; // Remove if empty
+                            data.startDate = null; // Explicitly clear startDate
                         }
                         
                         console.log('Course data before submit:', data);
@@ -4423,6 +4442,18 @@
         // Initialize admin panel
         const adminPanel = new AdminPanel();
         window.adminPanel = adminPanel;
+
+        // Toggle start date field based on checkbox
+        function toggleStartDateField(checkbox) {
+            const dateInput = checkbox.closest('div').querySelector('input[name="startDate"]');
+            if (dateInput) {
+                dateInput.disabled = !checkbox.checked;
+                if (!checkbox.checked) {
+                    dateInput.value = '';
+                }
+            }
+        }
+        window.toggleStartDateField = toggleStartDateField;
     </script>
 
     <!-- Application Detail Modal -->
