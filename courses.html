@@ -677,7 +677,30 @@
                 return;
             }
 
-            gridEl.innerHTML = courses.map(course => createCourseCard(course)).join('');
+            // Sort courses: completed last, then courses with startDate first (by date), then without startDate
+            const sortedCourses = [...courses].sort((a, b) => {
+                // Completed courses go to the end
+                if (a.isCompleted && !b.isCompleted) return 1;
+                if (!a.isCompleted && b.isCompleted) return -1;
+                
+                // Courses with startDate come first
+                const aHasDate = a.startDate ? 1 : 0;
+                const bHasDate = b.startDate ? 1 : 0;
+                
+                if (aHasDate !== bHasDate) {
+                    return bHasDate - aHasDate; // Courses with date first
+                }
+                
+                // If both have startDate, sort by date (soonest first)
+                if (a.startDate && b.startDate) {
+                    return new Date(a.startDate) - new Date(b.startDate);
+                }
+                
+                // If neither has date, keep original order
+                return 0;
+            });
+
+            gridEl.innerHTML = sortedCourses.map(course => createCourseCard(course)).join('');
             gridEl.classList.remove('hidden');
             
             // Add event listeners for course application buttons
@@ -774,11 +797,30 @@
             // Generate course code from title or use existing
             const courseCode = course.slug ? course.slug.toUpperCase().substring(0, 8) : 'BCUS-' + (course._id ? course._id.toString().slice(-3) : '001');
             
+            // Helper function to format date as "14 lutego"
+            function formatPolishDate(dateStr) {
+                if (!dateStr) return null;
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return null;
+                const months = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 
+                               'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+                return `${date.getDate()} ${months[date.getMonth()]}`;
+            }
+            
             // Status formatting (no price display)
             let statusText, statusClass;
             if (isCompleted) {
                 statusText = 'ZREALIZOWANY';
                 statusClass = 'text-gray-300';
+            } else if (course.startDate) {
+                const formattedDate = formatPolishDate(course.startDate);
+                if (formattedDate) {
+                    statusText = `Termin: ${formattedDate}`;
+                    statusClass = 'text-orange-300';
+                } else {
+                    statusText = 'DOSTĘPNY';
+                    statusClass = 'text-green-300';
+                }
             } else if (course.isActive !== false) {
                 statusText = 'DOSTĘPNY';
                 statusClass = 'text-green-300';

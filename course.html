@@ -109,13 +109,13 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3" role="img" aria-label="Loga partnerów projektu">
                     <a href="/" class="flex items-center" aria-label="Powrót do strony głównej BCU SPEDYCJA">
-                        <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
+                        <img src="/imgs/spedycjawhite.png" alt="BCU SPEDYCJA - Branżowe Centrum Umiejętności" class="h-9 md:h-10 w-auto flex-shrink-0 hover:opacity-80 transition-opacity cursor-pointer">
                     </a>
-                    <img src="./imgs/logoo_powiat.png" alt="Powiat Krapkowicki" class="h-8 w-auto">
-                    <img src="./imgs/zdzieszowice1.png" alt="Zdzieszowice" class="h-6 w-auto">
-                    <img src="./imgs/salogo_PUT-18.png" alt="Politechnika Opolska" class="h-6 w-auto hidden md:block">
-                    <img src="./imgs/opolska1.png" alt="Województwo Opolskie" class="h-6 w-auto hidden md:block">
-                    <img src="./imgs/frse-bialy-poziom.svg" alt="FRSE" class="h-5 w-auto hidden md:block">
+                    <img src="/imgs/logoo_powiat.png" alt="Powiat Krapkowicki" class="h-8 w-auto">
+                    <img src="/imgs/zdzieszowice1.png" alt="Zdzieszowice" class="h-6 w-auto">
+                    <img src="/imgs/salogo_PUT-18.png" alt="Politechnika Opolska" class="h-6 w-auto hidden md:block">
+                    <img src="/imgs/opolska1.png" alt="Województwo Opolskie" class="h-6 w-auto hidden md:block">
+                    <img src="/imgs/frse-bialy-poziom.svg" alt="FRSE" class="h-5 w-auto hidden md:block">
                 </div>
                 <div class="flex items-center space-x-2">
                     <nav class="hidden md:flex space-x-8 mr-4" role="navigation" aria-label="Menu główne">
@@ -298,7 +298,7 @@
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
                 <div>
-                    <img src="./imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
+                    <img src="/imgs/spedycjawhite.png" alt="BCU SPEDYCJA" class="h-12 w-auto mb-4">
                     <p class="text-gray-300 mb-4">Branżowe Centrum Umiejętności w dziedzinie spedycji, logistyki i transportu.</p>
                     <div class="flex space-x-4">
                         <a href="https://www.facebook.com/profile.php?id=61580378476009" target="_blank" rel="noopener noreferrer" aria-label="Facebook BCU Spedycja" class="w-8 h-8 flex items-center justify-center bg-secondary rounded-full hover:bg-white/10">
@@ -315,7 +315,7 @@
                         Przedsięwzięcie pn. „Branżowe Centrum Umiejętności – SPEDYCJA" realizowane w ramach konkursu „Utworzenie i wsparcie funkcjonowania 120 Branżowych Centrum Umiejętności (BCU)", realizujących koncepcję Centrów Doskonałości Zawodowej (CoVes) współfinansowane ze środków Krajowego Planu Odbudowy i Zwiększania Odporności.
                     </p>
                     <div class="flex justify-start">
-                        <img src="./imgs/logo_KPOWHite.png" alt="Krajowy Plan Odbudowy - NextGenerationEU" class="h-12 w-auto">
+                        <img src="/imgs/logo_KPOWHite.png" alt="Krajowy Plan Odbudowy - NextGenerationEU" class="h-12 w-auto">
                     </div>
                 </div>
                 <div>
@@ -390,7 +390,7 @@
         // Smart image selection
         function getSmartImage(course) {
             let imageUrl = course.imageUrl;
-            if (!imageUrl || imageUrl === './imgs/halazdjecie.jpg') {
+            if (!imageUrl || imageUrl === './imgs/halazdjecie.jpg' || imageUrl === '/imgs/halazdjecie.jpg') {
                 const title = (course.title || '').toLowerCase();
                 
                 if (title.includes('firma') || title.includes('zarządzanie') || title.includes('prowadzenie')) {
@@ -504,11 +504,30 @@
             const statusEl = document.getElementById('course-status');
             const isCompleted = course.isCompleted === true;
             
+            // Helper function to format date as "14 lutego"
+            function formatPolishDate(dateStr) {
+                if (!dateStr) return null;
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return null;
+                const months = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 
+                               'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+                return `${date.getDate()} ${months[date.getMonth()]}`;
+            }
+            
             if (isCompleted) {
                 statusEl.textContent = 'ZREALIZOWANY';
                 statusEl.className = 'bg-gray-500 text-white text-xs font-bold px-3 py-1 rounded-full';
                 // Add grayscale to image
                 document.getElementById('course-image').classList.add('grayscale-[40%]');
+            } else if (course.startDate) {
+                const formattedDate = formatPolishDate(course.startDate);
+                if (formattedDate) {
+                    statusEl.textContent = `Termin: ${formattedDate}`;
+                    statusEl.className = 'bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full';
+                } else {
+                    statusEl.textContent = 'DOSTĘPNY';
+                    statusEl.className = 'bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full';
+                }
             } else if (course.isActive !== false) {
                 statusEl.textContent = 'DOSTĘPNY';
                 statusEl.className = 'bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full';
@@ -590,7 +609,7 @@
     </script>
     
     <!-- API Integration for application form -->
-    <script src="./assets/js/api.js"></script>
+    <script src="/assets/js/api.js"></script>
 </body>
 </html>
 

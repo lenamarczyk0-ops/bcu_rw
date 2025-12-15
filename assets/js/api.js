@@ -161,6 +161,16 @@ async function loadCourses() {
     }
 }
 
+// Helper function to format date as "14 lutego" for modal display
+function formatPolishDateForModal(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+    const months = ['stycznia', 'lutego', 'marca', 'kwietnia', 'maja', 'czerwca', 
+                   'lipca', 'sierpnia', 'września', 'października', 'listopada', 'grudnia'];
+    return `${date.getDate()} ${months[date.getMonth()]}`;
+}
+
 async function showCourseModal(slug) {
     try {
         const response = await api.getCourse(slug);
@@ -237,6 +247,12 @@ async function showCourseModal(slug) {
                         
                         <div class="mb-4">
                             <div class="grid grid-cols-3 gap-4 text-sm">
+                                ${course.startDate ? `
+                                <div class="col-span-3 bg-orange-50 border border-orange-200 rounded-lg p-3 mb-2">
+                                    <strong class="text-orange-700"><i class="ri-calendar-line mr-1"></i>Termin:</strong>
+                                    <span class="text-orange-800 font-semibold ml-2">${formatPolishDateForModal(course.startDate)}</span>
+                                </div>
+                                ` : ''}
                                 <div>
                                     <strong>Przeznaczone dla:</strong><br>
                                     ${course.targetGroup || 'dorosłych'}

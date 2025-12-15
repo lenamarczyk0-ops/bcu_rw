@@ -1189,7 +1189,7 @@
                                     <span><i class="ri-group-line mr-1"></i>${course.targetGroup || 'dorośli'}</span>
                                     <span><i class="ri-user-line mr-1"></i>Max: ${course.maxParticipants || 20}</span>
                                 </div>
-                                <div class="flex items-center space-x-2 mt-2">
+                                <div class="flex items-center space-x-2 mt-2 flex-wrap gap-y-1">
                                     <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
                                         course.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                     }">
@@ -1201,6 +1201,8 @@
                                         ${course.isPaid ? 'Płatny' : 'Bezpłatny'}
                                     </span>
                                     ${course.isPaid && course.price > 0 ? `<span class="text-xs text-gray-600">${course.price} PLN</span>` : ''}
+                                    ${course.isCompleted ? `<span class="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">Zrealizowany</span>` : ''}
+                                    ${course.startDate ? `<span class="inline-block px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800"><i class="ri-calendar-line mr-1"></i>Termin: ${new Date(course.startDate).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}</span>` : ''}
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2 ml-4">
@@ -1231,10 +1233,10 @@
                         <div class="mt-2 pt-2 border-t border-gray-100">
                             <div class="flex items-center text-xs text-gray-500">
                                 <i class="ri-link mr-1"></i>
-                                <span class="font-medium mr-1">Link:</span>
-                                <code class="bg-gray-100 px-2 py-0.5 rounded select-all text-blue-600">/course/${course.slug}</code>
-                                <button data-action="copy-course-link" data-slug="${course.slug}" class="ml-2 bg-green-100 text-green-700 hover:bg-green-200 px-2 py-0.5 rounded text-xs font-medium transition-colors">
-                                    📋 Kopiuj pełny link
+                                <span class="font-medium mr-1">Link do reklamy:</span>
+                                <code class="bg-blue-50 px-2 py-0.5 rounded select-all text-blue-700 border border-blue-200">/courses#course-${course.slug}</code>
+                                <button data-action="copy-course-link" data-slug="${course.slug}" class="ml-2 bg-green-500 text-white hover:bg-green-600 px-3 py-1 rounded text-xs font-medium transition-colors">
+                                    📋 Kopiuj link
                                 </button>
                             </div>
                         </div>
@@ -1541,6 +1543,14 @@
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700 mb-2">Liczba godzin *</label>
                                             <input type="number" name="hours" required min="1" placeholder="np. 30" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                                <i class="ri-calendar-line mr-1"></i>
+                                                Data rozpoczęcia
+                                            </label>
+                                            <input type="date" name="startDate" class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <p class="text-xs text-gray-500 mt-1">Opcjonalne - jeśli podasz, wyświetli się "Termin: data"</p>
                                         </div>
                                     </div>
                                     <div>
@@ -1933,15 +1943,24 @@
                     if (type === 'course') {
                         const isActiveCheckbox = form.querySelector('input[name="isActive"]');
                         const isPaidCheckbox = form.querySelector('input[name="isPaid"]');
+                        const isCompletedCheckbox = form.querySelector('input[name="isCompleted"]');
                         
                         data.isActive = isActiveCheckbox ? isActiveCheckbox.checked : false;
                         data.isPaid = isPaidCheckbox ? isPaidCheckbox.checked : false;
+                        data.isCompleted = isCompletedCheckbox ? isCompletedCheckbox.checked : false;
                         
                         // Convert numeric fields to proper types
                         // weeks usunięte z formularza kursu
                         if (data.hours) data.hours = parseInt(data.hours);
                         if (data.maxParticipants) data.maxParticipants = parseInt(data.maxParticipants);
                         if (data.price) data.price = parseFloat(data.price);
+                        
+                        // Handle startDate - convert to ISO format if provided
+                        if (data.startDate) {
+                            data.startDate = new Date(data.startDate).toISOString();
+                        } else {
+                            delete data.startDate; // Remove if empty
+                        }
                         
                         console.log('Course data before submit:', data);
                     } else if (type === 'news') {
@@ -2341,7 +2360,7 @@
                                     <span><i class="ri-group-line mr-1"></i>${course.targetGroup || 'dorośli'}</span>
                                     <span><i class="ri-user-line mr-1"></i>Max: ${course.maxParticipants || 20}</span>
                                 </div>
-                                <div class="flex items-center space-x-2 mt-2">
+                                <div class="flex items-center space-x-2 mt-2 flex-wrap gap-y-1">
                                     <span class="inline-block px-2 py-1 text-xs font-medium rounded-full ${
                                         course.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                     }">
@@ -2353,6 +2372,8 @@
                                         ${course.isPaid ? 'Płatny' : 'Bezpłatny'}
                                     </span>
                                     ${course.isPaid && course.price > 0 ? `<span class="text-xs text-gray-600">${course.price} PLN</span>` : ''}
+                                    ${course.isCompleted ? `<span class="inline-block px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">Zrealizowany</span>` : ''}
+                                    ${course.startDate ? `<span class="inline-block px-2 py-1 text-xs font-medium rounded-full bg-orange-100 text-orange-800"><i class="ri-calendar-line mr-1"></i>Termin: ${new Date(course.startDate).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long' })}</span>` : ''}
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2 ml-4">
@@ -2364,6 +2385,9 @@
                                     ${course.status === 'published' ? 'Opublikowany' :
                                       course.status === 'draft' ? 'Szkic' : 'Zarchiwizowany'}
                                 </span>
+                                <button data-action="copy-course-link" data-slug="${course.slug}" class="text-green-600 hover:text-green-800" title="Kopiuj link do kursu">
+                                    <i class="ri-link"></i>
+                                </button>
                                 <button data-action="preview-course" data-id="${course._id}" class="text-blue-600 hover:text-blue-800" title="Podgląd">
                                     <i class="ri-eye-line"></i>
                                 </button>
@@ -2372,6 +2396,16 @@
                                 </button>
                                 <button data-action="delete-course" data-id="${course._id}" class="text-red-600 hover:text-red-800" title="Usuń">
                                     <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2 pt-2 border-t border-gray-100">
+                            <div class="flex items-center text-xs text-gray-500">
+                                <i class="ri-link mr-1"></i>
+                                <span class="font-medium mr-1">Link do reklamy:</span>
+                                <code class="bg-blue-50 px-2 py-0.5 rounded select-all text-blue-700 border border-blue-200">/courses#course-${course.slug}</code>
+                                <button data-action="copy-course-link" data-slug="${course.slug}" class="ml-2 bg-green-500 text-white hover:bg-green-600 px-3 py-1 rounded text-xs font-medium transition-colors">
+                                    📋 Kopiuj link
                                 </button>
                             </div>
                         </div>
@@ -3559,6 +3593,29 @@
                     button.addEventListener('click', (e) => {
                         const id = e.currentTarget.dataset.id;
                         this.deleteCourse(id);
+                    });
+                });
+                
+                // Copy course link action
+                document.querySelectorAll('[data-action="copy-course-link"]').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const slug = e.currentTarget.dataset.slug;
+                        const baseUrl = window.location.origin;
+                        const courseLink = `${baseUrl}/courses#course-${slug}`;
+                        
+                        navigator.clipboard.writeText(courseLink).then(() => {
+                            this.showNotification('Link skopiowany do schowka!', 'success');
+                            // Zmień tekst przycisku na chwilę
+                            const originalText = e.currentTarget.innerHTML;
+                            e.currentTarget.innerHTML = '✅ Skopiowano!';
+                            setTimeout(() => {
+                                e.currentTarget.innerHTML = originalText;
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('Failed to copy:', err);
+                            // Fallback - pokaż link w alert
+                            prompt('Skopiuj ten link:', courseLink);
+                        });
                     });
                 });
 
