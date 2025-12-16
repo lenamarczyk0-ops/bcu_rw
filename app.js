@@ -619,6 +619,9 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
+// Global server reference for graceful shutdown
+let server = null;
+
 // Initialize AdminJS before starting server
 async function startServer() {
   try {
@@ -626,7 +629,7 @@ async function startServer() {
     await initializeAdminJS();
     
     // Start server
-    const server = app.listen(PORT, HOST, () => {
+    server = app.listen(PORT, HOST, () => {
       console.log(`🚀 Server running on ${HOST}:${PORT}`);
       console.log(`📊 Environment: ${process.env.NODE_ENV}`);
       console.log(`📊 Node version: ${process.version}`);
@@ -679,18 +682,26 @@ process.on('unhandledRejection', (reason, promise) => {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('🛑 SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    console.log('✅ Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGINT', () => {
   console.log('🛑 SIGINT received, shutting down gracefully');
-  server.close(() => {
-    console.log('✅ Server closed');
+  if (server) {
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 module.exports = app;

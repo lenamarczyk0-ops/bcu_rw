@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 let isConnected = false;
 let connectionAttempts = 0;
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 2;
 
 const connectDB = async () => {
   try {
@@ -14,13 +14,13 @@ const connectDB = async () => {
     connectionAttempts++;
     console.log(`🔄 Connecting to MongoDB (attempt ${connectionAttempts}/${MAX_RETRIES})...`);
 
+    // Shorter timeout for Railway - app needs to start quickly
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // 10 second timeout
-      socketTimeoutMS: 45000, // 45 second timeout
+      serverSelectionTimeoutMS: 5000, // 5 second timeout for faster startup
+      socketTimeoutMS: 30000, // 30 second timeout
       maxPoolSize: 10,
       retryWrites: true,
+      connectTimeoutMS: 5000, // 5 second connection timeout
     });
 
     isConnected = true;
@@ -45,10 +45,10 @@ const connectDB = async () => {
   } catch (error) {
     console.error('❌ Database connection error:', error.message);
     
-    // Retry logic
+    // Retry logic - but don't block startup too long
     if (connectionAttempts < MAX_RETRIES) {
-      console.log(`⏳ Retrying in 5 seconds...`);
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      console.log(`⏳ Retrying in 2 seconds...`);
+      await new Promise(resolve => setTimeout(resolve, 2000));
       return connectDB();
     }
     
